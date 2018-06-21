@@ -2,7 +2,10 @@ class Agent {
     constructor(tasksList, x, y) {
         this.restingTime = 1 + Math.floor(Math.random() * 100);// or should start at 0?
         this.preferences = this.makePreferences(tasksList);
-        console.log(this.preferences);
+        // the next attributes are used for the trading system,
+        this.tradeTask = '';// this defines the task the agent wants to do
+        this.hasTraded = false;// if has traded than it will be selecteds for the trade task
+        // console.log(this.preferences);
         this.FLD = 1 + Math.floor(Math.random() * 10);// feel like doing
         this.solidarity = 1 + Math.floor(Math.random() * 10);
         this.ability = true;
@@ -13,8 +16,8 @@ class Agent {
     }
     show() {
         noStroke();
-        if(this.occupied)fill(255, 0, 0);
-        else if(!this.ability)fill(125);
+        if (this.occupied) fill(255, 0, 0);
+        else if (!this.ability) fill(125);
         else fill(0, 255, 0);
         rect(this.pos.x, this.pos.y, this.r, this.r);
     }
@@ -22,14 +25,14 @@ class Agent {
         this.pos.x = x;
         this.pos.y = y;
     }
-    trade(taskName) {
+    trade(task) {
         // lazyness should be a value that influences 
         // the trade algorithm
         // and resting time as well
         // if an agent has no resting time he can't trade
         if (Math.random() < 1.5) {// let's test without trading
             // if not trading
-            this.updateAttributes(taskName, true);
+            this.updateAttributes(task, true);
             // increase resting time
             return false;
         } else {// if trading
@@ -48,6 +51,11 @@ class Agent {
             }
             return true;
         }
+    }
+
+    randomTask(){
+        const index = Math.floor(Math.random() * this.preferences.length);
+        return this.preferences[index].task_name;
     }
     updateAttributes(task, done) {
         /**
@@ -79,7 +87,7 @@ class Agent {
         return this.preferences[index].task_name;
     }
 
-    /**
+/**
  * @param {Array} arr Array of task objects
  * @returns an Array of objects with the preference for each task
  */
@@ -98,7 +106,7 @@ class Agent {
         return result;
     }
 
-    /**
+/**
  * computes the preference based on skill and preference offset
  * @param {Number} skill 
  * @param {Number} offset 

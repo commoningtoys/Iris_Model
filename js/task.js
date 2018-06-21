@@ -1,5 +1,5 @@
 class Task{
-    constructor(taskObject){
+    constructor(taskObject, x, y){
         /**
          * time needed to carry out the task
          */
@@ -19,6 +19,15 @@ class Task{
         this.urgencyReset = this.urgency; //we need this to reset the urgency
         this.type = taskObject.type;
         this.skillNeeded = 1 + Math.floor(Math.random() * 100);
+        this.pos = createVector(x, y);
+        this.r = 10;
+    }
+
+    show(){
+        fill(255);
+        let h = (this.aot / TIME_SCALE) * 10;
+        // console.log(h);
+        rect(this.pos.x, this.pos.y, this.r, -h);
     }
     /**
      * this method is called every tick by decreasing
@@ -27,9 +36,9 @@ class Task{
     updateUrgency(agents){
         this.urgency--;
         if(this.urgency <= 0){
-            console.log('choose agent for the task: ' + this.type);
+            // console.log('choose agent for the task: ' + this.type);
             this.urgency = this.urgencyReset;
-            this.chooseAgent(agents);
+            // this.chooseAgent(agents);
         }
     }
     /**
