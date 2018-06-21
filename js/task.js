@@ -18,17 +18,18 @@ class Task{
         this.urgency = Math.floor(DAY / taskObject.executions_per_day);
         this.urgencyReset = this.urgency; //we need this to reset the urgency
         this.type = taskObject.type;
-        this.skillNeeded = 1 + Math.floor(Math.random() * 11);
+        this.skillNeeded = 1 + Math.floor(Math.random() * 100);
     }
     /**
      * this method is called every tick by decreasing
      * the urgency when it reaches 0 it wil be reset to its original value.
      */
-    updateUrgency(){
+    updateUrgency(agents){
         this.urgency--;
         if(this.urgency <= 0){
             console.log('choose agent for the task: ' + this.type);
             this.urgency = this.urgencyReset;
+            this.chooseAgent(agents);
         }
     }
     /**
