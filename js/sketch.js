@@ -18,7 +18,7 @@ function draw() {
 
   for (const task of tasks) {
     task.show();
-    task.updateUrgency();
+    task.updateUrgency(agents);
   }
 }
 

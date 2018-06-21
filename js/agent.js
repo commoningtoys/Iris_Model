@@ -25,6 +25,24 @@ class Agent {
         this.pos.x = x;
         this.pos.y = y;
     }
+    getSkillLevel(taskName) {
+        let result = 0;
+        for (const el of this.preferences) {
+            if (el.task_name.includes(taskName)) {
+                result = el.skill_level;
+                break;
+            }
+        }
+        return result;
+    }
+    updateCompletedTasks(taskName){
+        for (const el of this.preferences) {
+            if (el.task_name.includes(taskName)) {
+                el.completed++;
+                break;
+            }
+        }
+    }
     trade(task) {
         // lazyness should be a value that influences 
         // the trade algorithm
@@ -53,7 +71,7 @@ class Agent {
         }
     }
 
-    randomTask(){
+    randomTask() {
         const index = Math.floor(Math.random() * this.preferences.length);
         return this.preferences[index].task_name;
     }
@@ -87,10 +105,10 @@ class Agent {
         return this.preferences[index].task_name;
     }
 
-/**
- * @param {Array} arr Array of task objects
- * @returns an Array of objects with the preference for each task
- */
+    /**
+     * @param {Array} arr Array of task objects
+     * @returns an Array of objects with the preference for each task
+     */
     makePreferences(arr) {
         const PREFERENCE_OFFSET = 30;
         let result = [];
@@ -106,12 +124,12 @@ class Agent {
         return result;
     }
 
-/**
- * computes the preference based on skill and preference offset
- * @param {Number} skill 
- * @param {Number} offset 
- * @returns the result of the calculation
- */
+    /**
+     * computes the preference based on skill and preference offset
+     * @param {Number} skill 
+     * @param {Number} offset 
+     * @returns the result of the calculation
+     */
     calculatePreference(skill, offset) {
         let result = 0;
         result = skill + (-offset + (Math.floor(Math.random() * offset * 2)));

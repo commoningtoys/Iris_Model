@@ -10,6 +10,8 @@ class Task{
          * The value goes down every time an agent (or agents) decide to 'carry out' the task.
          */
         this.value = 0;
+        this.agentPool = [];
+        this.tradingAgents = 0;
         /**
          * after how many ticks do I need to call this task again?
          * here we need an algorithm that calculates the urgency based
@@ -18,7 +20,7 @@ class Task{
         this.urgency = Math.floor(DAY / taskObject.executions_per_day);
         this.urgencyReset = this.urgency; //we need this to reset the urgency
         this.type = taskObject.type;
-        this.skillNeeded = 1 + Math.floor(Math.random() * 100);
+        this.skillNeeded = 1 + Math.floor(Math.random() * 100);//this needs to be better defined
         this.pos = createVector(x, y);
         this.r = 10;
     }
@@ -57,6 +59,22 @@ class Task{
      * @param {Array} agents 
      */
     chooseAgent(agents){
-
+        this.agentPool = [];
+        this.tradingAgents = 0;
+        let amountOfSkill = 0;
+        for (const agent of agents) {
+            let skill = agent.getSkillLevel(this.type);
+            if(agent.hasTraded && agent.tradeTask){//here we need a string comparison
+                // this is where chooseTask() happens
+                this.agentPool.push(agent);
+                this.tradingAgents++;
+                amountOfSkill += skill;
+                // maybe deprecated
+                agent.occupied = true;//the agent becomes occupied
+            }else if(!agent.occupied && agent.ability && !agent.trade(this)){
+                this.agentPool.push(agent);
+            }
+            
+        }
     }
 }
