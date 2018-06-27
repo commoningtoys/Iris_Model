@@ -38,9 +38,10 @@ class Task{
     updateUrgency(agents){
         this.urgency--;
         if(this.urgency <= 0){
-            // console.log('choose agent for the task: ' + this.type);
+            console.log('choose agent for the task: ' + this.type);
             this.urgency = this.urgencyReset;
-            // this.chooseAgent(agents);
+            this.chooseAgent(agents);
+            noLoop();
         }
     }
     /**
@@ -64,17 +65,17 @@ class Task{
         let amountOfSkill = 0;
         for (const agent of agents) {
             let skill = agent.getSkillLevel(this.type);
-            if(agent.hasTraded && agent.tradeTask){//here we need a string comparison
+            if(agent.hasTraded && agent.tradeTask.includes(this.type)){//here we need a string comparison
                 // this is where chooseTask() happens
                 this.agentPool.push(agent);
                 this.tradingAgents++;
                 amountOfSkill += skill;
                 // maybe deprecated
                 agent.occupied = true;//the agent becomes occupied
-            }else if(!agent.occupied && agent.ability && !agent.trade(this)){
-                this.agentPool.push(agent);
             }
-            
+            if(!agent.occupied && agent.ability && !agent.trade(this)){
+                this.agentPool.push(agent);
+            }            
         }
     }
 }

@@ -1,6 +1,8 @@
 class Agent {
     constructor(tasksList, x, y) {
-        this.restingTime = 1 + Math.floor(Math.random() * 100);// or should start at 0?
+        // or should start at 0?
+        // might be accumulative or not
+        this.restingTime = 1 + Math.floor(Math.random() * 100);
         this.preferences = this.makePreferences(tasksList);
         // the next attributes are used for the trading system,
         this.tradeTask = '';// this defines the task the agent wants to do
@@ -20,6 +22,12 @@ class Agent {
         else if (!this.ability) fill(125);
         else fill(0, 255, 0);
         rect(this.pos.x, this.pos.y, this.r, this.r);
+    }
+    update(){
+        if(this.occupied){
+            this.occupiedTimer--;
+            if(this.occupiedTimer <= 0)this.occupied = false;
+        }
     }
     setPosition(x, y) {
         this.pos.x = x;
@@ -48,24 +56,28 @@ class Agent {
         // the trade algorithm
         // and resting time as well
         // if an agent has no resting time he can't trade
-        if (Math.random() < 1.5) {// let's test without trading
+        if (Math.random() < 0.5) {// let's test without trading
             // if not trading
             this.updateAttributes(task, true);
             // increase resting time
             return false;
         } else {// if trading
-            if (Math.random() < 0.5) {// this needs to be updated with the lazyness as a factor
+            if (Math.random() > 0.5) {// this needs to be updated with the lazyness as a factor
                 /**
                  * updateAttributes()
                  * occupied = true
                  * decrease resting time
                  */
+                this.updateAttributes(task, true);
             } else {
                 /**
                  * Occupied = false
                  * therefore available for another task.
                  * no need for an else
                  */
+                console.log('traded!')
+                this.hasTraded = true;
+                this.tradeTask = this.randomTask();
             }
             return true;
         }
@@ -86,6 +98,9 @@ class Agent {
          * - occupied (true) agent becomes occupied when doing the task (not trading);
          *   it stays occupied for the duration of Taks's amount of time
          */
+        this.occupied = true;
+        this.occupiedTimer = task.aot;
+        // this.restingTime += task.value;
     }
 
     /**
