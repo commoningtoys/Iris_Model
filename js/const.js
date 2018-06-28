@@ -1,4 +1,4 @@
-const TIME_SCALE = 10;
+const TIME_SCALE = 50;
 const DAY = 24 * TIME_SCALE;
 const COOK = makeTask(1.5 * TIME_SCALE, 3, 'cook');
 const CLEAN = makeTask(2 * TIME_SCALE, 4, 'clean');

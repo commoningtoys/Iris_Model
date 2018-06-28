@@ -2,8 +2,8 @@ class Agent {
     constructor(tasksList, x, y) {
         // or should start at 0?
         // might be accumulative or not
-        this.restingTime = 1 + Math.floor(Math.random() * 100);
-        this.preferences = this.makePreferences(tasksList);
+        this.restingTime = 0;//1 + Math.floor(Math.random() * 100);
+        this.preferences = this.makePreferences(tasksList);//preferences for each single task
         // the next attributes are used for the trading system,
         this.tradeTask = '';// this defines the task the agent wants to do
         this.hasTraded = false;// if has traded than it will be selecteds for the trade task
@@ -11,22 +11,22 @@ class Agent {
         this.FLD = 1 + Math.floor(Math.random() * 10);// feel like doing
         this.solidarity = 1 + Math.floor(Math.random() * 10);
         this.ability = true;
-        this.occupied = false;
+        this.working = false;
         this.occupiedTimer = 0;
         this.pos = createVector(x, y);
         this.r = 10;
     }
     show() {
         noStroke();
-        if (this.occupied) fill(255, 0, 0);
+        if (this.working) fill(255, 0, 0);
         else if (!this.ability) fill(125);
         else fill(0, 255, 0);
         rect(this.pos.x, this.pos.y, this.r, this.r);
     }
     update(){
-        if(this.occupied){
+        if(this.working){
             this.occupiedTimer--;
-            if(this.occupiedTimer <= 0)this.occupied = false;
+            if(this.occupiedTimer <= 0)this.working = false;
         }
     }
     setPosition(x, y) {
@@ -43,6 +43,10 @@ class Agent {
         }
         return result;
     }
+    /**
+     * updates the completed task preference by adding +1
+     * @param {String} taskName 
+     */
     updateCompletedTasks(taskName){
         for (const el of this.preferences) {
             if (el.task_name.includes(taskName)) {
@@ -70,6 +74,7 @@ class Agent {
                  */
                 this.updateAttributes(task, true);
             } else {
+                //chooseTask()
                 /**
                  * Occupied = false
                  * therefore available for another task.
@@ -77,12 +82,20 @@ class Agent {
                  */
                 console.log('traded!')
                 this.hasTraded = true;
+                // need to keep track how often the agent traded
                 this.tradeTask = this.randomTask();
             }
             return true;
         }
     }
-
+    /**
+     * sets the agent at work for a given amount of time
+     * @param {Number} amount_of_time 
+     */
+    work(amount_of_time){
+        this.working = true;
+        this.occupiedTimer = amount_of_time;
+    }
     randomTask() {
         const index = Math.floor(Math.random() * this.preferences.length);
         return this.preferences[index].task_name;
@@ -98,8 +111,11 @@ class Agent {
          * - occupied (true) agent becomes occupied when doing the task (not trading);
          *   it stays occupied for the duration of Taks's amount of time
          */
-        this.occupied = true;
+        this.working = true;
         this.occupiedTimer = task.aot;
+        // IMPORTANT!!!!!
+        // add a update function to update the preference of the task
+
         // this.restingTime += task.value;
     }
 
@@ -134,6 +150,7 @@ class Agent {
                 skill_level: skill,
                 task_name: el.type,
                 task_preference: this.calculatePreference(skill, PREFERENCE_OFFSET)
+                // need to add a way to update the prefrence based on how often the same task has been completed
             })
         }
         return result;
