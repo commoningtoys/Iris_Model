@@ -14,6 +14,7 @@ function draw() {
   background(51);
   for (const agent of agents) {
     agent.show();
+    agent.update();
   }
 
   for (const task of tasks) {
