@@ -150,9 +150,26 @@ class Task {
         }
         //CHOOSE RANDOM AGENT FROM THE POOL
     }
-
+    /**
+     * 
+     * @param {Number} skill_level the skill level for this task
+     * @returns the amount of time the agent needs to complewte the task
+     */
     amountOfTimeBasedOnSkill(skill_level) {
-        // here we need to calculate the amount of time based on the skill level
-        return this.aot;
+        /**
+         * we assume that an agent with medium skill
+         * will complete the task in the assigned amount of time
+         * but highly skilled or lower skilled agents will complete it 
+         * in less or more time
+         */
+        const MEDIUM_SKILL = MAXIMUM / 2;// we define the medium skill level
+        // here we subtract the skill level the the medium skill level and we divide it 
+        // by maximum to get a value between 0 and 1, that we multiply by the time scale.
+        // the result will oscillate between -0.5 and +0.5 that we multiply by the time scale
+        let result = ((MEDIUM_SKILL - skill_level) / MAXIMUM) * TIME_SCALE;
+        result += this.aot;
+        const MINIMUM_TIME = 0.25 * TIME_SCALE;// this is the minimum time an agent has to invest for an assigned task aka 15 minutes
+        if(result <= MINIMUM_TIME) return MINIMUM_TIME;// if the result is less than the minimum time return the minimum time
+        else return result;// else return the result
     }
 }

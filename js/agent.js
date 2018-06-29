@@ -154,9 +154,9 @@ class Agent {
     }
 
     /**
- * updates the completed task preference by adding +1
- * @param {String} task_name 
- */
+     * updates the task_preference in this.preferences by adding +1
+     * @param {String} task_name 
+     */
     updateTaskPreference(task_name) {
         for (const el of this.preferences) {
             if (el.task_name.includes(task_name)) {
