@@ -30,7 +30,7 @@ class Task {
         this.urgencyReset = this.urgency; //we need this to reset the urgency
         this.type = task_object.type;
         // DEPRECATED FOR NOW
-        this.skillNeeded = 1 + Math.floor(Math.random() * 100);//this needs to be better defined
+        this.skillNeeded = 1 + Math.floor(Math.random() * MAXIMUM);//this needs to be better defined
         /////////////////////////////////
         this.pos = createVector(x, y);
         this.r = 10;
@@ -77,7 +77,8 @@ class Task {
                 counter++;
             }
         }
-        this.value = Math.floor((counter / NUMBER_OF_AGENTS) * TIME_SCALE);// here we update the value of the task
+        // the value needs to be proportional to the TIME_SCALE
+        this.value = (counter / NUMBER_OF_AGENTS) * TIME_SCALE;
     }
     /**
      * The task chooses one agent from the available pool.
@@ -102,8 +103,8 @@ class Task {
                 amountOfSkill += skill;// we will use this when we will need more agents to carry out the task
                 //////////////////////
                 let time = this.amountOfTimeBasedOnSkill(skill);
-                agent.work(time);//the agent works
-                console.log('trading agent doing the task!')
+                agent.work(time, this);//the agent works
+                console.log('trading agent doing the task!');
                 return;
             }
             if (!agent.working && agent.ability) {// maybe the trade happens once we have the pool
@@ -126,6 +127,7 @@ class Task {
             const agent = this.agentsPool[randIndex];// here we pick a random agent from the pool
 
             if (counter > maximumTradings || this.agentsPool.length < 1) {
+                // we need to handle the case in which no agent is available for one task
                 console.log('NO AGENT FOUND FOR THIS TASK!');
                 noLoop();
                 break;
@@ -134,8 +136,9 @@ class Task {
                     // if the agent has not traded 
                     // then he executes the task
                     let time = this.amountOfTimeBasedOnSkill(skill);
-                    agent.work(time);// we set the agent at work
+                    agent.work(time, this);// we set the agent at work
                     trading = false;// here we exit the while loop
+                    break;//DEPRECATED
                 } else {
                     // if the agent has traded we remove him from the pool
                     // so he can't be picked the next time 
