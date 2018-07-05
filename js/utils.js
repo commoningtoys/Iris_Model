@@ -26,3 +26,7 @@ function makeTask(time_needed, how_often, name) {
 function clamp(val, min, max) {
     return Math.min(Math.max(min, val), max);
 }
+
+function randomMinMAx(){
+    return MINIMUM + Math.floor(Math.random() * MAXIMUM);
+}

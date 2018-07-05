@@ -1,8 +1,12 @@
+const AGENT_NUM = 10;
 let agents = [];
 let tasks = [];
 function setup() {
   createCanvas(innerWidth, innerHeight);
-  for (let i = 0; i < 10; i++)agents.push(new Agent(TASK_LIST, 10 + i * 11, height * 0.9));
+  for (let i = 0; i < AGENT_NUM; i++)agents.push(new Agent(TASK_LIST, i + 1, 10 + i * 11, height * 0.9));
+  for (const agent of agents) {
+    agent.setAgents(agents);
+  }
   let i = 0;
   for (const task of TASK_LIST) {
     tasks.push(new Task(task, 20 + (i * 12), height * 0.65));
@@ -12,9 +16,10 @@ function setup() {
 
 function draw() {
   background(51);
+  document.getElementById('time').innerHTML = 'FRAME_RATE: ' + frameRate()
   for (const agent of agents) {
     agent.show();
-    agent.update();
+    agent.update(agents, tasks);
   }
 
   for (const task of tasks) {

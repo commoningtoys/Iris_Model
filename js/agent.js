@@ -1,5 +1,6 @@
 class Agent {
-    constructor(task_list, x, y) {
+    constructor(task_list, id, x, y) {
+        this.ID = nf(id, 4);
         // or should start at 0?
         // might be accumulative or not
         this.restingTime = 0;//MINIMUM + Math.floor(Math.random() * MAXIMUM);
@@ -7,9 +8,11 @@ class Agent {
         // the next attributes are used for the trading system,
         this.tradeTask = '';// this defines the task the agent wants to do
         this.hasTraded = false;// if has traded than it will be selecteds for the trade task
-        // console.log(this.preferences);
-        this.FLD = MINIMUM + Math.floor(Math.random() * 10);// feel like doing
-        this.solidarity = MINIMUM + Math.floor(Math.random() * 10);
+        this.totalTaskCompleted = 0;
+        this.totalTaskCompletedByAgents = 0;
+        this.agents = [];
+        this.FLD = randomMinMAx();// feel like doing
+        this.solidarity = randomMinMAx();
         this.ability = true;
         this.working = false;
         this.workingTimer = 0;
@@ -32,7 +35,13 @@ class Agent {
     /**
      * here the agent works
      */
-    update() {
+    update(_tasks) {
+        // this.FLD--;
+        // this.FLD = clamp(this.FLD, MINIMUM, MAXIMUM);
+        this.totalTaskCompletedByAgents = 0;
+        for (const task of _tasks) {// no go!
+            this.totalTaskCompletedByAgents += task.executed;
+        }
         if (this.working) {
             this.workingTimer--;
             if (this.workingTimer <= 0) {
@@ -40,6 +49,9 @@ class Agent {
                 this.working = false;
             }
         }
+    }
+    setAgents(_agents) {
+        this.agents = _agents;
     }
     /**
      * We will need this later
@@ -73,7 +85,7 @@ class Agent {
         if (Math.random() < 0.5) {// let's test without trading
             // if not trading
             console.log('Doing the task!');
-            this.updateAttributes(task, true);
+            // this.updateAttributes(task, true);
             // increase resting time
             return false;
         } else {// if trading
@@ -87,6 +99,7 @@ class Agent {
                 this.working = true;
                 this.workingTimer = 2 * TIME_SCALE;
                 this.restingTime -= task.value;
+                this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
                 // this.updateAttributes(task, true);
                 return true;
             } else {
@@ -137,14 +150,16 @@ class Agent {
         // add a update function to update the preference of the task
         let taskName = task.type;
         this.updateCompletedTasks(task.type);
-
-        this.restingTime += task.value * task_executed == true ? 1 : -1;
+        this.updateFLD();
+        // this.FLD = ;
+        this.restingTime += task.value;// * task_executed == true ? 1 : -1;
     }
     /**
      * updates the completed task preference by adding +1
      * @param {String} task_name 
      */
     updateCompletedTasks(task_name) {
+        this.totalTaskCompleted++;
         for (const el of this.preferences) {
             if (el.task_name.includes(task_name)) {
                 el.completed++;
@@ -153,6 +168,24 @@ class Agent {
         }
     }
 
+    updateFLD() {
+        // get the total tasks that have been completed by all the agents
+        // let sum = 0;
+        // for (const agent of agents) {
+        //     for (const item of agent.preferences) {
+        //         sum += item.completed;
+        //     }            
+        // }        
+        // THIS algorithm checks the the overall 
+        // let result = (this.totalTaskCompleted / (this.totalTaskCompletedByAgents / this.numberOfAgents));
+        // console.log(this.ID, this.totalTaskCompleted, this.totalTaskCompletedByAgents, result, this.FLD);
+        // if(result > 1)this.FLD--;
+        // else this.FLD++;
+        this.FLD = clamp(this.FLD, MINIMUM, MAXIMUM);
+        // result = (this.totalTaskCompleted / sum) * agents.length;
+        // console.log(this.totalTaskCompleted, sum, result);
+
+    }
     /**
      * updates the task_preference in this.preferences by adding +1
      * @param {String} task_name 
@@ -191,7 +224,7 @@ class Agent {
         const PREFERENCE_OFFSET = 30;
         let result = [];
         for (const el of arr) {
-            let skill = MINIMUM + Math.floor(Math.random() * MAXIMUM);
+            let skill = randomMinMAx();
             result.push({
                 completed: 0, // how many the task has been completed
                 skill_level: skill,

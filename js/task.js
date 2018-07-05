@@ -29,8 +29,9 @@ class Task {
         // 
         this.urgencyReset = this.urgency; //we need this to reset the urgency
         this.type = task_object.type;
+        this.executed = 0;
         // DEPRECATED FOR NOW
-        this.skillNeeded = 1 + Math.floor(Math.random() * MAXIMUM);//this needs to be better defined
+        this.skillNeeded = randomMinMAx();//this needs to be better defined
         /////////////////////////////////
         this.pos = createVector(x, y);
         this.r = 10;
@@ -56,6 +57,7 @@ class Task {
             // every time the uregency reaches 0 we update the value in the future
             // the preference of the agent may vary according on how often he executed the same task
             this.updateValue(agents);
+            this.executed++;
             // here we choose the agent to carry out the task
             this.chooseAgent(agents);
             // noLoop();
@@ -79,6 +81,7 @@ class Task {
         }
         // the value needs to be proportional to the TIME_SCALE
         this.value = (counter / NUMBER_OF_AGENTS) * TIME_SCALE;
+        console.log(`value: ${this.type}`, this.value);
     }
     /**
      * The task chooses one agent from the available pool.
@@ -104,6 +107,7 @@ class Task {
                 //////////////////////
                 let time = this.amountOfTimeBasedOnSkill(skill);
                 agent.work(time, this);//the agent works
+                // this.executed++;
                 console.log('trading agent doing the task!');
                 return;
             }
@@ -137,6 +141,7 @@ class Task {
                     // then he executes the task
                     let time = this.amountOfTimeBasedOnSkill(skill);
                     agent.work(time, this);// we set the agent at work
+                    // this.executed++;
                     trading = false;// here we exit the while loop
                     break;//DEPRECATED
                 } else {
@@ -169,7 +174,7 @@ class Task {
         let result = ((MEDIUM_SKILL - skill_level) / MAXIMUM) * TIME_SCALE;
         result += this.aot;
         const MINIMUM_TIME = 0.25 * TIME_SCALE;// this is the minimum time an agent has to invest for an assigned task aka 15 minutes
-        if(result <= MINIMUM_TIME) return MINIMUM_TIME;// if the result is less than the minimum time return the minimum time
+        if (result <= MINIMUM_TIME) return MINIMUM_TIME;// if the result is less than the minimum time return the minimum time
         else return result;// else return the result
     }
 }
