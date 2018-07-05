@@ -84,18 +84,19 @@ class Agent {
         // if an agent has no resting time he can't trade
         if (Math.random() < 0.5) {// let's test without trading
             // if not trading
-            console.log('Doing the task!');
+            // console.log('Doing the task!');
             // this.updateAttributes(task, true);
             // increase resting time
             return false;
         } else {// if trading
             if (Math.random() > 0.5) {// this needs to be updated with the lazyness as a factor and available resting time
                 /**
+                 * NOT DOING THE TASK
                  * updateAttributes()
                  * occupied = true
                  * decrease resting time
                  */
-                console.log('too lazy to work now!');
+                // console.log('too lazy to work now!');
                 this.working = true;
                 this.workingTimer = 2 * TIME_SCALE;
                 this.restingTime -= task.value;
@@ -107,7 +108,7 @@ class Agent {
                 /**
                  * therefore available for another task.
                  */
-                console.log('traded!')
+                // console.log('traded!');
                 this.hasTraded = true;
                 // need to keep track how often the agent traded
                 this.tradeTask = this.randomTask();// traded task should be different than this task
@@ -175,15 +176,31 @@ class Agent {
         //     for (const item of agent.preferences) {
         //         sum += item.completed;
         //     }            
-        // }        
-        // THIS algorithm checks the the overall 
+        // }     
+        /**
+          * this algorithm looks how much the other agents have been 
+          * working. If the others are working more than this agent than
+          * his FLD decreases slower, if he is working more than it 
+          * decreses faster.
+          * it could be possible to introduce the soncept of groups here where 
+          * the agents looks only how the group performs
+          */
+        let otherTasksCompleted = [];
+        for (const agent of this.agents) {
+            if(agent !== this)otherTasksCompleted.push(agent.totalTaskCompleted);
+        }
+        
+        const max = Math.max(...otherTasksCompleted);
         // let result = (this.totalTaskCompleted / (this.totalTaskCompletedByAgents / this.numberOfAgents));
-        // console.log(this.ID, this.totalTaskCompleted, this.totalTaskCompletedByAgents, result, this.FLD);
-        // if(result > 1)this.FLD--;
-        // else this.FLD++;
+        let result = Math.floor((this.totalTaskCompleted / max) * 5);
+        this.FLD -= result;
         this.FLD = clamp(this.FLD, MINIMUM, MAXIMUM);
+        console.log(this.ID, this.totalTaskCompleted, max, result, this.FLD);
+        // if (result > 1) this.FLD--;
+        // else this.FLD++;
         // result = (this.totalTaskCompleted / sum) * agents.length;
         // console.log(this.totalTaskCompleted, sum, result);
+
 
     }
     /**

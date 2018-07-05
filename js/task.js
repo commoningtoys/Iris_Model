@@ -81,7 +81,7 @@ class Task {
         }
         // the value needs to be proportional to the TIME_SCALE
         this.value = (counter / NUMBER_OF_AGENTS) * TIME_SCALE;
-        console.log(`value: ${this.type}`, this.value);
+        // console.log(`value: ${this.type}`, this.value);
     }
     /**
      * The task chooses one agent from the available pool.
@@ -108,7 +108,7 @@ class Task {
                 let time = this.amountOfTimeBasedOnSkill(skill);
                 agent.work(time, this);//the agent works
                 // this.executed++;
-                console.log('trading agent doing the task!');
+                // console.log('trading agent doing the task!');
                 return;
             }
             if (!agent.working && agent.ability) {// maybe the trade happens once we have the pool
@@ -122,7 +122,7 @@ class Task {
          * if he trades than it looks for another agent
          * and updates the value of the task by increment
          */
-        console.log('agent pool: ', this.agentsPool.length);
+        // console.log('agent pool: ', this.agentsPool.length);
         let trading = true;
         let maximumTradings = 10000;
         let counter = 0;
@@ -148,7 +148,7 @@ class Task {
                     // if the agent has traded we remove him from the pool
                     // so he can't be picked the next time 
                     this.agentsPool.splice(randIndex, 1);
-                    console.log('agent pool after trading: ', this.agentsPool.length);
+                    // console.log('agent pool after trading: ', this.agentsPool.length);
                 }
             }
             counter++;
