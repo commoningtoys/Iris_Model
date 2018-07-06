@@ -1,4 +1,4 @@
-const TIME_SCALE = 10; // never lower than 2
+const TIME_SCALE = 1; // never lower than 2
 const DAY = 24 * TIME_SCALE;// 1 day
 const MAXIMUM = 100; // we need this to clamp values for preferences
 const MINIMUM = 1;

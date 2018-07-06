@@ -191,15 +191,38 @@ class Agent {
         });
         if (this.preferenceArchive.length > 10) this.preferenceArchive.splice(0, 1);
         this.updatePreferences(task.type);
-        
+
     }
-    updatePreferences(task_name){
+    updatePreferences(task_name) {
+        /**
+         * the preferences (skill & preference for a task) get updated
+         * according on how often the same task has been done in a row
+         * as often as the same task is done as much skill you gain
+         * but you also get bored of the task therefore you lose preference
+         * while skill and preference get updated the skill and preference of the
+         * tasks that have not been executed  also get inversely updated
+         */
+        // here we check how often a task has been executed in a row
         let counter = 0;
-        for(let i = this.preferenceArchive.length - 1; i >= 0; i--){
+        for (let i = this.preferenceArchive.length - 1; i >= 0; i--) {
             let pref = this.preferenceArchive[i];
-            console.log(pref);
-            if(pref.executed_task.includes(task_name))counter++;
+            if (pref.executed_task.includes(task_name)) counter++;
             else break;
+        }
+        // here we adjust the skill and preference
+        for (const pref of this.preferences) {
+            if (pref.task_name.includes(task_name)) {
+                // skill increases while preference decreases
+                pref.skill_level += counter;
+                pref.task_preference -= counter;
+            } else {
+                // the opposit for the other tasks
+                pref.skill_level --;
+                pref.task_preference ++;
+            }
+            // we clamp the values between 1 and 100
+            pref.skill_level = clamp(pref.skill_level, MINIMUM, MAXIMUM);
+            pref.task_preference = clamp(pref.task_preference, MINIMUM, MAXIMUM);
         }
         console.log(this.preferenceArchive, counter, task_name);
     }
