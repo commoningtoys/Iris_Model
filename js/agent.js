@@ -6,8 +6,11 @@ class Agent {
         this.restingTime = 0;//MINIMUM + Math.floor(Math.random() * MAXIMUM);
         this.preferences = this.makePreferences(task_list);//preferences for each single task
         this.preferenceArchive = [];
-        let insert = JSON.parse(JSON.stringify(this.preferences));
-        this.preferenceArchive.push(insert);
+        // let insert = JSON.parse(JSON.stringify(this.preferences));
+        // this.preferenceArchive.push({
+        //     prefereces: insert,
+        //     executed_task: ''
+        // });
         // const insert = this.preferences;
         // this.preferenceArchive.push(insert);
         // the next attributes are used for the trading system,
@@ -181,9 +184,24 @@ class Agent {
          * without copying the reference to the original array 
          */
         let insert = JSON.parse(JSON.stringify(this.preferences));// the trick
-        this.preferenceArchive.push(insert);
+        this.preferenceArchive.push({
+            prefereces: insert,
+            executed_task: task.type,
+            timeStamp: new Date()
+        });
         if (this.preferenceArchive.length > 10) this.preferenceArchive.splice(0, 1);
-        console.log(insert, this.preferenceArchive);
+        this.updatePreferences(task.type);
+        
+    }
+    updatePreferences(task_name){
+        let counter = 0;
+        for(let i = this.preferenceArchive.length - 1; i >= 0; i--){
+            let pref = this.preferenceArchive[i];
+            console.log(pref);
+            if(pref.executed_task.includes(task_name))counter++;
+            else break;
+        }
+        console.log(this.preferenceArchive, counter, task_name);
     }
     /**
      * updates the completed task preference by adding +1
@@ -220,7 +238,7 @@ class Agent {
             if (agent !== this) otherTasksCompleted.push(agent.totalTaskCompleted);
         }
 
-        const max = Math.max(...otherTasksCompleted);
+        const max = Math.max(...otherTasksCompleted);// magic trick
         // let result = (this.totalTaskCompleted / (this.totalTaskCompletedByAgents / this.numberOfAgents));
         let result = Math.floor((this.totalTaskCompleted / max) * 5);
         this.FLD -= result;
