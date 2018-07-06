@@ -5,17 +5,25 @@ class Agent {
         // might be accumulative or not
         this.restingTime = 0;//MINIMUM + Math.floor(Math.random() * MAXIMUM);
         this.preferences = this.makePreferences(task_list);//preferences for each single task
+        this.preferenceArchive = [];
+        let insert = JSON.parse(JSON.stringify(this.preferences));
+        this.preferenceArchive.push(insert);
+        // const insert = this.preferences;
+        // this.preferenceArchive.push(insert);
         // the next attributes are used for the trading system,
         this.tradeTask = '';// this defines the task the agent wants to do
         this.hasTraded = false;// if has traded than it will be selecteds for the trade task
         this.totalTaskCompleted = 0;
         this.totalTaskCompletedByAgents = 0;
         this.agents = [];
+
         this.FLD = randomMinMAx();// feel like doing
         this.solidarity = randomMinMAx();
         this.ability = true;
+        // working attributes
         this.working = false;
-        this.workingTimer = 0;
+        this.workingTimer = 0;// how long is the agent at work
+        // ANIMATION
         this.pos = createVector(x, y);
         this.r = 10;
         this.colors = {
@@ -92,7 +100,7 @@ class Agent {
         let skill = this.getPreferences(task.type).skill_level; // here we get the skill
         let timeNeeded = task.amountOfTimeBasedOnSkill(skill); // we compute the time he needs
         let result = task.aot - timeNeeded; // and we compute the result that is either a positive or negative number
-        console.log(skill, timeNeeded, result);
+        // console.log(skill, timeNeeded, result);
         /**
          * preference also influences the trading algorithm
          * if the preference for that task is high enough 
@@ -101,7 +109,7 @@ class Agent {
         let taskPreference = this.getPreferences(task.type).task_preference;
         if (this.FLD >= 20 && (result >= 0 || taskPreference > 90)) {// let's test without trading
             // if not trading
-            console.log(`Doing the task!,  FLD ${this.FLD}, time: ${result}, pref: ${taskPreference}`);
+            // console.log(`Doing the task!,  FLD ${this.FLD}, time: ${result}, pref: ${taskPreference}`);
             // this.updateAttributes(task, true);
             // increase resting time
             return false;
@@ -113,7 +121,7 @@ class Agent {
              * occupied = true
              * decrease resting time
              */
-            console.log(`too lazy FLD: ${this.FLD}, rest time : ${this.restingTime}`);
+            // console.log(`too lazy FLD: ${this.FLD}, rest time : ${this.restingTime}`);
             this.working = true;
             this.workingTimer = 2 * TIME_SCALE;
             this.restingTime -= task.value;
@@ -125,7 +133,7 @@ class Agent {
             /**
              * therefore available for another task.
              */
-            console.log(`traded! FLD ${this.FLD}, time: ${result}, pref: ${taskPreference}`);
+            // console.log(`traded! FLD ${this.FLD}, time: ${result}, pref: ${taskPreference}`);
             this.hasTraded = true;
             // need to keep track how often the agent traded
             this.tradeTask = this.randomTask();// traded task should be different than this task
@@ -163,13 +171,19 @@ class Agent {
          */
         // this.working = true;
         // this.workingTimer = task.aot;
-        // IMPORTANT!!!!!
-        // add a update function to update the preference of the task
         let taskName = task.type;
         this.updateCompletedTasks(task.type);
         this.updateFLD();
         // this.FLD = ;
         this.restingTime += task.value;// * task_executed == true ? 1 : -1;
+        /**
+         * the magik trick below let us to push the preferences
+         * without copying the reference to the original array 
+         */
+        let insert = JSON.parse(JSON.stringify(this.preferences));// the trick
+        this.preferenceArchive.push(insert);
+        if (this.preferenceArchive.length > 10) this.preferenceArchive.splice(0, 1);
+        console.log(insert, this.preferenceArchive);
     }
     /**
      * updates the completed task preference by adding +1
@@ -211,7 +225,7 @@ class Agent {
         let result = Math.floor((this.totalTaskCompleted / max) * 5);
         this.FLD -= result;
         this.FLD = clamp(this.FLD, MINIMUM, MAXIMUM);
-        console.log('update FLD: ', this.ID, this.totalTaskCompleted, max, result, this.FLD);
+        // console.log('update FLD: ', this.ID, this.totalTaskCompleted, max, result, this.FLD);
         // if (result > 1) this.FLD--;
         // else this.FLD++;
         // result = (this.totalTaskCompleted / sum) * agents.length;

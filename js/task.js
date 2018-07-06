@@ -81,12 +81,14 @@ class Task {
         }
         // we need to add exception in case there is no matching preferred task
         if (counter == 0) {
+            // if there is no one preferring this task than we return the maximum value
             this.value = 1 * TIME_SCALE;
             return;
         } else {
-            // the value needs to be proportional to the TIME_SCALE
+            // else we return a value that is inverse proportional
+            // as many agents prefer tha task as lower it is its value
             this.value = (1 - (counter / NUMBER_OF_AGENTS)) * TIME_SCALE;
-            console.log(`value: ${this.type}, ${this.value}, number ${counter}`);
+            // console.log(`value: ${this.type}, ${this.value}, number ${counter}`);
             return;
         }
     }
