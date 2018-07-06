@@ -16,7 +16,6 @@ function setup() {
 
 function draw() {
   background(51);
-  document.getElementById('time').innerHTML = 'FRAME_RATE: ' + frameRate()
   for (const agent of agents) {
     agent.show();
     agent.update(agents, tasks);

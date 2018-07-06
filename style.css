@@ -2,3 +2,20 @@ body {
     padding: 0;
     margin: 0;
 }
+@font-face{
+    font-family: mono;
+    src: url(font/SourceCodePro-Medium.otf);
+}
+.info{
+    background-color: #fff;
+    font-family: mono;
+    font-size: 75%;
+    hyphens: auto;
+    width: 33%;
+    min-width: 250px;
+    right: 0px;
+    position: fixed;
+    height: 100vh;
+    overflow-y: scroll;
+    max-height: none;
+}

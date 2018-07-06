@@ -112,7 +112,7 @@ class Agent {
         let taskPreference = this.getPreferences(task.type).task_preference;
         if (this.FLD >= 20 && (result >= 0 || taskPreference > 90)) {// let's test without trading
             // if not trading
-            // console.log(`Doing the task!,  FLD ${this.FLD}, time: ${result}, pref: ${taskPreference}`);
+            this.makeInfo(`AGENT: ${this.ID} is doing the task!,  FLD ${this.FLD}, time: ${result}, pref: ${taskPreference}`);
             // this.updateAttributes(task, true);
             // increase resting time
             return false;
@@ -128,6 +128,7 @@ class Agent {
             this.working = true;
             this.workingTimer = 2 * TIME_SCALE;
             this.restingTime -= task.value;
+            this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
             this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
             // this.updateAttributes(task, true);
             return true;
@@ -136,10 +137,11 @@ class Agent {
             /**
              * therefore available for another task.
              */
-            // console.log(`traded! FLD ${this.FLD}, time: ${result}, pref: ${taskPreference}`);
+            
             this.hasTraded = true;
             // need to keep track how often the agent traded
             this.tradeTask = this.randomTask();// traded task should be different than this task
+            this.makeInfo(`AGENT: ${this.ID} has traded task ${task.type} for ${this.tradeTask}`);
             return true;
         }
     }
@@ -150,7 +152,17 @@ class Agent {
     work(amount_of_time, task) {
         this.working = true;
         this.workingTimer = amount_of_time;
-        this.updateAttributes(task, true);
+        this.updateAttributes(task);
+        this.makeInfo(`AGENT: ${this.ID} is executing ${task.type}. It will take ${amount_of_time} ticks`);
+    }
+    makeInfo(text){
+        text += '<br><br>'
+        let myDiv = document.createElement('div');
+        $(myDiv).html(text);
+        $('.info').append(myDiv);
+        let myClass = document.getElementsByClassName('info');
+        if(myClass.length > 100)myClass.splice(0, 1);
+        $('#i').scrollTop($('#i')[0].scrollHeight);//this automatically scrolls to the bottom of the div
     }
     /**
      * @returns a random task
@@ -161,7 +173,7 @@ class Agent {
         return this.preferences[index].task_name;
     }
 
-    updateAttributes(task, task_executed) {
+    updateAttributes(task) {
         /**
          * - resting time (++) increases by some value depending on the value of the task
          * - preference (could be fixed, or updating, as described on the left); 
@@ -179,6 +191,7 @@ class Agent {
         this.updateFLD();
         // this.FLD = ;
         this.restingTime += task.value;// * task_executed == true ? 1 : -1;
+        console.log(`executed task: ${this.restingTime}, value: ${task.value}`);
         /**
          * the magik trick below let us to push the preferences
          * without copying the reference to the original array 
@@ -187,11 +200,10 @@ class Agent {
         this.preferenceArchive.push({
             prefereces: insert,
             executed_task: task.type,
-            timeStamp: new Date()
+            resting_time: this.restingTime
         });
-        if (this.preferenceArchive.length > 10) this.preferenceArchive.splice(0, 1);
+        if (this.preferenceArchive.length > 100) this.preferenceArchive.splice(0, 1);
         this.updatePreferences(task.type);
-
     }
     updatePreferences(task_name) {
         /**
