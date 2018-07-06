@@ -79,9 +79,16 @@ class Task {
                 counter++;
             }
         }
-        // the value needs to be proportional to the TIME_SCALE
-        this.value = (counter / NUMBER_OF_AGENTS) * TIME_SCALE;
-        // console.log(`value: ${this.type}`, this.value);
+        // we need to add exception in case there is no matching preferred task
+        if (counter == 0) {
+            this.value = 1 * TIME_SCALE;
+            return;
+        } else {
+            // the value needs to be proportional to the TIME_SCALE
+            this.value = (1 - (counter / NUMBER_OF_AGENTS)) * TIME_SCALE;
+            console.log(`value: ${this.type}, ${this.value}, number ${counter}`);
+            return;
+        }
     }
     /**
      * The task chooses one agent from the available pool.

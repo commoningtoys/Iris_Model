@@ -82,38 +82,54 @@ class Agent {
         // the trade algorithm
         // and resting time as well
         // if an agent has no resting time he can't trade
-        if (Math.random() < 0.5) {// let's test without trading
+
+        /**
+         * here we compute the skill of the agent.
+         * given its skill level we compute the amount of time he needs to 
+         * complete if he needs more time than the original time needed to
+         * complete the task than the agent will trade
+         */
+        let skill = this.getPreferences(task.type).skill_level; // here we get the skill
+        let timeNeeded = task.amountOfTimeBasedOnSkill(skill); // we compute the time he needs
+        let result = task.aot - timeNeeded; // and we compute the result that is either a positive or negative number
+        console.log(skill, timeNeeded, result);
+        /**
+         * preference also influences the trading algorithm
+         * if the preference for that task is high enough 
+         * the agent will execute it even if it takes a lot of time
+         */
+        let taskPreference = this.getPreferences(task.type).task_preference;
+        if (this.FLD >= 20 && (result >= 0 || taskPreference > 90)) {// let's test without trading
             // if not trading
-            // console.log('Doing the task!');
+            console.log(`Doing the task!,  FLD ${this.FLD}, time: ${result}, pref: ${taskPreference}`);
             // this.updateAttributes(task, true);
             // increase resting time
             return false;
-        } else {// if trading
-            if (Math.random() > 0.5) {// this needs to be updated with the lazyness as a factor and available resting time
-                /**
-                 * NOT DOING THE TASK
-                 * updateAttributes()
-                 * occupied = true
-                 * decrease resting time
-                 */
-                // console.log('too lazy to work now!');
-                this.working = true;
-                this.workingTimer = 2 * TIME_SCALE;
-                this.restingTime -= task.value;
-                this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
-                // this.updateAttributes(task, true);
-                return true;
-            } else {
-                //chooseTask()
-                /**
-                 * therefore available for another task.
-                 */
-                // console.log('traded!');
-                this.hasTraded = true;
-                // need to keep track how often the agent traded
-                this.tradeTask = this.randomTask();// traded task should be different than this task
-                return true;
-            }
+        } else if (this.FLD < 2 && this.restingTime > task.aot) {// if trading
+            // this needs to be updated with the lazyness as a factor and available resting time
+            /**
+             * NOT DOING THE TASK
+             * updateAttributes()
+             * occupied = true
+             * decrease resting time
+             */
+            console.log(`too lazy FLD: ${this.FLD}, rest time : ${this.restingTime}`);
+            this.working = true;
+            this.workingTimer = 2 * TIME_SCALE;
+            this.restingTime -= task.value;
+            this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
+            // this.updateAttributes(task, true);
+            return true;
+        } else {
+            //chooseTask()
+            /**
+             * therefore available for another task.
+             */
+            console.log(`traded! FLD ${this.FLD}, time: ${result}, pref: ${taskPreference}`);
+            this.hasTraded = true;
+            // need to keep track how often the agent traded
+            this.tradeTask = this.randomTask();// traded task should be different than this task
+            return true;
         }
     }
     /**
@@ -187,15 +203,15 @@ class Agent {
           */
         let otherTasksCompleted = [];
         for (const agent of this.agents) {
-            if(agent !== this)otherTasksCompleted.push(agent.totalTaskCompleted);
+            if (agent !== this) otherTasksCompleted.push(agent.totalTaskCompleted);
         }
-        
+
         const max = Math.max(...otherTasksCompleted);
         // let result = (this.totalTaskCompleted / (this.totalTaskCompletedByAgents / this.numberOfAgents));
         let result = Math.floor((this.totalTaskCompleted / max) * 5);
         this.FLD -= result;
         this.FLD = clamp(this.FLD, MINIMUM, MAXIMUM);
-        console.log(this.ID, this.totalTaskCompleted, max, result, this.FLD);
+        console.log('update FLD: ', this.ID, this.totalTaskCompleted, max, result, this.FLD);
         // if (result > 1) this.FLD--;
         // else this.FLD++;
         // result = (this.totalTaskCompleted / sum) * agents.length;
@@ -214,6 +230,21 @@ class Agent {
                 break;
             }
         }
+    }
+
+    /**
+     * @param {String} task_name 
+     * @return the preferences of that specific task
+     */
+    getPreferences(task_name) {
+        let result = {};
+        for (const el of this.preferences) {
+            if (el.task_name.includes(task_name)) {
+                result = el;
+                break;
+            }
+        }
+        return result;
     }
 
     /**
@@ -237,7 +268,7 @@ class Agent {
      * @param {Array} arr Array of task objects
      * @returns an Array of objects with the preference for each task
      */
-    makePreferences(arr) {
+    makePreferences(arr) { // MAYBE NEEDSD REFACTORING MAKING IT AN OBJECT RATHER THAN A ARRAY OF OBJECTS
         const PREFERENCE_OFFSET = 30;
         let result = [];
         for (const el of arr) {
