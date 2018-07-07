@@ -1,4 +1,4 @@
-const AGENT_NUM = 10;
+const AGENT_NUM = 100;
 let agents = [];
 let tasks = [];
 function setup() {
@@ -8,9 +8,11 @@ function setup() {
     agent.setAgents(agents);
   }
   let i = 0;
-  for (const task of TASK_LIST) {
-    tasks.push(new Task(task, 20 + (i * 12), height * 0.65));
-    i++;
+  for(let j = 0; j < 10; j++){
+    for (const task of TASK_LIST) {
+      tasks.push(new Task(task, 20 + (i * 12), height * 0.65));
+      i++;
+    }
   }
 }
 

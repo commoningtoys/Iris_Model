@@ -1,3 +1,4 @@
+let autoScrolling = true; // thius is our variable for the autoscrolling
 class Agent {
     constructor(task_list, id, x, y) {
         this.ID = nf(id, 4);
@@ -137,7 +138,7 @@ class Agent {
             /**
              * therefore available for another task.
              */
-            
+
             this.hasTraded = true;
             // need to keep track how often the agent traded
             this.tradeTask = this.randomTask();// traded task should be different than this task
@@ -155,14 +156,30 @@ class Agent {
         this.updateAttributes(task);
         this.makeInfo(`AGENT: ${this.ID} is executing ${task.type}. It will take ${amount_of_time} ticks`);
     }
-    makeInfo(text){
-        text += '<br><br>'
+    makeInfo(text) {
+        text += '<br>';
         let myDiv = document.createElement('div');
-        $(myDiv).html(text);
+        $(myDiv).html(text)
+            .addClass('content')
+            .click(() => console.log(this));// here we set the agent to be shown in show function
         $('.info').append(myDiv);
-        let myClass = document.getElementsByClassName('info');
-        if(myClass.length > 100)myClass.splice(0, 1);
-        $('#i').scrollTop($('#i')[0].scrollHeight);//this automatically scrolls to the bottom of the div
+        let infoClass = document.getElementById('i');
+        if (infoClass.childNodes.length > 50) infoClass.removeChild(infoClass.childNodes[0]);
+       
+        /**
+         * set autoscrolling on and off
+         */
+        $('#i').hover(() => {
+            autoScrolling = false;
+            // console.log('HOVER');
+            noLoop();
+        }, () => {
+            autoScrolling = true;
+            // console.log('NOT HOVER');
+            loop();
+        });
+        //this automatically scrolls to the bottom of the div
+        if(autoScrolling)$('#i').scrollTop($('#i')[0].scrollHeight);
     }
     /**
      * @returns a random task
@@ -191,7 +208,7 @@ class Agent {
         this.updateFLD();
         // this.FLD = ;
         this.restingTime += task.value;// * task_executed == true ? 1 : -1;
-        console.log(`executed task: ${this.restingTime}, value: ${task.value}`);
+        // console.log(`executed task: ${this.restingTime}, value: ${task.value}`);
         /**
          * the magik trick below let us to push the preferences
          * without copying the reference to the original array 
@@ -200,7 +217,8 @@ class Agent {
         this.preferenceArchive.push({
             prefereces: insert,
             executed_task: task.type,
-            resting_time: this.restingTime
+            resting_time: this.restingTime,
+            feel_like_doing: this.FLD
         });
         if (this.preferenceArchive.length > 100) this.preferenceArchive.splice(0, 1);
         this.updatePreferences(task.type);
@@ -229,14 +247,14 @@ class Agent {
                 pref.task_preference -= counter;
             } else {
                 // the opposit for the other tasks
-                pref.skill_level --;
-                pref.task_preference ++;
+                pref.skill_level--;
+                pref.task_preference++;
             }
             // we clamp the values between 1 and 100
             pref.skill_level = clamp(pref.skill_level, MINIMUM, MAXIMUM);
             pref.task_preference = clamp(pref.task_preference, MINIMUM, MAXIMUM);
         }
-        console.log(this.preferenceArchive, counter, task_name);
+        // console.log(this.preferenceArchive, counter, task_name);
     }
     /**
      * updates the completed task preference by adding +1
