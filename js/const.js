@@ -2,6 +2,9 @@ const TIME_SCALE = 3; // never lower than 2
 const DAY = 24 * TIME_SCALE;// 1 day
 const MAXIMUM = 100; // we need this to clamp values for preferences
 const MINIMUM = 1;
+const AGENT_NUM = 100;
+// animation const
+const PADDING = 5;
 // make our tasks
 /**
  * VERY IMPORTANT THE TASK CAN'T BE LESS THAN 1 HOUR FOR NOW

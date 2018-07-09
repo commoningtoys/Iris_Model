@@ -7,13 +7,6 @@ class Agent {
         this.restingTime = 0;//MINIMUM + Math.floor(Math.random() * MAXIMUM);
         this.preferences = this.makePreferences(task_list);//preferences for each single task
         this.preferenceArchive = [];
-        // let insert = JSON.parse(JSON.stringify(this.preferences));
-        // this.preferenceArchive.push({
-        //     prefereces: insert,
-        //     executed_task: ''
-        // });
-        // const insert = this.preferences;
-        // this.preferenceArchive.push(insert);
         // the next attributes are used for the trading system,
         this.tradeTask = '';// this defines the task the agent wants to do
         this.hasTraded = false;// if has traded than it will be selecteds for the trade task
@@ -36,6 +29,13 @@ class Agent {
             unable: color(125),
             lazy: color(255, 255, 0)
         };
+        this.showStatistics = false;
+        this.preferenceColors = {
+            skill: color(255, 255, 0),
+            preference: color(255, 0, 255),
+            FLD: color(0, 255, 255),
+            restingTime: color(255, 0, 0)
+        }
     }
     show() {
         noStroke();
@@ -43,6 +43,15 @@ class Agent {
         else if (!this.ability) fill(this.colors.unable);
         else if (!this.working) fill(this.colors.available);
         rect(this.pos.x, this.pos.y, this.r, this.r);
+        if (this.showStatistics) {
+            this.infographic();
+        }
+    }
+
+    infographic() {
+        ellipse(width / 2, height / 2, width, height);
+        fill(0);
+        text(this.ID, width / 2, height / 2);
     }
     /**
      * here the agent works
@@ -161,25 +170,31 @@ class Agent {
         let myDiv = document.createElement('div');
         $(myDiv).html(text)
             .addClass('content')
-            .click(() => console.log(this));// here we set the agent to be shown in show function
+            .click(() => {
+                console.log(this)
+                this.showStatistics = true;
+                for (const agent of this.agents) {
+                    if(this !== agent)agent.showStatistics = false;
+                }
+            });// here we set the agent to be shown in show function
         $('.info').append(myDiv);
         let infoClass = document.getElementById('i');
         if (infoClass.childNodes.length > 50) infoClass.removeChild(infoClass.childNodes[0]);
-       
+
         /**
          * set autoscrolling on and off
          */
         $('#i').hover(() => {
             autoScrolling = false;
             // console.log('HOVER');
-            noLoop();
+            noLoop();//find a better solution like suspending the remove child
         }, () => {
             autoScrolling = true;
             // console.log('NOT HOVER');
             loop();
         });
         //this automatically scrolls to the bottom of the div
-        if(autoScrolling)$('#i').scrollTop($('#i')[0].scrollHeight);
+        if (autoScrolling) $('#i').scrollTop($('#i')[0].scrollHeight);
     }
     /**
      * @returns a random task

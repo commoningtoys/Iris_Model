@@ -1,8 +1,11 @@
-const AGENT_NUM = 100;
+
+
+function  WIDTH(){return innerWidth * 0.64};
+
 let agents = [];
 let tasks = [];
 function setup() {
-  createCanvas(innerWidth, innerHeight);
+  createCanvas(WIDTH(), windowHeight - 4);
   for (let i = 0; i < AGENT_NUM; i++)agents.push(new Agent(TASK_LIST, i + 1, 10 + i * 11, height * 0.9));
   for (const agent of agents) {
     agent.setAgents(agents);
@@ -30,5 +33,5 @@ function draw() {
 }
 
 function windowResized(){
-  resizeCanvas(innerWidth, innerHeight);
+  resizeCanvas(WIDTH(), innerHeight);
 }
