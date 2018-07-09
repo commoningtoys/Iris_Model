@@ -49,9 +49,52 @@ class Agent {
     }
 
     infographic() {
-        ellipse(width / 2, height / 2, width, height);
-        fill(0);
-        text(this.ID, width / 2, height / 2);
+        const LEFT_GUTTER = 120;
+        const INFO_WIDTH = width - LEFT_GUTTER;
+        const ROWS = 5;
+        const INFO_HEIGHT = (height - (6 * PADDING)) / ROWS;
+        let fld = this.preferenceArchive.map(result => result.feel_like_doing);
+        let rt = this.preferenceArchive.map(result => result.resting_time);
+        printGraphic(fld, this.preferenceColors.FLD, 0);
+        printGraphic(rt, this.preferenceColors.restingTime, 0);
+        // extract preferences
+        let prefCook = this.preferenceArchive.map(result => result.prefereces[0]);
+        let skillCook = prefCook.map(result => result.skill_level);
+        let cookPref = prefCook.map(result => result.task_preference);
+        printGraphic(skillCook, this.preferenceColors.skill, 1);
+        printGraphic(cookPref, this.preferenceColors.preference, 1);
+        let prefClean = this.preferenceArchive.map(result => result.prefereces[1]);
+        let cleanSkill = prefClean.map(result => result.skill_level);
+        let cleanPref = prefClean.map(result => result.task_preference);
+        printGraphic(cleanSkill, this.preferenceColors.skill, 2);
+        printGraphic(cleanPref, this.preferenceColors.preference, 2);
+        let prefShop = this.preferenceArchive.map(result => result.prefereces[2]);
+        let prefAdmin = this.preferenceArchive.map(result => result.prefereces[3]);
+        function posX(index, max) {
+            return LEFT_GUTTER + map(index, 0, max, 0, INFO_WIDTH - PADDING);
+        }
+        function posY(val) {
+            return (INFO_HEIGHT) - map(val, MINIMUM, MAXIMUM, 0, INFO_HEIGHT);
+        }
+        function printGraphic(arr, col, row_number) {
+            let i = 0;
+            let prevX = LEFT_GUTTER;
+            let prevY = PADDING + INFO_HEIGHT;
+            beginShape();
+            for (const val of arr) {
+                noFill();
+                stroke(col);
+                strokeWeight(2);
+                let currX = posX(i, arr.length);
+                let currY = posY(val) + ((INFO_HEIGHT * row_number) - PADDING * 2);
+                // line(prevX, prevY, currX, currY);
+                vertex(currX, currY);
+                prevX = currX;
+                prevY = currY;
+                i++;
+            }
+            endShape();
+        }
     }
     /**
      * here the agent works
@@ -59,10 +102,10 @@ class Agent {
     update(_tasks) {
         // this.FLD--;
         // this.FLD = clamp(this.FLD, MINIMUM, MAXIMUM);
-        this.totalTaskCompletedByAgents = 0;
-        for (const task of _tasks) {// no go!
-            this.totalTaskCompletedByAgents += task.executed;
-        }
+        // this.totalTaskCompletedByAgents = 0;
+        // for (const task of _tasks) {// no go!
+        //     this.totalTaskCompletedByAgents += task.executed;
+        // }
         if (this.working) {
             this.workingTimer--;
             if (this.workingTimer <= 0) {
@@ -137,7 +180,8 @@ class Agent {
             // console.log(`too lazy FLD: ${this.FLD}, rest time : ${this.restingTime}`);
             this.working = true;
             this.workingTimer = 2 * TIME_SCALE;
-            this.restingTime -= task.value;
+            // this.restingTime -= task.value;
+            this.restingTime /= 2;
             this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
             this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
             // this.updateAttributes(task, true);
@@ -159,10 +203,10 @@ class Agent {
      * sets the agent at work for a given amount of time
      * @param {Number} amount_of_time 
      */
-    work(amount_of_time, task) {
+    work(amount_of_time, task, agents) {
         this.working = true;
         this.workingTimer = amount_of_time;
-        this.updateAttributes(task);
+        this.updateAttributes(task, agents);
         this.makeInfo(`AGENT: ${this.ID} is executing ${task.type}. It will take ${amount_of_time} ticks`);
     }
     makeInfo(text) {
@@ -173,8 +217,8 @@ class Agent {
             .click(() => {
                 console.log(this)
                 this.showStatistics = true;
-                for (const agent of this.agents) {
-                    if(this !== agent)agent.showStatistics = false;
+                for (const agent of agents) {// this needs to be refactored
+                    if (this !== agent) agent.showStatistics = false;
                 }
             });// here we set the agent to be shown in show function
         $('.info').append(myDiv);
@@ -205,7 +249,7 @@ class Agent {
         return this.preferences[index].task_name;
     }
 
-    updateAttributes(task) {
+    updateAttributes(task, agents) {
         /**
          * - resting time (++) increases by some value depending on the value of the task
          * - preference (could be fixed, or updating, as described on the left); 
@@ -220,7 +264,7 @@ class Agent {
         // this.workingTimer = task.aot;
         let taskName = task.type;
         this.updateCompletedTasks(task.type);
-        this.updateFLD();
+        this.updateFLD(agents);
         // this.FLD = ;
         this.restingTime += task.value;// * task_executed == true ? 1 : -1;
         // console.log(`executed task: ${this.restingTime}, value: ${task.value}`);
@@ -285,7 +329,7 @@ class Agent {
         }
     }
 
-    updateFLD() {
+    updateFLD(agents) {
         // get the total tasks that have been completed by all the agents
         // let sum = 0;
         // for (const agent of agents) {
@@ -302,7 +346,7 @@ class Agent {
           * the agents looks only how the group performs
           */
         let otherTasksCompleted = [];
-        for (const agent of this.agents) {
+        for (const agent of agents) {
             if (agent !== this) otherTasksCompleted.push(agent.totalTaskCompleted);
         }
 

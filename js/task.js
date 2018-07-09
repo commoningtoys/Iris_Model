@@ -115,7 +115,7 @@ class Task {
                 amountOfSkill += skill;// we will use this when we will need more agents to carry out the task
                 //////////////////////
                 let time = this.amountOfTimeBasedOnSkill(skill);
-                agent.work(time, this);//the agent works
+                agent.work(time, this, agents);//the agent works
                 // this.executed++;
                 // console.log('trading agent doing the task!');
                 return;
@@ -149,7 +149,7 @@ class Task {
                     // if the agent has not traded 
                     // then he executes the task
                     let time = this.amountOfTimeBasedOnSkill(skill);
-                    agent.work(time, this);// we set the agent at work
+                    agent.work(time, this, agents);// we set the agent at work
                     // this.executed++;
                     trading = false;// here we exit the while loop
                     break;//DEPRECATED
