@@ -4,7 +4,7 @@ const MAXIMUM = 100; // we need this to clamp values for preferences
 const MINIMUM = 1;
 const AGENT_NUM = 100;
 // animation const
-const PADDING = 5;
+const PADDING = 10;
 // make our tasks
 /**
  * VERY IMPORTANT THE TASK CAN'T BE LESS THAN 1 HOUR FOR NOW

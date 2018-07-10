@@ -55,26 +55,34 @@ class Agent {
         const INFO_HEIGHT = (height - (6 * PADDING)) / ROWS;
         let fld = this.preferenceArchive.map(result => result.feel_like_doing);
         let rt = this.preferenceArchive.map(result => result.resting_time);
-        printGraphic(fld, this.preferenceColors.FLD, 0);
-        printGraphic(rt, this.preferenceColors.restingTime, 0);
+        printGraphic(fld, this.preferenceColors.FLD, 1);
+        printGraphic(rt, this.preferenceColors.restingTime, 1);
         // extract preferences
         let prefCook = this.preferenceArchive.map(result => result.prefereces[0]);
-        let skillCook = prefCook.map(result => result.skill_level);
+        let cookSkill = prefCook.map(result => result.skill_level);
         let cookPref = prefCook.map(result => result.task_preference);
-        printGraphic(skillCook, this.preferenceColors.skill, 1);
-        printGraphic(cookPref, this.preferenceColors.preference, 1);
+        printGraphic(cookSkill, this.preferenceColors.skill, 2);
+        printGraphic(cookPref, this.preferenceColors.preference, 2);
         let prefClean = this.preferenceArchive.map(result => result.prefereces[1]);
         let cleanSkill = prefClean.map(result => result.skill_level);
         let cleanPref = prefClean.map(result => result.task_preference);
-        printGraphic(cleanSkill, this.preferenceColors.skill, 2);
-        printGraphic(cleanPref, this.preferenceColors.preference, 2);
+        printGraphic(cleanSkill, this.preferenceColors.skill, 3);
+        printGraphic(cleanPref, this.preferenceColors.preference, 3);
         let prefShop = this.preferenceArchive.map(result => result.prefereces[2]);
+        let shopSkill = prefShop.map(result => result.skill_level);
+        let shopPref = prefShop.map(result => result.task_preference);
+        printGraphic(shopSkill, this.preferenceColors.skill, 4);
+        printGraphic(shopPref, this.preferenceColors.preference, 4);
         let prefAdmin = this.preferenceArchive.map(result => result.prefereces[3]);
+        let adminSkill = prefAdmin.map(result => result.skill_level);
+        let adminPref = prefAdmin.map(result => result.task_preference);
+        printGraphic(adminSkill, this.preferenceColors.skill, 5);
+        printGraphic(adminPref, this.preferenceColors.preference, 5);
         function posX(index, max) {
             return LEFT_GUTTER + map(index, 0, max, 0, INFO_WIDTH - PADDING);
         }
-        function posY(val) {
-            return (INFO_HEIGHT) - map(val, MINIMUM, MAXIMUM, 0, INFO_HEIGHT);
+        function posY(val, row_number) {
+            return ((INFO_HEIGHT + PADDING) * row_number) - map(val, MINIMUM, MAXIMUM, 0, INFO_HEIGHT);
         }
         function printGraphic(arr, col, row_number) {
             let i = 0;
@@ -86,7 +94,7 @@ class Agent {
                 stroke(col);
                 strokeWeight(2);
                 let currX = posX(i, arr.length);
-                let currY = posY(val) + ((INFO_HEIGHT * row_number) - PADDING * 2);
+                let currY = posY(val, row_number);
                 // line(prevX, prevY, currX, currY);
                 vertex(currX, currY);
                 prevX = currX;
