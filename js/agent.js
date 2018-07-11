@@ -124,37 +124,64 @@ class Agent {
         const INFO_WIDTH = width - LEFT_GUTTER;
         const ROWS = 5;
         const INFO_HEIGHT = (height - (6 * PADDING)) / ROWS;
+        const CT = this.currentTask;
+        // console.log(this.currentTask);
         // here we extract the values of FLD and resting time
         let fld = this.preferenceArchive.map(result => result.feel_like_doing);
         let rt = this.preferenceArchive.map(result => result.resting_time);
         // and here we draw them in the infographic
-        printGraphic(fld, this.preferenceColors.FLD, 1);
-        printGraphic(rt, this.preferenceColors.restingTime, 1);
+        printGraphic('FLD', fld, this.preferenceColors.FLD, 1);
+        printGraphic('\nRESTING \nTIME', rt, this.preferenceColors.restingTime, 1);
         // here we extract preferences and we NEEDS REFACTORING!!
+        // let preferences = this.preferenceArchive.map(result => result.prefereces);
+        // console.log(preferences);
+        // for (const preference of preferences) {
+        //     let i = 0;
+        //     // console.log(preference);
+        //     for (const el of preference) {
+        //         let skillz = preferences.map(result => result[i].skill_level);
+        //         let prefz = preferences.map(result => result[i].task_preference);
+        //         // console.log(skillz);
+        //         // console.log(prefz);
+        //         // console.log(el.task_name);
+        //         printGraphic(el.task_name, skillz, this.preferenceColors.skill, i + 1);
+        //         printGraphic(el.task_name, prefz, this.preferenceColors.preference, i + 1);
+        //         i++;
+        //     }
+        // }
         let prefCook = this.preferenceArchive.map(result => result.prefereces[0]);
         let cookSkill = prefCook.map(result => result.skill_level);
         let cookPref = prefCook.map(result => result.task_preference);
-        printGraphic(cookSkill, this.preferenceColors.skill, 2);
-        printGraphic(cookPref, this.preferenceColors.preference, 2);
+        // let name = prefCook.prefereces[0].task_name[0];
+        printGraphic('COOK', cookSkill, this.preferenceColors.skill, 2);
+        printGraphic('', cookPref, this.preferenceColors.preference, 2);
         let prefClean = this.preferenceArchive.map(result => result.prefereces[1]);
         let cleanSkill = prefClean.map(result => result.skill_level);
         let cleanPref = prefClean.map(result => result.task_preference);
-        printGraphic(cleanSkill, this.preferenceColors.skill, 3);
-        printGraphic(cleanPref, this.preferenceColors.preference, 3);
+        printGraphic('CLEAN', cleanSkill, this.preferenceColors.skill, 3);
+        printGraphic('', cleanPref, this.preferenceColors.preference, 3);
         let prefShop = this.preferenceArchive.map(result => result.prefereces[2]);
         let shopSkill = prefShop.map(result => result.skill_level);
         let shopPref = prefShop.map(result => result.task_preference);
-        printGraphic(shopSkill, this.preferenceColors.skill, 4);
-        printGraphic(shopPref, this.preferenceColors.preference, 4);
+        printGraphic('SHOP', shopSkill, this.preferenceColors.skill, 4);
+        printGraphic('', shopPref, this.preferenceColors.preference, 4);
         let prefAdmin = this.preferenceArchive.map(result => result.prefereces[3]);
         let adminSkill = prefAdmin.map(result => result.skill_level);
         let adminPref = prefAdmin.map(result => result.task_preference);
-        printGraphic(adminSkill, this.preferenceColors.skill, 5);
-        printGraphic(adminPref, this.preferenceColors.preference, 5);
-        function printGraphic(arr, col, row_number) {
+        printGraphic('ADMIN', adminSkill, this.preferenceColors.skill, 5);
+        printGraphic('', adminPref, this.preferenceColors.preference, 5);
+        function printGraphic(str, arr, col, row_number) {
             // let prevX = LEFT_GUTTER;
             // let prevY = PADDING + INFO_HEIGHT;
             // here we draw the outline of the graphics
+            // if(CT === str.toLowerCase() && str !== ''){
+            //     noStroke();
+            //     fill(255, 255, 0, 100);
+            //     rect(posX(0, MAXIMUM), posY(MAXIMUM, row_number), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, row_number));
+            // }
+            fill(255);
+            noStroke();
+            text(str, PADDING, posY(MAXIMUM, row_number))
             stroke(255);
             line(posX(0, MAXIMUM), posY(MAXIMUM, row_number), posX(0, MINIMUM), posY(MINIMUM, row_number));
             line(posX(0, MAXIMUM), posY(MINIMUM, row_number), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, row_number));
@@ -197,8 +224,10 @@ class Agent {
             this.setInfo();
             if (this.workingTimer <= 0) {
                 this.hasTraded = false;// reset to false, very IMPORTANT otherwise the agent will always be called to do a traded task
+                this.tradeTask = '';
                 this.working = false;
                 this.currentTask = '';
+                this.setInfo();
             }
         }
     }
@@ -281,10 +310,10 @@ class Agent {
             /**
              * therefore available for another task.
              */
-
+            // console.log(`trade this: ${task.type}`);
             this.hasTraded = true;
             // need to keep track how often the agent traded
-            this.tradeTask = this.randomTask();// traded task should be different than this task
+            this.tradeTask = this.randomTask(task.type);// traded task should be different than this task
             // this.makeInfo(`AGENT: ${this.ID} has traded task ${task.type} for ${this.tradeTask}`);
             this.setInfo();
             return true;
@@ -306,10 +335,21 @@ class Agent {
     /**
      * @returns a random task
      */
-    randomTask() {
+    randomTask(task_name) {
         // traded task should be different than this task
-        const index = Math.floor(Math.random() * this.preferences.length);
-        return this.preferences[index].task_name;
+        let result = ''
+        let loop = true;
+        while (loop) {
+            const index = Math.floor(Math.random() * this.preferences.length);
+            if (this.preferences[index].task_name !== task_name) {
+
+                result = this.preferences[index].task_name;
+                loop = false;
+                break;
+            }
+        }
+        // console.log(`result: ${result}`)
+        return result;
     }
 
     updateAttributes(task, agents) {
@@ -340,7 +380,8 @@ class Agent {
             prefereces: insert,
             executed_task: task.type,
             resting_time: this.restingTime,
-            feel_like_doing: this.FLD
+            feel_like_doing: this.FLD,
+            traded: this.hasTraded == true ? this.tradeTask : ''
         });
         if (this.preferenceArchive.length > 100) this.preferenceArchive.splice(0, 1);
         this.updatePreferences(task.type);
@@ -362,16 +403,19 @@ class Agent {
             if (pref.executed_task.includes(task_name)) counter++;
             else break;
         }
+        // console.log(counter);
         // here we adjust the skill and preference
         for (const pref of this.preferences) {
             if (pref.task_name.includes(task_name)) {
                 // skill increases while preference decreases
                 pref.skill_level += counter;
-                pref.task_preference -= counter;
+                pref.task_preference -= Math.pow(counter, 2);
+                // pref.task_preference--;
             } else {
                 // the opposit for the other tasks
                 pref.skill_level--;
-                pref.task_preference++;
+                pref.task_preference += 2;
+                // pref.task_preference += 1;
             }
             // we clamp the values between 1 and 100
             pref.skill_level = clamp(pref.skill_level, MINIMUM, MAXIMUM);
