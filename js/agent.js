@@ -13,7 +13,7 @@ class Agent {
         this.totalTaskCompleted = 0;
         this.totalTaskCompletedByAgents = 0;
         this.agents = [];
-
+        this.currentTask = '';
         this.FLD = randomMinMAx();// feel like doing
         this.solidarity = randomMinMAx();
         this.ability = true;
@@ -36,13 +36,84 @@ class Agent {
             FLD: color(0, 255, 255),
             restingTime: color(255, 0, 0)
         }
+        this.makeInfo();
     }
+
+    makeInfo() {
+        let myDiv = document.createElement('div');
+        $(myDiv).html(this.htmlText())
+            .addClass('content')
+            .attr('id', this.ID)
+            .click(() => {
+
+                // $('#' + this.ID + ' .preference').toggle('slow');
+                this.showStatistics = true;
+                for (const agent of agents) {// this needs to be refactored
+                    if (this !== agent) agent.showStatistics = false;
+                }
+            });// here we set the agent to be shown in show function
+        $('.info').append(myDiv);
+
+        /**
+         * set autoscrolling on and off
+         */
+        // $('#i').hover(() => {
+        //     autoScrolling = false;
+        //     // console.log('HOVER');
+        //     noLoop();//find a better solution like suspending the remove child
+        // }, () => {
+        //     autoScrolling = true;
+        //     // console.log('NOT HOVER');
+        //     loop();
+        // });
+        // //this automatically scrolls to the bottom of the div
+        // if (autoScrolling) $('#i').scrollTop($('#i')[0].scrollHeight);
+    }
+
+    setInfo() {
+        // to update teh infos
+        document.getElementById(this.ID).innerHTML = this.htmlText();
+    }
+
+    htmlText() {
+        const BR = '<br>';
+        let str1 = '<b>AGENT: ' + this.ID + '</b>' + BR;
+        let str2 = (this.working == true ? 'doing this task : ' + this.currentTask : 'is not working') + BR;
+        let str21 = 'working timer: ' + BR + this.workingTimer + BR;
+        let str3 = (this.hasTraded == true ? 'has traded to do : ' + this.tradeTask : 'has not traded') + BR;
+        let str4 = 'feel like doing: ' + this.FLD + BR;
+        let str5 = 'resting time: ' + this.restingTime + BR;
+        let str6 = '<div class="toggle">preferences:';
+        //iterating through all the item one by one.
+        this.preferences.forEach(val => {
+            //getting all the keys in val (current array item)
+            var keys = Object.keys(val);
+            //assigning HTML string to the variable html
+            str6 += "<div class = 'preference'>";
+            //iterating through all the keys presented in val (current array item)
+            keys.forEach(key => {
+                //appending more HTML string with key and value aginst that key;
+                str6 += "<strong>" + key + "</strong>: " + val[key] + "<br>";
+            });
+            //final HTML sting is appending to close the DIV element.
+            str6 += "</div><br>";
+        });
+        str6 += '</div>';
+        // $('.preference').hide();
+        // $('.toggle').click((el) => {
+        //     console.log(el);
+        //     $('.preference').toggle('slow');
+        // });
+        // console.log(str6);
+        return str1 + str2 + str21 + str3 + str4 + str5 + str6;
+    }
+
     show() {
-        noStroke();
-        if (this.working) fill(this.colors.working);
-        else if (!this.ability) fill(this.colors.unable);
-        else if (!this.working) fill(this.colors.available);
-        rect(this.pos.x, this.pos.y, this.r, this.r);
+        // noStroke();
+        // if (this.working) fill(this.colors.working);
+        // else if (!this.ability) fill(this.colors.unable);
+        // else if (!this.working) fill(this.colors.available);
+        // rect(this.pos.x, this.pos.y, this.r, this.r);
         if (this.showStatistics) {
             this.infographic();
         }
@@ -53,11 +124,13 @@ class Agent {
         const INFO_WIDTH = width - LEFT_GUTTER;
         const ROWS = 5;
         const INFO_HEIGHT = (height - (6 * PADDING)) / ROWS;
+        // here we extract the values of FLD and resting time
         let fld = this.preferenceArchive.map(result => result.feel_like_doing);
         let rt = this.preferenceArchive.map(result => result.resting_time);
+        // and here we draw them in the infographic
         printGraphic(fld, this.preferenceColors.FLD, 1);
         printGraphic(rt, this.preferenceColors.restingTime, 1);
-        // extract preferences
+        // here we extract preferences and we NEEDS REFACTORING!!
         let prefCook = this.preferenceArchive.map(result => result.prefereces[0]);
         let cookSkill = prefCook.map(result => result.skill_level);
         let cookPref = prefCook.map(result => result.task_preference);
@@ -78,36 +151,41 @@ class Agent {
         let adminPref = prefAdmin.map(result => result.task_preference);
         printGraphic(adminSkill, this.preferenceColors.skill, 5);
         printGraphic(adminPref, this.preferenceColors.preference, 5);
+        function printGraphic(arr, col, row_number) {
+            // let prevX = LEFT_GUTTER;
+            // let prevY = PADDING + INFO_HEIGHT;
+            // here we draw the outline of the graphics
+            stroke(255);
+            line(posX(0, MAXIMUM), posY(MAXIMUM, row_number), posX(0, MINIMUM), posY(MINIMUM, row_number));
+            line(posX(0, MAXIMUM), posY(MINIMUM, row_number), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, row_number));
+            noFill();
+            stroke(col);
+            let i = 0;
+            beginShape();
+            for (const val of arr) {
+                strokeWeight(2);
+                let currX = posX(i, arr.length);
+                let currY = posY(val, row_number);
+                // line(prevX, prevY, currX, currY);
+                vertex(currX, currY);
+                // prevX = currX;
+                // prevY = currY;
+                i++;
+            }
+            endShape();
+
+        }
         function posX(index, max) {
             return LEFT_GUTTER + map(index, 0, max, 0, INFO_WIDTH - PADDING);
         }
         function posY(val, row_number) {
             return ((INFO_HEIGHT + PADDING) * row_number) - map(val, MINIMUM, MAXIMUM, 0, INFO_HEIGHT);
         }
-        function printGraphic(arr, col, row_number) {
-            let i = 0;
-            let prevX = LEFT_GUTTER;
-            let prevY = PADDING + INFO_HEIGHT;
-            beginShape();
-            for (const val of arr) {
-                noFill();
-                stroke(col);
-                strokeWeight(2);
-                let currX = posX(i, arr.length);
-                let currY = posY(val, row_number);
-                // line(prevX, prevY, currX, currY);
-                vertex(currX, currY);
-                prevX = currX;
-                prevY = currY;
-                i++;
-            }
-            endShape();
-        }
     }
     /**
      * here the agent works
      */
-    update(_tasks) {
+    update() {
         // this.FLD--;
         // this.FLD = clamp(this.FLD, MINIMUM, MAXIMUM);
         // this.totalTaskCompletedByAgents = 0;
@@ -116,9 +194,11 @@ class Agent {
         // }
         if (this.working) {
             this.workingTimer--;
+            this.setInfo();
             if (this.workingTimer <= 0) {
                 this.hasTraded = false;// reset to false, very IMPORTANT otherwise the agent will always be called to do a traded task
                 this.working = false;
+                this.currentTask = '';
             }
         }
     }
@@ -173,9 +253,10 @@ class Agent {
         let taskPreference = this.getPreferences(task.type).task_preference;
         if (this.FLD >= 20 && (result >= 0 || taskPreference > 90)) {// let's test without trading
             // if not trading
-            this.makeInfo(`AGENT: ${this.ID} is doing the task!,  FLD ${this.FLD}, time: ${result}, pref: ${taskPreference}`);
+            // this.makeInfo(`AGENT: ${this.ID} is doing the task!,  FLD ${this.FLD}, time: ${result}, pref: ${taskPreference}`);
             // this.updateAttributes(task, true);
             // increase resting time
+            this.setInfo();
             return false;
         } else if (this.FLD < 2 && this.restingTime > task.aot) {// if trading
             // this needs to be updated with the lazyness as a factor and available resting time
@@ -190,9 +271,10 @@ class Agent {
             this.workingTimer = 2 * TIME_SCALE;
             // this.restingTime -= task.value;
             this.restingTime /= 2;
-            this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
+            // this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
             this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
             // this.updateAttributes(task, true);
+            this.setInfo();
             return true;
         } else {
             //chooseTask()
@@ -203,7 +285,8 @@ class Agent {
             this.hasTraded = true;
             // need to keep track how often the agent traded
             this.tradeTask = this.randomTask();// traded task should be different than this task
-            this.makeInfo(`AGENT: ${this.ID} has traded task ${task.type} for ${this.tradeTask}`);
+            // this.makeInfo(`AGENT: ${this.ID} has traded task ${task.type} for ${this.tradeTask}`);
+            this.setInfo();
             return true;
         }
     }
@@ -215,39 +298,11 @@ class Agent {
         this.working = true;
         this.workingTimer = amount_of_time;
         this.updateAttributes(task, agents);
-        this.makeInfo(`AGENT: ${this.ID} is executing ${task.type}. It will take ${amount_of_time} ticks`);
+        this.currentTask = task.type;// we set the current task according to the task the agent is currently working on
+        this.setInfo();
+        // this.makeInfo(`AGENT: ${this.ID} is executing ${task.type}. It will take ${amount_of_time} ticks`);
     }
-    makeInfo(text) {
-        text += '<br>';
-        let myDiv = document.createElement('div');
-        $(myDiv).html(text)
-            .addClass('content')
-            .click(() => {
-                console.log(this)
-                this.showStatistics = true;
-                for (const agent of agents) {// this needs to be refactored
-                    if (this !== agent) agent.showStatistics = false;
-                }
-            });// here we set the agent to be shown in show function
-        $('.info').append(myDiv);
-        let infoClass = document.getElementById('i');
-        if (infoClass.childNodes.length > 50) infoClass.removeChild(infoClass.childNodes[0]);
 
-        /**
-         * set autoscrolling on and off
-         */
-        $('#i').hover(() => {
-            autoScrolling = false;
-            // console.log('HOVER');
-            noLoop();//find a better solution like suspending the remove child
-        }, () => {
-            autoScrolling = true;
-            // console.log('NOT HOVER');
-            loop();
-        });
-        //this automatically scrolls to the bottom of the div
-        if (autoScrolling) $('#i').scrollTop($('#i')[0].scrollHeight);
-    }
     /**
      * @returns a random task
      */
@@ -289,6 +344,7 @@ class Agent {
         });
         if (this.preferenceArchive.length > 100) this.preferenceArchive.splice(0, 1);
         this.updatePreferences(task.type);
+        this.setInfo();
     }
     updatePreferences(task_name) {
         /**
@@ -426,9 +482,9 @@ class Agent {
         for (const el of arr) {
             let skill = randomMinMAx();
             result.push({
+                task_name: el.type,
                 completed: 0, // how many the task has been completed
                 skill_level: skill,
-                task_name: el.type,
                 task_preference: this.calculatePreference(skill, PREFERENCE_OFFSET)
                 // need to add a way to update the prefrence based on how often the same task has been completed
             })

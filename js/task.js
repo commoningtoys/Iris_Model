@@ -182,6 +182,7 @@ class Task {
         // the result will oscillate between -0.5 and +0.5 that we multiply by the time scale
         let result = ((MEDIUM_SKILL - skill_level) / MAXIMUM) * TIME_SCALE;
         result += this.aot;
+        // console.log(`this is the skill level: ${skill_level} and this the median: 50. this is the amount of time: ${this.aot} and the result: ${result}`);
         const MINIMUM_TIME = 0.25 * TIME_SCALE;// this is the minimum time an agent has to invest for an assigned task aka 15 minutes
         if (result <= MINIMUM_TIME) return MINIMUM_TIME;// if the result is less than the minimum time return the minimum time
         else return result;// else return the result
