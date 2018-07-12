@@ -105,6 +105,20 @@ class Task {
         this.tradingAgents = 0;
         let amountOfSkill = 0;
         let skill = 0;
+        /**
+         * Randomize array element order in-place.
+         * Using Durstenfeld shuffle algorithm.
+         * @param {*} array 
+         */
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                let temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+            }
+        }
+        shuffleArray(agents);
         for (const agent of agents) {
             skill = agent.getPreferences(this.type).skill_level;
             if (agent.hasTraded && agent.tradeTask.includes(this.type)) {
@@ -119,8 +133,7 @@ class Task {
                 // this.executed++;
                 // console.log('trading agent doing the task!');
                 return;
-            }
-            if (!agent.working && agent.ability) {// maybe the trade happens once we have the pool
+            } else if (!agent.working && agent.ability) {// maybe the trade happens once we have the pool
                 this.agentsPool.push(agent);
             }
         }

@@ -87,33 +87,23 @@ class Agent {
         //iterating through all the item one by one.
         Object.keys(this.preferences).forEach(val => {
             //getting all the keys in val (current array item)
-            let keys = Object.keys(val);
+            let keys = Object.keys(this.preferences[val]);
+            let objAttribute = this.preferences[val];
             //assigning HTML string to the variable html
             str6 += "<div class = 'preference'>";
             //iterating through all the keys presented in val (current array item)
             keys.forEach(key => {
                 //appending more HTML string with key and value aginst that key;
-                str6 += "<strong>" + key + "</strong>: " + val[key] + "<br>";
+                str6 += "<strong>" + key + "</strong>: " + objAttribute[key] + "<br>";
             });
             //final HTML sting is appending to close the DIV element.
             str6 += "</div><br>";
         });
         str6 += '</div>';
-        // $('.preference').hide();
-        // $('.toggle').click((el) => {
-        //     console.log(el);
-        //     $('.preference').toggle('slow');
-        // });
-        // console.log(str6);
         return str1 + str2 + str21 + str3 + str4 + str5 + str6;
     }
 
     show() {
-        // noStroke();
-        // if (this.working) fill(this.colors.working);
-        // else if (!this.ability) fill(this.colors.unable);
-        // else if (!this.working) fill(this.colors.available);
-        // rect(this.pos.x, this.pos.y, this.r, this.r);
         if (this.showStatistics) {
             this.infographic();
         }
@@ -133,22 +123,6 @@ class Agent {
         printGraphic('FLD', fld, this.preferenceColors.FLD, 1);
         printGraphic('\nRESTING \nTIME', rt, this.preferenceColors.restingTime, 1);
         // here we extract preferences and we NEEDS REFACTORING!!
-        // let preferences = this.preferenceArchive.map(result => result.prefereces);
-        // console.log(preferences);
-        // for (const preference of preferences) {
-        //     let i = 0;
-        //     // console.log(preference);
-        //     for (const el of preference) {
-        //         let skillz = preferences.map(result => result[i].skill_level);
-        //         let prefz = preferences.map(result => result[i].task_preference);
-        //         // console.log(skillz);
-        //         // console.log(prefz);
-        //         // console.log(el.task_name);
-        //         printGraphic(el.task_name, skillz, this.preferenceColors.skill, i + 1);
-        //         printGraphic(el.task_name, prefz, this.preferenceColors.preference, i + 1);
-        //         i++;
-        //     }
-        // }
         let i = 2;
         for (const el of TASK_LIST) {
             let pref = this.preferenceArchive.map(result => result.prefereces[el.type]);
@@ -159,28 +133,6 @@ class Agent {
             printGraphic('', taskPref, this.preferenceColors.preference, i);
             i++;
         }
-        // let prefCook = this.preferenceArchive.map(result => result.prefereces['admin']);
-        // console.log(prefCook);
-        // let cookSkill = prefCook.map(result => result.skill_level);
-        // let cookPref = prefCook.map(result => result.task_preference);
-        // // let name = prefCook.prefereces[0].task_name[0];
-        // printGraphic('COOK', cookSkill, this.preferenceColors.skill, 2);
-        // printGraphic('', cookPref, this.preferenceColors.preference, 2);
-        // let prefClean = this.preferenceArchive.map(result => result.prefereces[1]);
-        // let cleanSkill = prefClean.map(result => result.skill_level);
-        // let cleanPref = prefClean.map(result => result.task_preference);
-        // printGraphic('CLEAN', cleanSkill, this.preferenceColors.skill, 3);
-        // printGraphic('', cleanPref, this.preferenceColors.preference, 3);
-        // let prefShop = this.preferenceArchive.map(result => result.prefereces[2]);
-        // let shopSkill = prefShop.map(result => result.skill_level);
-        // let shopPref = prefShop.map(result => result.task_preference);
-        // printGraphic('SHOP', shopSkill, this.preferenceColors.skill, 4);
-        // printGraphic('', shopPref, this.preferenceColors.preference, 4);
-        // let prefAdmin = this.preferenceArchive.map(result => result.prefereces[3]);
-        // let adminSkill = prefAdmin.map(result => result.skill_level);
-        // let adminPref = prefAdmin.map(result => result.task_preference);
-        // printGraphic('ADMIN', adminSkill, this.preferenceColors.skill, 5);
-        // printGraphic('', adminPref, this.preferenceColors.preference, 5);
         function printGraphic(str, arr, col, row_number) {
             // let prevX = LEFT_GUTTER;
             // let prevY = PADDING + INFO_HEIGHT;
@@ -251,22 +203,6 @@ class Agent {
     setPosition(x, y) {
         this.pos.x = x;
         this.pos.y = y;
-    }
-
-    /**
-     * 
-     * @param {String} task_name 
-     * @returns returns the skill levele given a task
-     */
-    getSkillLevel(task_name) {
-        let result = 0;
-        for (const el of this.preferences) {
-            if (el.task_name.includes(task_name)) {
-                result = el.skill_level;
-                break;
-            }
-        }
-        return result;
     }
 
     trade(task) {
