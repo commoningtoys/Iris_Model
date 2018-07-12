@@ -85,9 +85,9 @@ class Agent {
         let str5 = 'resting time: ' + this.restingTime + BR;
         let str6 = '<div class="toggle">preferences:';
         //iterating through all the item one by one.
-        this.preferences.forEach(val => {
+        Object.keys(this.preferences).forEach(val => {
             //getting all the keys in val (current array item)
-            var keys = Object.keys(val);
+            let keys = Object.keys(val);
             //assigning HTML string to the variable html
             str6 += "<div class = 'preference'>";
             //iterating through all the keys presented in val (current array item)
@@ -149,27 +149,38 @@ class Agent {
         //         i++;
         //     }
         // }
-        let prefCook = this.preferenceArchive.map(result => result.prefereces[0]);
-        let cookSkill = prefCook.map(result => result.skill_level);
-        let cookPref = prefCook.map(result => result.task_preference);
-        // let name = prefCook.prefereces[0].task_name[0];
-        printGraphic('COOK', cookSkill, this.preferenceColors.skill, 2);
-        printGraphic('', cookPref, this.preferenceColors.preference, 2);
-        let prefClean = this.preferenceArchive.map(result => result.prefereces[1]);
-        let cleanSkill = prefClean.map(result => result.skill_level);
-        let cleanPref = prefClean.map(result => result.task_preference);
-        printGraphic('CLEAN', cleanSkill, this.preferenceColors.skill, 3);
-        printGraphic('', cleanPref, this.preferenceColors.preference, 3);
-        let prefShop = this.preferenceArchive.map(result => result.prefereces[2]);
-        let shopSkill = prefShop.map(result => result.skill_level);
-        let shopPref = prefShop.map(result => result.task_preference);
-        printGraphic('SHOP', shopSkill, this.preferenceColors.skill, 4);
-        printGraphic('', shopPref, this.preferenceColors.preference, 4);
-        let prefAdmin = this.preferenceArchive.map(result => result.prefereces[3]);
-        let adminSkill = prefAdmin.map(result => result.skill_level);
-        let adminPref = prefAdmin.map(result => result.task_preference);
-        printGraphic('ADMIN', adminSkill, this.preferenceColors.skill, 5);
-        printGraphic('', adminPref, this.preferenceColors.preference, 5);
+        let i = 2;
+        for (const el of TASK_LIST) {
+            let pref = this.preferenceArchive.map(result => result.prefereces[el.type]);
+            let taskSkill = pref.map(result => result.skill_level);
+            let taskPref = pref.map(result => result.task_preference);
+
+            printGraphic(el.type, taskSkill, this.preferenceColors.skill, i);
+            printGraphic('', taskPref, this.preferenceColors.preference, i);
+            i++;
+        }
+        // let prefCook = this.preferenceArchive.map(result => result.prefereces['admin']);
+        // console.log(prefCook);
+        // let cookSkill = prefCook.map(result => result.skill_level);
+        // let cookPref = prefCook.map(result => result.task_preference);
+        // // let name = prefCook.prefereces[0].task_name[0];
+        // printGraphic('COOK', cookSkill, this.preferenceColors.skill, 2);
+        // printGraphic('', cookPref, this.preferenceColors.preference, 2);
+        // let prefClean = this.preferenceArchive.map(result => result.prefereces[1]);
+        // let cleanSkill = prefClean.map(result => result.skill_level);
+        // let cleanPref = prefClean.map(result => result.task_preference);
+        // printGraphic('CLEAN', cleanSkill, this.preferenceColors.skill, 3);
+        // printGraphic('', cleanPref, this.preferenceColors.preference, 3);
+        // let prefShop = this.preferenceArchive.map(result => result.prefereces[2]);
+        // let shopSkill = prefShop.map(result => result.skill_level);
+        // let shopPref = prefShop.map(result => result.task_preference);
+        // printGraphic('SHOP', shopSkill, this.preferenceColors.skill, 4);
+        // printGraphic('', shopPref, this.preferenceColors.preference, 4);
+        // let prefAdmin = this.preferenceArchive.map(result => result.prefereces[3]);
+        // let adminSkill = prefAdmin.map(result => result.skill_level);
+        // let adminPref = prefAdmin.map(result => result.task_preference);
+        // printGraphic('ADMIN', adminSkill, this.preferenceColors.skill, 5);
+        // printGraphic('', adminPref, this.preferenceColors.preference, 5);
         function printGraphic(str, arr, col, row_number) {
             // let prevX = LEFT_GUTTER;
             // let prevY = PADDING + INFO_HEIGHT;
@@ -340,10 +351,10 @@ class Agent {
         let result = ''
         let loop = true;
         while (loop) {
-            const index = Math.floor(Math.random() * this.preferences.length);
-            if (this.preferences[index].task_name !== task_name) {
-
-                result = this.preferences[index].task_name;
+            // const index = Math.floor(Math.random() * this.preferences.length);
+            let randObj = random(TASK_LIST);
+            if (randObj.type !== task_name) {
+                result = randObj.type;
                 loop = false;
                 break;
             }
@@ -405,7 +416,9 @@ class Agent {
         }
         // console.log(counter);
         // here we adjust the skill and preference
-        for (const pref of this.preferences) {
+        let myObj = this.preferences;
+        Object.keys(myObj).forEach(key => {
+            let pref = myObj[key];
             if (pref.task_name.includes(task_name)) {
                 // skill increases while preference decreases
                 pref.skill_level += counter;
@@ -420,7 +433,9 @@ class Agent {
             // we clamp the values between 1 and 100
             pref.skill_level = clamp(pref.skill_level, MINIMUM, MAXIMUM);
             pref.task_preference = clamp(pref.task_preference, MINIMUM, MAXIMUM);
-        }
+        });
+        // for (const pref of this.preferences) {
+        // }
         // console.log(this.preferenceArchive, counter, task_name);
     }
     /**
@@ -429,12 +444,12 @@ class Agent {
      */
     updateCompletedTasks(task_name) {
         this.totalTaskCompleted++;
-        for (const el of this.preferences) {
-            if (el.task_name.includes(task_name)) {
-                el.completed++;
-                break;
+        let myObj = this.preferences;
+        Object.keys(myObj).forEach(key => {
+            if (myObj[key].task_name === task_name) {
+                myObj[key].completed++;
             }
-        }
+        });
     }
 
     updateFLD(agents) {
@@ -471,18 +486,24 @@ class Agent {
 
 
     }
-    /**
-     * updates the task_preference in this.preferences by adding +1
-     * @param {String} task_name 
-     */
-    updateTaskPreference(task_name) {
-        for (const el of this.preferences) {
-            if (el.task_name.includes(task_name)) {
-                el.completed++;
-                break;
-            }
-        }
-    }
+    // /**
+    //  * updates the task_preference in this.preferences by adding +1
+    //  * @param {String} task_name 
+    //  */
+    // updateTaskPreference(task_name) {
+    //     let myObj = this.preferences;
+    //     Object.keys(myObj).forEach(key => {
+    //         if(myObj[key].task_name === task_name){
+    //             myObj[key].completed++;
+    //         }
+    //     });
+    //     // for (const el of this.preferences) {
+    //     //     if (el.task_name.includes(task_name)) {
+    //     //         el.completed++;
+    //     //         break;
+    //     //     }
+    //     // }
+    // }
 
     /**
      * @param {String} task_name 
@@ -490,12 +511,12 @@ class Agent {
      */
     getPreferences(task_name) {
         let result = {};
-        for (const el of this.preferences) {
-            if (el.task_name.includes(task_name)) {
-                result = el;
-                break;
+        let myObj = this.preferences;
+        Object.keys(myObj).forEach(key => {
+            if (myObj[key].task_name === task_name) {
+                result = myObj[key];
             }
-        }
+        });
         return result;
     }
 
@@ -504,16 +525,17 @@ class Agent {
      */
     preferredTask() {
         let max = 0;
-        let i = 0;
-        let index = 0;
-        for (const el of this.preferences) {
-            if (el.task_preference > max) {
-                max = el.task_preference;
-                index = i;
+        let myObj = this.preferences;
+        let result = ''
+        Object.keys(myObj).forEach(key => {
+            let pref = myObj[key].task_preference;
+            let name = myObj[key].task_name;
+            if (pref > max) {
+                max = pref;
+                result = name;
             }
-            i++;
-        }
-        return this.preferences[index].task_name;
+        });
+        return result;
     }
 
     /**
@@ -522,17 +544,38 @@ class Agent {
      */
     makePreferences(arr) { // MAYBE NEEDSD REFACTORING MAKING IT AN OBJECT RATHER THAN A ARRAY OF OBJECTS
         const PREFERENCE_OFFSET = 30;
-        let result = [];
+        // let result = [];
+        // for (const el of arr) {
+        //     let skill = randomMinMAx();
+        //     result.push({
+        //         task_name: el.type,
+        //         completed: 0, // how many the task has been completed
+        //         skill_level: skill,
+        //         task_preference: this.calculatePreference(skill, PREFERENCE_OFFSET)
+        //         // need to add a way to update the prefrence based on how often the same task has been completed
+        //     })
+        // }
+
+        let result = {};
         for (const el of arr) {
             let skill = randomMinMAx();
-            result.push({
+            result[el.type] = {
                 task_name: el.type,
                 completed: 0, // how many the task has been completed
                 skill_level: skill,
                 task_preference: this.calculatePreference(skill, PREFERENCE_OFFSET)
-                // need to add a way to update the prefrence based on how often the same task has been completed
-            })
+            }
+            // result.push({
+            //     task_name: {
+            //         // task_name: el.type,
+            //         completed: 0, // how many the task has been completed
+            //         skill_level: skill,
+            //         task_preference: this.calculatePreference(skill, PREFERENCE_OFFSET)
+            //     }
+            //     // need to add a way to update the prefrence based on how often the same task has been completed
+            // })
         }
+        // console.log(result);
         return result;
     }
 

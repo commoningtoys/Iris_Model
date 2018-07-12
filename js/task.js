@@ -106,7 +106,7 @@ class Task {
         let amountOfSkill = 0;
         let skill = 0;
         for (const agent of agents) {
-            skill = agent.getSkillLevel(this.type);
+            skill = agent.getPreferences(this.type).skill_level;
             if (agent.hasTraded && agent.tradeTask.includes(this.type)) {
                 // this is where chooseTask() happens
                 // this.agentsPool.push(agent);
