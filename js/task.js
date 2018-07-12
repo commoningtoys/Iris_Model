@@ -142,7 +142,7 @@ class Task {
             if (counter > maximumTradings || this.agentsPool.length < 1) {
                 // we need to handle the case in which no agent is available for one task
                 console.log('NO AGENT FOUND FOR THIS TASK!');
-                noLoop();
+                // noLoop();
                 break;
             } else {
                 if (!agent.trade(this)) {

@@ -20,7 +20,7 @@ function setup() {
 }
 
 function draw() {
-  // console.log(frameRate());
+  
   background(51);
   for (const agent of agents) {
     agent.show();
@@ -36,4 +36,9 @@ function draw() {
 
 function windowResized() {
   resizeCanvas(WIDTH(), innerHeight);
+}
+
+function mouseClicked(){
+  // window.getAttention();
+  // console.log(self);
 }
