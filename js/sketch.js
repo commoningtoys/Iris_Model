@@ -6,7 +6,8 @@ let agents = [];
 let tasks = [];
 function setup() {
   createCanvas(WIDTH(), windowHeight - 4);
-  for (let i = 0; i < 10; i++)agents.push(new Agent(TASK_LIST, i + 1, 10 + i * 11, height * 0.9));
+  for (let i = 0; i < 5; i++)agents.push(new Agent(TASK_LIST, i + 1, false));
+  agents.push(new Agent(TASK_LIST, AGENT_NUM + 1, true));
   // for (const agent of agents) {
   //   agent.setAgents(agents);
   // }

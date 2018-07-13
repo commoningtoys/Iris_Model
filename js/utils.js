@@ -27,6 +27,20 @@ function clamp(val, min, max) {
     return Math.min(Math.max(min, val), max);
 }
 
-function randomMinMAx(){
+function randomMinMAx() {
     return MINIMUM + Math.floor(Math.random() * MAXIMUM);
+}
+
+/**
+ * Randomize array element order in-place.
+ * Using Durstenfeld shuffle algorithm.
+ * @param {*} array 
+*/
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        let temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
 }

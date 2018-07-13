@@ -10,6 +10,8 @@ body {
     padding: 0;
     margin: 0;
     font-family: mono;
+    font-size: 75%;
+    hyphens: auto;
 }
 
 ::-webkit-scrollbar-track {
@@ -43,8 +45,6 @@ body {
 }
 .info{
     background-color: #fff;
-    font-size: 75%;
-    hyphens: auto;
     width: 33%;
     /* min-width: 250px; */
     right: 0px;
@@ -53,11 +53,34 @@ body {
     overflow-y: scroll;
     max-height: none;
 }
-
 .preference{
     color: #f00;
 }
 #p5Sketch{
     position: fixed;
     width: 67%;
+}
+.player-interface{
+    display: none;
+    background-color: #0f0;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    width: 65%;
+    height: 33vh;
+    overflow-y: scroll;
+}
+#player-stats, #palyer-task{
+    position: relative;
+    width: 50%;
+    float: left;
+}
+#player-stats{
+    background-color: #00f
+}
+#palyer-task{
+    background-color: #f00;
 }

@@ -100,25 +100,14 @@ class Task {
      * of the agent.
      * @param {Array} agents 
      */
-    chooseAgent(agents) {// choose only one agent for now!
+    chooseAgent(agents) {
+
         this.agentsPool = [];
         this.tradingAgents = 0;
         let amountOfSkill = 0;
         let skill = 0;
-        /**
-         * Randomize array element order in-place.
-         * Using Durstenfeld shuffle algorithm.
-         * @param {*} array 
-         */
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                let j = Math.floor(Math.random() * (i + 1));
-                let temp = array[i];
-                array[i] = array[j];
-                array[j] = temp;
-            }
-        }
-        shuffleArray(agents);
+        shuffleArray(agents);// we shuffle the agents 
+        // here we check if the agent has traded before if yes he executes the task
         for (const agent of agents) {
             skill = agent.getPreferences(this.type).skill_level;
             if (agent.hasTraded && agent.tradeTask.includes(this.type)) {
@@ -159,6 +148,13 @@ class Task {
                 break;
             } else {
                 if (!agent.trade(this)) {
+                    // first we check if the agent is the human player
+                    if (agent.isPlayer) {
+                        noLoop();
+                        agent.playerInteraction(this);
+                        console.log(agent.ID);
+                        trading = false;
+                    }
                     // if the agent has not traded 
                     // then he executes the task
                     let time = this.amountOfTimeBasedOnSkill(skill);

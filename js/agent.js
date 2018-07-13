@@ -1,6 +1,7 @@
 let autoScrolling = true; // thius is our variable for the autoscrolling
 class Agent {
-    constructor(task_list, id, x, y) {
+    constructor(task_list, id, is_player) {
+        this.isPlayer = is_player;
         this.ID = nf(id, 4);
         // or should start at 0?
         // might be accumulative or not
@@ -21,8 +22,8 @@ class Agent {
         this.working = false;
         this.workingTimer = 0;// how long is the agent at work
         // ANIMATION
-        this.pos = createVector(x, y);
-        this.r = 10;
+        // this.pos = createVector(x, y);
+        // this.r = 10;
         this.colors = {
             working: color(255, 0, 0),
             available: color(0, 255, 0),
@@ -37,6 +38,7 @@ class Agent {
             restingTime: color(255, 0, 0)
         }
         this.makeInfo();
+        this.setInfo();
     }
 
     makeInfo() {
@@ -71,8 +73,9 @@ class Agent {
     }
 
     setInfo() {
-        // to update teh infos
+        // to update the infos
         document.getElementById(this.ID).innerHTML = this.htmlText();
+        if (this.isPlayer) document.getElementById('player-stats').innerHTML = this.htmlText();
     }
 
     htmlText() {
@@ -210,7 +213,10 @@ class Agent {
         // the trade algorithm
         // and resting time as well
         // if an agent has no resting time he can't trade
-
+        // if(this.isPlayer){
+        //     console.log(this.ID);
+        //     return false;
+        // }
         /**
          * here we compute the skill of the agent.
          * given its skill level we compute the amount of time he needs to 
@@ -227,7 +233,7 @@ class Agent {
          * the agent will execute it even if it takes a lot of time
          */
         let taskPreference = this.getPreferences(task.type).task_preference;
-        if (this.FLD >= 20 && (result >= 0 || taskPreference > 90)) {// let's test without trading
+        if (this.isPlayer || (this.FLD >= 20 && (result >= 0 || taskPreference > 90))) {// let's test without trading
             // if not trading
             // this.makeInfo(`AGENT: ${this.ID} is doing the task!,  FLD ${this.FLD}, time: ${result}, pref: ${taskPreference}`);
             // this.updateAttributes(task, true);
@@ -265,6 +271,35 @@ class Agent {
             this.setInfo();
             return true;
         }
+    }
+
+    playerInteraction(task) {
+        // needs to be done in the index.html
+        $('.player-interface').toggle();
+        document.getElementById('task-name').innerHTML = task.type;
+        let interactionP = document.createElement('p');
+        $(interactionP).html('YES')
+            .addClass('content')
+            .click(() => {
+                // here a new window should open
+                // this.work()
+                loop();
+                $('.player-interface').toggle();
+            });
+        $('#player-task').append(interactionP);
+        // let myDiv = document.createElement('div');
+        // $(myDiv).html(this.htmlText())
+        //     .addClass('content')
+        //     .attr('id', this.ID)
+        //     .click(() => {
+
+        //         // $('#' + this.ID + ' .preference').toggle('slow');
+        //         this.showStatistics = true;
+        //         for (const agent of agents) {// this needs to be refactored
+        //             if (this !== agent) agent.showStatistics = false;
+        //         }
+        //     });// here we set the agent to be shown in show function
+        // $('.info').append(myDiv);
     }
     /**
      * sets the agent at work for a given amount of time
