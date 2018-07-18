@@ -112,17 +112,24 @@ class Task {
             skill = agent.getPreferences(this.type).skill_level;
             if (agent.hasTraded && agent.tradeTask.includes(this.type)) {
                 // this is where chooseTask() happens
-                // this.agentsPool.push(agent);
-                this.tradingAgents++;
-                //////DEPRECATED//////
-                amountOfSkill += skill;// we will use this when we will need more agents to carry out the task
-                //////////////////////
-                let time = this.amountOfTimeBasedOnSkill(skill);
-                agent.work(time, this, agents);//the agent works
-                // this.executed++;
-                // console.log('trading agent doing the task!');
-                return;
-            } else if (!agent.working && agent.ability) {// maybe the trade happens once we have the pool
+                if (agent.isPlayer) {
+                    console.log('player trades')
+                    agent.playerWorks(agents);
+                    return;
+                } else {
+                    console.log(agent.ID);
+                    // this.agentsPool.push(agent);
+                    this.tradingAgents++;
+                    //////DEPRECATED//////
+                    amountOfSkill += skill;// we will use this when we will need more agents to carry out the task
+                    //////////////////////
+                    let time = this.amountOfTimeBasedOnSkill(skill);
+                    agent.work(time, this, agents);//the agent works
+                    // this.executed++;
+                    // console.log('trading agent doing the task!');
+                    return;
+                }
+            } else if (!agent.working && agent.ability && !agent.hasTraded) {// maybe the trade happens once we have the pool
                 this.agentsPool.push(agent);
             }
         }
@@ -148,13 +155,7 @@ class Task {
                 break;
             } else {
                 if (!agent.trade(this)) {
-                    // first we check if the agent is the human player
-                    if (agent.isPlayer) {
-                        noLoop();
-                        agent.playerInteraction(this);
-                        console.log(agent.ID);
-                        trading = false;
-                    }
+                    
                     // if the agent has not traded 
                     // then he executes the task
                     let time = this.amountOfTimeBasedOnSkill(skill);

@@ -71,16 +71,19 @@ body {
     -webkit-transform: translate(-50%, -50%);
     width: 65%;
     height: 33vh;
-    overflow-y: scroll;
 }
-#player-stats, #palyer-task{
+#player-stats, #player-task{
+    min-height: 150px;
     position: relative;
     width: 50%;
+    height: 100%;
     float: left;
+    overflow-y: scroll;
 }
 #player-stats{
     background-color: #00f
 }
-#palyer-task{
+#player-task{
+    text-align: center;
     background-color: #f00;
 }

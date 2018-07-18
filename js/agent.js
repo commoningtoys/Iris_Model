@@ -2,6 +2,7 @@ let autoScrolling = true; // thius is our variable for the autoscrolling
 class Agent {
     constructor(task_list, id, is_player) {
         this.isPlayer = is_player;
+        this.playerTaskToExecute;
         this.ID = nf(id, 4);
         // or should start at 0?
         // might be accumulative or not
@@ -83,7 +84,7 @@ class Agent {
         let str1 = '<b>AGENT: ' + this.ID + '</b>' + BR;
         let str2 = (this.working == true ? 'doing this task : ' + this.currentTask : 'is not working') + BR;
         let str21 = 'working timer: ' + BR + this.workingTimer + BR;
-        let str3 = (this.hasTraded == true ? 'has traded to do : ' + this.tradeTask : 'has not traded') + BR;
+        let str3 = (this.hasTraded === true ? 'has traded to do : ' + this.tradeTask : 'has not traded') + BR;
         let str4 = 'feel like doing: ' + this.FLD + BR;
         let str5 = 'resting time: ' + this.restingTime + BR;
         let str6 = '<div class="toggle">preferences:';
@@ -217,6 +218,15 @@ class Agent {
         //     console.log(this.ID);
         //     return false;
         // }
+        // first we check if the agent is the human player
+        // that has not traded
+        if (this.isPlayer && !this.hasTraded) {
+            // console.log(agent.ID);
+            noLoop();
+            // console.log(`noLoop ${agent.isPlayer}, ${agent.hasTraded}`)
+            this.playerInteraction(task);
+            return true;
+        }
         /**
          * here we compute the skill of the agent.
          * given its skill level we compute the amount of time he needs to 
@@ -274,19 +284,28 @@ class Agent {
     }
 
     playerInteraction(task) {
+        this.playerTaskToExecute = task;
         // needs to be done in the index.html
         $('.player-interface').toggle();
+        // console.log($('.player-interface')[0].attributes[1].value)
         document.getElementById('task-name').innerHTML = task.type;
-        let interactionP = document.createElement('p');
-        $(interactionP).html('YES')
-            .addClass('content')
-            .click(() => {
-                // here a new window should open
-                // this.work()
-                loop();
-                $('.player-interface').toggle();
-            });
-        $('#player-task').append(interactionP);
+        // let interactionP = document.createElement('p');
+        // here we handle a positive answer
+        // $('#yes').click(() => {
+        //     // here a new window should open
+        //     // this.work()
+        // });
+        let i = 0;
+        for (const t of TASK_LIST) {
+            if (t.type !== task.type) {
+                $('#task-' + (i + 1))
+                    .html(t.type)
+                    .val(t.type);
+                i++
+            }
+        }
+        // $('#other-tasks').change(() => {
+        // })
         // let myDiv = document.createElement('div');
         // $(myDiv).html(this.htmlText())
         //     .addClass('content')
@@ -300,6 +319,22 @@ class Agent {
         //         }
         //     });// here we set the agent to be shown in show function
         // $('.info').append(myDiv);
+    }
+    playerWorks(agents) {
+        // here the player timer should start
+        console.log('player works!');
+        let skill = this.getPreferences(this.playerTaskToExecute.type).skill_level;
+        console.log(skill);
+        let time = this.playerTaskToExecute.amountOfTimeBasedOnSkill(skill);
+        this.work(time, this.playerTaskToExecute, agents);
+    }
+    playerTrades(task_name) {
+        this.hasTraded = true;
+        console.log(this.hasTraded);
+        this.tradeTask = task_name;
+        console.log(this.tradeTask);
+        this.setInfo();
+        // console.log(this);
     }
     /**
      * sets the agent at work for a given amount of time
@@ -363,7 +398,7 @@ class Agent {
             executed_task: task.type,
             resting_time: this.restingTime,
             feel_like_doing: this.FLD,
-            traded: this.hasTraded == true ? this.tradeTask : ''
+            traded: this.hasTraded === true ? this.tradeTask : ''
         });
         if (this.preferenceArchive.length > 100) this.preferenceArchive.splice(0, 1);
         this.updatePreferences(task.type);

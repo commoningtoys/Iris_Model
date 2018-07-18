@@ -26,6 +26,19 @@
       <p>
         DO YOU WANT TO EXECUTE:
         <span id="task-name"></span>?
+        <br>
+        <span id="yes" class="content" onclick="playerExecuteTask()">YES</span>
+        <br>OR
+        <br> do you want to execute
+        <br>
+        <select id="other-tasks" onchange="playerTradeTask()">
+          <option value="" id="task-1"></option>
+          <option value="" id="task-2"></option>
+          <option value="" id="task-3"></option>
+        </select>
+        <br> OR
+        <br>
+        Do you want to rest?
       </p>
     </div>
   </div>
