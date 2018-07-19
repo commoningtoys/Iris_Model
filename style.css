@@ -60,7 +60,7 @@ body {
     position: fixed;
     width: 67%;
 }
-.player-interface{
+.player-interface, .player-work{
     display: none;
     background-color: #0f0;
     position: fixed;

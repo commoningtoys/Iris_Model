@@ -113,17 +113,19 @@ class Task {
             if (agent.hasTraded && agent.tradeTask.includes(this.type)) {
                 // this is where chooseTask() happens
                 if (agent.isPlayer) {
-                    console.log('player trades')
+                    // if the agent is the player than make him work
+                    agent.playerTaskToExecute = this;
+                    agent.hasTraded = false; // reset here the traded boolean
                     agent.playerWorks(agents);
                     return;
                 } else {
-                    console.log(agent.ID);
                     // this.agentsPool.push(agent);
                     this.tradingAgents++;
                     //////DEPRECATED//////
                     amountOfSkill += skill;// we will use this when we will need more agents to carry out the task
                     //////////////////////
                     let time = this.amountOfTimeBasedOnSkill(skill);
+                    agent.hasTraded = false; // reset here the traded boolean
                     agent.work(time, this, agents);//the agent works
                     // this.executed++;
                     // console.log('trading agent doing the task!');
@@ -150,7 +152,7 @@ class Task {
 
             if (counter > maximumTradings || this.agentsPool.length < 1) {
                 // we need to handle the case in which no agent is available for one task
-                console.log('NO AGENT FOUND FOR THIS TASK!');
+                console.log(`NO AGENT FOUND FOR ${this.type}!`);
                 // noLoop();
                 break;
             } else {

@@ -3,6 +3,8 @@ class Agent {
     constructor(task_list, id, is_player) {
         this.isPlayer = is_player;
         this.playerTaskToExecute;
+        this.playerTimer = 0;
+        this.playerWorking = false;
         this.ID = nf(id, 4);
         // or should start at 0?
         // might be accumulative or not
@@ -186,7 +188,12 @@ class Agent {
         // for (const task of _tasks) {// no go!
         //     this.totalTaskCompletedByAgents += task.executed;
         // }
-        if (this.working) {
+        if(this.playerWorking){
+            this.playerTimer++;
+            $('#timer').html(this.playerTimer);
+            this.setInfo();
+        }
+        if (this.working && !this.isPlayer) {
             this.workingTimer--;
             this.setInfo();
             if (this.workingTimer <= 0) {
@@ -295,6 +302,8 @@ class Agent {
         //     // here a new window should open
         //     // this.work()
         // });
+        // the following code is to keep the first option always selected
+        document.getElementById('other-tasks').options[0].selected = true;
         let i = 0;
         for (const t of TASK_LIST) {
             if (t.type !== task.type) {
@@ -322,11 +331,18 @@ class Agent {
     }
     playerWorks(agents) {
         // here the player timer should start
-        console.log('player works!');
-        let skill = this.getPreferences(this.playerTaskToExecute.type).skill_level;
-        console.log(skill);
-        let time = this.playerTaskToExecute.amountOfTimeBasedOnSkill(skill);
-        this.work(time, this.playerTaskToExecute, agents);
+        noLoop();
+        $('.player-work').show();
+        this.working = true;
+        this.updateAttributes(this.playerTaskToExecute, agents);
+        this.currentTask = this.playerTaskToExecute.type;
+
+        this.setInfo();
+        console.log('player works!', this.working);
+        // let skill = this.getPreferences(this.playerTaskToExecute.type).skill_level;
+        // console.log(skill);
+        // let time = this.playerTaskToExecute.amountOfTimeBasedOnSkill(skill);
+        // this.work(time, this.playerTaskToExecute, agents);
     }
     playerTrades(task_name) {
         this.hasTraded = true;

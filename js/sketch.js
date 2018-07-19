@@ -6,13 +6,13 @@ let agents = [];
 let tasks = [];
 function setup() {
   createCanvas(WIDTH(), windowHeight - 4);
-  for (let i = 0; i < 20; i++)agents.push(new Agent(TASK_LIST, i + 1, false));
+  for (let i = 0; i < 10; i++)agents.push(new Agent(TASK_LIST, i + 1, false));
   agents.push(new Agent(TASK_LIST, PLAYER_ID, true));
   // for (const agent of agents) {
   //   agent.setAgents(agents);
   // }
   let i = 0;
-  for (let j = 0; j < 2; j++) {
+  for (let j = 0; j < 1; j++) {
     for (const task of TASK_LIST) {
       tasks.push(new Task(task, 20 + (i * 12), height * 0.65));
       i++;
@@ -45,9 +45,9 @@ function mouseClicked() {
 }
 
 function playerExecuteTask() {
-  console.log('YES');
+  // console.log('YES');
   let task_name = $('#task-name').text();
-  console.log(task_name);
+  // console.log(task_name);
   let agent = agents.filter(obj => obj.ID === PLAYER_ID);
   agent[0].playerWorks(agents);
   // let task = tasks.filter(obj => obj.type === task_name);
@@ -58,7 +58,7 @@ function playerExecuteTask() {
   //     // break
   //   }
   // })
-  loop();
+  // loop();
   $('.player-interface').toggle();
 }
 
@@ -70,4 +70,32 @@ function playerTradeTask() {
   loop();
   $('.player-interface').toggle();
   // console.log($('.player-interface')[0].attributes[1].value);
+}
+
+function startPlayerTime(){
+  console.log('start');
+  let agent = returnPlayerAgent(PLAYER_ID);
+  agent.playerTimer = 0;
+  agent.playerWorking = true;
+  console.log(agent.playerWorking);
+  loop();
+}
+
+function stopPlayerTime(){
+  console.log('stop');
+  let agent = returnPlayerAgent(PLAYER_ID);
+  agent.playerWorking = false;
+  agent.working = false;
+  if(agent.hasTraded){
+    agent.hasTraded = false;
+    agent.tradeTask = '';
+  }
+  agent.setInfo();
+  setTimeout(()=>{
+    $('.player-work').hide('fast')
+  }, 500)
+}
+
+function returnPlayerAgent(player){
+  return agents.filter(obj => obj.ID === player)[0];
 }

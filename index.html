@@ -20,6 +20,16 @@
 <body>
   <div id="p5Sketch"></div>
   <div class="info"></div>
+  <div class="player-work">
+    <span id="start" class="content" onclick="startPlayerTime()">START YOUR TASK</span>
+    <br>
+    <br> TICKS FROM STARTING THE TASK
+    <br>
+    <span id="timer"></span>
+    <br>
+    <br>
+    <span id="stop" class="content" onclick="stopPlayerTime()">DONE!</span>
+  </div>
   <div class="player-interface">
     <div id="player-stats"></div>
     <div id="player-task">
@@ -32,13 +42,13 @@
         <br> do you want to execute
         <br>
         <select id="other-tasks" onchange="playerTradeTask()">
+          <option selected>CHOOSE BETWEEN</option>
           <option value="" id="task-1"></option>
           <option value="" id="task-2"></option>
           <option value="" id="task-3"></option>
         </select>
         <br> OR
-        <br>
-        Do you want to rest?
+        <br> Do you want to rest?
       </p>
     </div>
   </div>
