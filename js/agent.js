@@ -43,7 +43,9 @@ class Agent {
         this.makeInfo();
         this.setInfo();
     }
-
+    /**
+     * 
+     */
     makeInfo() {
         let myDiv = document.createElement('div');
         $(myDiv).html(this.htmlText())
@@ -74,13 +76,17 @@ class Agent {
         // //this automatically scrolls to the bottom of the div
         // if (autoScrolling) $('#i').scrollTop($('#i')[0].scrollHeight);
     }
-
+    /**
+     * 
+     */
     setInfo() {
         // to update the infos
         document.getElementById(this.ID).innerHTML = this.htmlText();
         if (this.isPlayer) document.getElementById('player-stats').innerHTML = this.htmlText();
     }
-
+    /**
+     * 
+     */
     htmlText() {
         const BR = '<br>';
         let str1 = '<b>AGENT: ' + this.ID + '</b>' + BR;
@@ -108,13 +114,17 @@ class Agent {
         str6 += '</div>';
         return str1 + str2 + str21 + str3 + str4 + str5 + str6;
     }
-
+    /**
+     * 
+     */
     show() {
         if (this.showStatistics) {
             this.infographic();
         }
     }
-
+    /**
+     * 
+     */
     infographic() {
         const LEFT_GUTTER = 120;
         const INFO_WIDTH = width - LEFT_GUTTER;
@@ -215,7 +225,10 @@ class Agent {
         this.pos.x = x;
         this.pos.y = y;
     }
-
+    /**
+     * 
+     * @param {*} task 
+     */
     trade(task) {
         // lazyness should be a value that influences 
         // the trade algorithm
@@ -230,6 +243,7 @@ class Agent {
         if (this.isPlayer && !this.hasTraded) {
             // console.log(agent.ID);
             noLoop();
+            console.log('noLoop');
             // console.log(`noLoop ${agent.isPlayer}, ${agent.hasTraded}`)
             this.playerInteraction(task);
             return true;
@@ -255,6 +269,7 @@ class Agent {
             // this.makeInfo(`AGENT: ${this.ID} is doing the task!,  FLD ${this.FLD}, time: ${result}, pref: ${taskPreference}`);
             // this.updateAttributes(task, true);
             // increase resting time
+            console.log(`execute task ${task.type}`);
             this.setInfo();
             return false;
         } else if (this.FLD < 2 && this.restingTime > task.aot) {// if trading
@@ -265,7 +280,7 @@ class Agent {
              * occupied = true
              * decrease resting time
              */
-            // console.log(`too lazy FLD: ${this.FLD}, rest time : ${this.restingTime}`);
+            console.log(`too lazy FLD: ${this.FLD}, rest time : ${this.restingTime}`);
             this.working = true;
             this.workingTimer = 2 * TIME_SCALE;
             // this.restingTime -= task.value;
@@ -280,7 +295,7 @@ class Agent {
             /**
              * therefore available for another task.
              */
-            // console.log(`trade this: ${task.type}`);
+            console.log(`trade this: ${task.type}`);
             this.hasTraded = true;
             // need to keep track how often the agent traded
             this.tradeTask = this.randomTask(task.type);// traded task should be different than this task
@@ -289,7 +304,10 @@ class Agent {
             return true;
         }
     }
-
+    /**
+     * 
+     * @param {*} task 
+     */
     playerInteraction(task) {
         this.playerTaskToExecute = task;
         // needs to be done in the index.html
@@ -329,21 +347,30 @@ class Agent {
         //     });// here we set the agent to be shown in show function
         // $('.info').append(myDiv);
     }
+    /**
+     * ADD DESCRIPTION
+     * @param {*} agents 
+     */
     playerWorks(agents) {
         // here the player timer should start
         noLoop();
+        console.log('noLoop');
         $('.player-work').show();
         this.working = true;
         this.updateAttributes(this.playerTaskToExecute, agents);
         this.currentTask = this.playerTaskToExecute.type;
 
         this.setInfo();
-        console.log('player works!', this.working);
+        // console.log('player works!', this.working);
         // let skill = this.getPreferences(this.playerTaskToExecute.type).skill_level;
         // console.log(skill);
         // let time = this.playerTaskToExecute.amountOfTimeBasedOnSkill(skill);
         // this.work(time, this.playerTaskToExecute, agents);
     }
+    /**
+     * 
+     * @param {*} task_name 
+     */
     playerTrades(task_name) {
         this.hasTraded = true;
         console.log(this.hasTraded);
@@ -369,6 +396,9 @@ class Agent {
      * @returns a random task
      */
     randomTask(task_name) {
+
+        // here we can check the preference for the task?
+
         // traded task should be different than this task
         let result = ''
         let loop = true;
@@ -384,7 +414,11 @@ class Agent {
         // console.log(`result: ${result}`)
         return result;
     }
-
+    /**
+     * 
+     * @param {*} task 
+     * @param {*} agents 
+     */
     updateAttributes(task, agents) {
         /**
          * - resting time (++) increases by some value depending on the value of the task
@@ -487,7 +521,7 @@ class Agent {
           * working. If the others are working more than this agent than
           * his FLD decreases slower, if he is working more than it 
           * decreses faster.
-          * it could be possible to introduce the soncept of groups here where 
+          * it could be possible to introduce the concept of groups here where 
           * the agents looks only how the group performs
           */
         let otherTasksCompleted = [];
