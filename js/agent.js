@@ -284,7 +284,7 @@ class Agent {
             this.working = true;
             this.workingTimer = 2 * TIME_SCALE;
             // this.restingTime -= task.value;
-            this.restingTime /= 2;
+            this.restingTime /= 2;// here add slider that chenges how much resting time is decreased
             // this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
             this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
             // this.updateAttributes(task, true);
@@ -539,8 +539,6 @@ class Agent {
         // else this.FLD++;
         // result = (this.totalTaskCompleted / sum) * agents.length;
         // console.log(this.totalTaskCompleted, sum, result);
-
-
     }
     // /**
     //  * updates the task_preference in this.preferences by adding +1

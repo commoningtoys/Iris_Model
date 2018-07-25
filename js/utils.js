@@ -43,4 +43,11 @@ function shuffleArray(array) {
         array[i] = array[j];
         array[j] = temp;
     }
+    
+function saveRAWData(agents){
+    let json = {};
+    for (const agent of agents) {
+        json['AGENT_ID_' + agent.ID] = agent.preferenceArchive;
+    }
+    saveJSON(json, 'RAW_DATA.json');
 }
