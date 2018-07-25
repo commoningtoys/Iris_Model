@@ -30,3 +30,11 @@ function clamp(val, min, max) {
 function randomMinMAx(){
     return MINIMUM + Math.floor(Math.random() * MAXIMUM);
 }
+
+function saveRAWData(agents){
+    let json = {};
+    for (const agent of agents) {
+        json['AGENT_ID_' + agent.ID] = agent.preferenceArchive;
+    }
+    saveJSON(json, 'RAW_DATA.json');
+}

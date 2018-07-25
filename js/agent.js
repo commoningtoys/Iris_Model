@@ -419,8 +419,6 @@ class Agent {
         // else this.FLD++;
         // result = (this.totalTaskCompleted / sum) * agents.length;
         // console.log(this.totalTaskCompleted, sum, result);
-
-
     }
     // /**
     //  * updates the task_preference in this.preferences by adding +1
