@@ -7,7 +7,7 @@ let tasks = [];
 function setup() {
   createCanvas(WIDTH(), windowHeight - 4);
   for (let i = 0; i < 10; i++)agents.push(new Agent(TASK_LIST, i + 1, false));
-  agents.push(new Agent(TASK_LIST, PLAYER_ID, true));
+  // agents.push(new Agent(TASK_LIST, PLAYER_ID, true));
   // for (const agent of agents) {
   //   agent.setAgents(agents);
   // }
@@ -21,11 +21,16 @@ function setup() {
 }
 
 function draw() {
-
   background(51);
+  for (let i = 0; i < COL; i++) {
+    let posX = map(i, 0, COL, PADDING, width - PADDING);
+    stroke(255);
+    line(posX, height - PADDING, posX, height - COL_HEIGHT);
+  }
   for (const agent of agents) {
     agent.show();
     agent.update();
+    drawInfos(agent);
     // agent.setInfo();
   }
 
@@ -37,6 +42,23 @@ function draw() {
 
 function windowResized() {
   resizeCanvas(WIDTH(), innerHeight);
+}
+
+
+function drawInfos(agent) {
+  let infos = agent.getPreferencesAsArray();
+  noFill();
+  beginShape();
+  stroke(0, 255, 255, 70)
+  let i = 0;
+  for (const info of infos) {
+    let posX = map(i, 0, infos.length, PADDING, width - PADDING);
+    let posY = map(info, MINIMUM, MAXIMUM, height - PADDING, height - COL_HEIGHT);
+    vertex(posX, posY);
+    i++;
+  }
+  endShape();
+  // console.log(infos);
 }
 
 function mouseClicked() {
@@ -72,7 +94,7 @@ function playerTradeTask() {
   // console.log($('.player-interface')[0].attributes[1].value);
 }
 
-function startPlayerTime(){
+function startPlayerTime() {
   console.log('start');
   let agent = returnPlayerAgent(PLAYER_ID);
   agent.playerTimer = 0;
@@ -81,21 +103,21 @@ function startPlayerTime(){
   loop();
 }
 
-function stopPlayerTime(){
+function stopPlayerTime() {
   console.log('stop');
   let agent = returnPlayerAgent(PLAYER_ID);
   agent.playerWorking = false;
   agent.working = false;
-  if(agent.hasTraded){
+  if (agent.hasTraded) {
     agent.hasTraded = false;
     agent.tradeTask = '';
   }
   agent.setInfo();
-  setTimeout(()=>{
+  setTimeout(() => {
     $('.player-work').hide('fast')
   }, 500)
 }
 
-function returnPlayerAgent(player){
+function returnPlayerAgent(player) {
   return agents.filter(obj => obj.ID === player)[0];
 }

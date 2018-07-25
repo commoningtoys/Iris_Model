@@ -60,21 +60,6 @@ class Agent {
                 }
             });// here we set the agent to be shown in show function
         $('.info').append(myDiv);
-
-        /**
-         * set autoscrolling on and off
-         */
-        // $('#i').hover(() => {
-        //     autoScrolling = false;
-        //     // console.log('HOVER');
-        //     noLoop();//find a better solution like suspending the remove child
-        // }, () => {
-        //     autoScrolling = true;
-        //     // console.log('NOT HOVER');
-        //     loop();
-        // });
-        // //this automatically scrolls to the bottom of the div
-        // if (autoScrolling) $('#i').scrollTop($('#i')[0].scrollHeight);
     }
     /**
      * 
@@ -119,6 +104,7 @@ class Agent {
      */
     show() {
         if (this.showStatistics) {
+            background(51)
             this.infographic();
         }
     }
@@ -150,14 +136,6 @@ class Agent {
             i++;
         }
         function printGraphic(str, arr, col, row_number) {
-            // let prevX = LEFT_GUTTER;
-            // let prevY = PADDING + INFO_HEIGHT;
-            // here we draw the outline of the graphics
-            // if(CT === str.toLowerCase() && str !== ''){
-            //     noStroke();
-            //     fill(255, 255, 0, 100);
-            //     rect(posX(0, MAXIMUM), posY(MAXIMUM, row_number), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, row_number));
-            // }
             fill(255);
             noStroke();
             text(str, PADDING, posY(MAXIMUM, row_number))
@@ -269,7 +247,7 @@ class Agent {
             // this.makeInfo(`AGENT: ${this.ID} is doing the task!,  FLD ${this.FLD}, time: ${result}, pref: ${taskPreference}`);
             // this.updateAttributes(task, true);
             // increase resting time
-            console.log(`execute task ${task.type}`);
+            // console.log(`execute task ${task.type}`);
             this.setInfo();
             return false;
         } else if (this.FLD < 2 && this.restingTime > task.aot) {// if trading
@@ -280,7 +258,7 @@ class Agent {
              * occupied = true
              * decrease resting time
              */
-            console.log(`too lazy FLD: ${this.FLD}, rest time : ${this.restingTime}`);
+            // console.log(`too lazy FLD: ${this.FLD}, rest time : ${this.restingTime}`);
             this.working = true;
             this.workingTimer = 2 * TIME_SCALE;
             // this.restingTime -= task.value;
@@ -295,7 +273,7 @@ class Agent {
             /**
              * therefore available for another task.
              */
-            console.log(`trade this: ${task.type}`);
+            // console.log(`trade this: ${task.type}`);
             this.hasTraded = true;
             // need to keep track how often the agent traded
             this.tradeTask = this.randomTask(task.type);// traded task should be different than this task
@@ -591,7 +569,27 @@ class Agent {
         });
         return result;
     }
-
+    /**
+     * @returns the preferences as an array of 10 elements
+     */
+    getPreferencesAsArray(){
+        // noLoop();
+        let arr = [];
+        arr.push(this.FLD);
+        arr.push(this.restingTime);
+        Object.keys(this.preferences).forEach(val => {
+            //getting all the keys in val (current array item)
+            let keys = Object.keys(this.preferences[val]);
+            let objAttribute = this.preferences[val];
+            //iterating through all the keys presented in val (current array item)
+            keys.forEach(key => {
+                //appending more HTML string with key and value aginst that key;
+                if(key === 'skill_level' || key === 'task_preference')arr.push(objAttribute[key]);
+            });
+        }); 
+        // console.log(this);
+        return arr;
+    }
     /**
      * @param {Array} arr Array of task objects
      * @returns an Array of objects with the preference for each task

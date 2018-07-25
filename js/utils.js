@@ -43,7 +43,7 @@ function shuffleArray(array) {
         array[i] = array[j];
         array[j] = temp;
     }
-    
+}
 function saveRAWData(agents){
     let json = {};
     for (const agent of agents) {

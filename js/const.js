@@ -5,6 +5,8 @@ const MINIMUM = 1;
 const AGENT_NUM = 100;
 // animation const
 const PADDING = 30;
+const COL = 10;
+const COL_HEIGHT = 250;
 // make our tasks
 /**
  * VERY IMPORTANT THE TASK CAN'T BE LESS THAN 1 HOUR FOR NOW
@@ -15,9 +17,16 @@ const ADMIN = makeTask(2.5 * TIME_SCALE, 1, 'admin');
 const SHOP = makeTask(1.5 * TIME_SCALE, 2, 'shop');
 // and a list out of them
 const TASK_LIST = [
-    COOK,
+    ADMIN,
     CLEAN,
-    SHOP,
-    ADMIN
+    COOK,
+    SHOP
 ];
+// agent states 
+const AGENT_BEHAVIOURS = [
+    'curious',
+    'perfectionist',
+    'geniesser',
+    'capitalist'
+]
 
