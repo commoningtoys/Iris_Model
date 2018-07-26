@@ -69,7 +69,7 @@ class Task {
      */
     updateValue(agents) {
         // INVERSE TO THE NUMBER OF AGENTS WITH PREFERENCE FOR SUCH TASK
-        let counter = 1;// we start from 1 to avoid 0 as result, this will result in a minimum value
+        let counter = 0;// we start from 1 to avoid 0 as result, this will result in a minimum value
         const NUMBER_OF_AGENTS = agents.length;
         for (const agent of agents) {
             // we go through all the agents if their preferred task matches 
@@ -86,7 +86,7 @@ class Task {
             return;
         } else {
             // else we return a value that is inverse proportional
-            // as many agents prefer tha task as lower it is its value
+            // as many agents prefer that task as lower it is its value
             this.value = (1 - (counter / NUMBER_OF_AGENTS)) * TIME_SCALE;
             // console.log(`value: ${this.type}, ${this.value}, number ${counter}`);
             return;

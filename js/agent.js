@@ -9,6 +9,7 @@ class Agent {
         // or should start at 0?
         // might be accumulative or not
         this.restingTime = 0;//MINIMUM + Math.floor(Math.random() * MAXIMUM);
+        this.resting = false;
         this.preferences = this.makePreferences(task_list);//preferences for each single task
         this.preferenceArchive = [];
         // the next attributes are used for the trading system,
@@ -170,19 +171,19 @@ class Agent {
      * here the agent works
      */
     update() {
-        // this.FLD--;
-        // this.FLD = clamp(this.FLD, MINIMUM, MAXIMUM);
-        // this.totalTaskCompletedByAgents = 0;
-        // for (const task of _tasks) {// no go!
-        //     this.totalTaskCompletedByAgents += task.executed;
-        // }
+        /**
+         * here we need to add the resting 
+         * similar to working. resting should also get a timer
+         */
         if(this.playerWorking){
             this.playerTimer++;
             $('#timer').html(this.playerTimer);
             this.setInfo();
         }
         if (this.working && !this.isPlayer) {
-            this.workingTimer--;
+
+            console.log(this.workingTimer);
+            this.workingTimer -= (1 / frameRate()) * TIME_SCALE;
             this.setInfo();
             if (this.workingTimer <= 0) {
                 this.hasTraded = false;// reset to false, very IMPORTANT otherwise the agent will always be called to do a traded task
@@ -265,6 +266,7 @@ class Agent {
             this.restingTime /= 2;// here add slider that chenges how much resting time is decreased
             // this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
             this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
+            this.resting = true;
             // this.updateAttributes(task, true);
             this.setInfo();
             return true;
@@ -309,21 +311,6 @@ class Agent {
                 i++
             }
         }
-        // $('#other-tasks').change(() => {
-        // })
-        // let myDiv = document.createElement('div');
-        // $(myDiv).html(this.htmlText())
-        //     .addClass('content')
-        //     .attr('id', this.ID)
-        //     .click(() => {
-
-        //         // $('#' + this.ID + ' .preference').toggle('slow');
-        //         this.showStatistics = true;
-        //         for (const agent of agents) {// this needs to be refactored
-        //             if (this !== agent) agent.showStatistics = false;
-        //         }
-        //     });// here we set the agent to be shown in show function
-        // $('.info').append(myDiv);
     }
     /**
      * ADD DESCRIPTION
@@ -410,7 +397,7 @@ class Agent {
          */
         // this.working = true;
         // this.workingTimer = task.aot;
-        let taskName = task.type;
+        // let taskName = task.type;
         this.updateCompletedTasks(task.type);
         this.updateFLD(agents);
         // this.FLD = ;
@@ -486,14 +473,7 @@ class Agent {
         });
     }
 
-    updateFLD(agents) {
-        // get the total tasks that have been completed by all the agents
-        // let sum = 0;
-        // for (const agent of agents) {
-        //     for (const item of agent.preferences) {
-        //         sum += item.completed;
-        //     }            
-        // }     
+    updateFLD(agents) {  
         /**
           * this algorithm looks how much the other agents have been 
           * working. If the others are working more than this agent than
@@ -573,21 +553,16 @@ class Agent {
      * @returns the preferences as an array of 10 elements
      */
     getPreferencesAsArray(){
-        // noLoop();
         let arr = [];
         arr.push(this.FLD);
         arr.push(this.restingTime);
         Object.keys(this.preferences).forEach(val => {
-            //getting all the keys in val (current array item)
             let keys = Object.keys(this.preferences[val]);
             let objAttribute = this.preferences[val];
-            //iterating through all the keys presented in val (current array item)
             keys.forEach(key => {
-                //appending more HTML string with key and value aginst that key;
                 if(key === 'skill_level' || key === 'task_preference')arr.push(objAttribute[key]);
             });
         }); 
-        // console.log(this);
         return arr;
     }
     /**
