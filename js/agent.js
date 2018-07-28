@@ -42,13 +42,13 @@ class Agent {
             FLD: color(0, 255, 255),
             restingTime: color(255, 0, 0)
         }
-        this.makeInfo();
-        this.setInfo();
+        // this.makeInfo();
+        // this.setInfo();
     }
     /**
      * 
      */
-    makeInfo() {
+    makeInfo(agents) {
         let myDiv = document.createElement('div');
         $(myDiv).html(this.htmlText())
             .addClass('content')
@@ -125,7 +125,7 @@ class Agent {
         let fld = this.preferenceArchive.map(result => result.feel_like_doing);
         let rt = this.preferenceArchive.map(result => result.resting_time);
         // and here we draw them in the infographic
-        printGraphic('FLD', fld, this.preferenceColors.FLD, 1);
+        printGraphic(`AGENT_ID${this.ID}FLD`, fld, this.preferenceColors.FLD, 1);
         printGraphic('\nRESTING \nTIME', rt, this.preferenceColors.restingTime, 1);
         // here we extract preferences and we NEEDS REFACTORING!!
         let i = 2;
@@ -177,16 +177,16 @@ class Agent {
          * here we need to add the resting 
          * similar to working. resting should also get a timer
          */
-        if(this.playerWorking){
+        if (this.playerWorking) {
             this.playerTimer++;
             $('#timer').html(this.playerTimer);
             this.setInfo();
         }
 
-        if(this.resting){
+        if (this.resting) {
             this.restingTimer -= (1 / frameRate()) * TIME_SCALE;
             this.setInfo();
-            if(this.restingTimer < 0){
+            if (this.restingTimer < 0) {
                 this.resting = false;
                 this.setInfo();
             }
@@ -275,12 +275,16 @@ class Agent {
             // console.log(`too lazy FLD: ${this.FLD}, rest time : ${this.restingTime}`);
             // this.working = true;
             // this.workingTimer = 2 * TIME_SCALE;
-            // this.restingTime -= task.value;
-            this.restingTime /= 2;// here add slider that chenges how much resting time is decreased
+            // if (this.restingTime > 0) {
+                
+            // }
+            this.restingTime -= task.aot;
+            task.updateGRT(task.aot);
+            // this.restingTime /= 2;// here add slider that chenges how much resting time is decreased
             // this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
             this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
             this.resting = true;
-            this.restingTimer = 2 * TIME_SCALE;
+            this.restingTimer = task.aot;
             // this.updateAttributes(task, true);
             this.setInfo();
             return true;
@@ -417,7 +421,9 @@ class Agent {
         this.updateCompletedTasks(task.type);
         this.updateFLD(agents);
         // this.FLD = ;
+        // console.log(`${this.ID}_value: ${task.value}`);
         this.restingTime += task.value;// * task_executed == true ? 1 : -1;
+        // console.log(this.restingTime);
         // console.log(`executed task: ${this.restingTime}, value: ${task.value}`);
         /**
          * the magik trick below let us to push the preferences
@@ -489,7 +495,7 @@ class Agent {
         });
     }
 
-    updateFLD(agents) {  
+    updateFLD(agents) {
         /**
           * this algorithm looks how much the other agents have been 
           * working. If the others are working more than this agent than
@@ -568,7 +574,7 @@ class Agent {
     /**
      * @returns the preferences as an array of 10 elements
      */
-    getPreferencesAsArray(){
+    getPreferencesAsArray() {
         let arr = [];
         arr.push(this.FLD);
         arr.push(this.restingTime);
@@ -576,9 +582,9 @@ class Agent {
             let keys = Object.keys(this.preferences[val]);
             let objAttribute = this.preferences[val];
             keys.forEach(key => {
-                if(key === 'skill_level' || key === 'task_preference')arr.push(objAttribute[key]);
+                if (key === 'skill_level' || key === 'task_preference') arr.push(objAttribute[key]);
             });
-        }); 
+        });
         return arr;
     }
     /**

@@ -85,23 +85,34 @@ class Task {
         // else we return a value that is inverse proportional
         // as many agents prefer that task as lower it is its value
         let amountOfTime = (counter / NUMBER_OF_AGENTS) * TIME_SCALE;
+        // down here we remove time from the GRT if it reaches 0 it stays 0!
         if(this.GRT > 0)this.GRT -= amountOfTime;
-        console.log(this.GRT, amountOfTime);
+        // console.log(this.GRT, amountOfTime);
         if (this.GRT - amountOfTime > 0) {
+            // if there is still vailable GRT give it to the agent as value for the task
             this.value = amountOfTime;
-            console.log(`GRT ${this.type} above 0 value: ${this.value}`);
+            // console.log(`GRT ${this.type} above 0 value: ${this.value}`);
         } else if (this.GRT > 0) {
-            this.value = this.GRT;
-            console.log(`GRT almost 0 ${this.GRT}`);
+            // here we give the agent the remaining GRT
+            this.value = parseFloat(this.GRT);
+            // console.log(`GRT almost 0 ${this.GRT}`);
             this.GRT = 0;
         } else {
-            console.log(`GRT is ${this.GRT}`)
+            // here we don't give any resting time
+            // we should think also on how the agent react when no resting time ids given for a task
+            // console.log(`GRT is ${this.GRT}`)
             this.value = 0;
             this.GRT = 0;
         }
         // this.value = (1 - (counter / NUMBER_OF_AGENTS)) * TIME_SCALE;
         // console.log(`value: ${this.type}, ${this.value}, number ${counter}`);
+        console.log(`task ${this.type} has this value ${this.value}, and this GRT ${this.GRT}`);
         return;
+    }
+
+    updateGRT(amount_of_time){
+        this.GRT += amount_of_time;
+        console.log(`GRT got updated by ${amount_of_time}, total GRT = ${this.GRT}`)
     }
 
     /**

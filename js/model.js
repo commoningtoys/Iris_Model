@@ -11,13 +11,18 @@ class IrisModel {
         for(let i = 0; i < num_players || 0; i++){
             this.agents.push(new Agent(TASK_LIST, i + 1, true))
         }
+        for (const agent of this.agents) {
+            agent.makeInfo(this.agents);
+            agent.setInfo();
+        }
         // add tasks
-        let restingTimePerTask = (this.GLOBAL_RESTING_TIME / num_agents) / TASK_LIST.length;
+        let restingTimePerTask = (this.GLOBAL_RESTING_TIME / TASK_LIST.length)
         for(let i = 0; i < num_task; i++){
             for (const task of TASK_LIST) {
                 this.tasks.push(new Task(task, restingTimePerTask));
             }
         }
+        this.getTotalRestingTime();
     }
     /**
      * calculates the global amount of time the agents have for resting
@@ -51,7 +56,18 @@ class IrisModel {
             task.updateUrgency(this.agents);
           }
     }
-
+    getTotalRestingTime(){
+        let sumAgent = 0;
+        for (const agent of this.agents) {
+            console.log(agent.restingTime);
+            sumAgent += agent.restingTime;
+        }
+        let sumTask = 0;
+        for (const task of this.tasks) {
+            sumTask += task.GRT;            
+        }
+        console.log(`agent resting time: ${sumAgent}, task GRT: ${sumTask} GLOBAL ${this.GLOBAL_RESTING_TIME}`);
+    }
     /**
      * player interactions below
      */
