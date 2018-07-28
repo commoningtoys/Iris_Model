@@ -7,7 +7,7 @@ class Task {
      * @param {Number} x position 
      * @param {Number} y position
      */
-    constructor(task_object, x, y) {
+    constructor(task_object) {
         /**
          * time needed to carry out the task
          */
@@ -33,8 +33,8 @@ class Task {
         // DEPRECATED FOR NOW
         this.skillNeeded = randomMinMAx();//this needs to be better defined
         /////////////////////////////////
-        this.pos = createVector(x, y);
-        this.r = 10;
+        // this.pos = createVector(x, y);
+        // this.r = 10;
     }
     /**
      * show the task development over time
@@ -109,7 +109,7 @@ class Task {
         shuffleArray(agents);// we shuffle the agents 
         // here we check if the agent has traded before if yes he executes the task
         for (const agent of agents) {
-            skill = agent.getPreferences(this.type).skill_level;
+            // skill = agent.getPreferences(this.type).skill_level;
             if (agent.hasTraded && agent.tradeTask.includes(this.type)) {
                 // this is where chooseTask() happens
                 if (agent.isPlayer) {
@@ -122,8 +122,9 @@ class Task {
                     // this.agentsPool.push(agent);
                     this.tradingAgents++;
                     //////DEPRECATED//////
-                    amountOfSkill += skill;// we will use this when we will need more agents to carry out the task
+                    // amountOfSkill += skill;// we will use this when we will need more agents to carry out the task
                     //////////////////////
+                    skill = agent.getPreferences(this.type).skill_level;
                     let time = this.amountOfTimeBasedOnSkill(skill);
                     agent.hasTraded = false; // reset here the traded boolean
                     agent.work(time, this, agents);//the agent works
@@ -152,14 +153,16 @@ class Task {
 
             if (counter > maximumTradings || this.agentsPool.length < 1) {
                 // we need to handle the case in which no agent is available for one task
+                this.bruteForceTask(agents);
                 // console.log(`NO AGENT FOUND FOR ${this.type}!`);
                 // noLoop();
                 break;
             } else {
                 if (!agent.trade(this)) {
-                    
+
                     // if the agent has not traded 
                     // then he executes the task
+                    skill = agent.getPreferences(this.type).skill_level;
                     let time = this.amountOfTimeBasedOnSkill(skill);
                     agent.work(time, this, agents);// we set the agent at work
                     // this.executed++;
@@ -175,6 +178,41 @@ class Task {
             counter++;
         }
         //CHOOSE RANDOM AGENT FROM THE POOL
+    }
+
+    bruteForceTask(agents) {
+        //assigns the task to someone as next task to do.
+        // console.log('BRUTE FORCE!!!')
+        let i = 0;
+        let controlState = true;
+        while (controlState || i > 10000) {
+            let index = Math.floor(Math.random() * agents.length);
+            let agent = agents[index];
+            if (!agent.working || agent.resting || agent.hasTraded) {
+                agent.resting = false;
+                agent.hasTraded = false;
+                agent.tradeTask = '';
+                let skill = agent.getPreferences(this.type).skill_level;
+                let time = this.amountOfTimeBasedOnSkill(skill);
+                agent.work(time, this, agents);
+                console.log(`agent_${agent.ID} has been brute forced to do ${this.type}`)
+                controlState = false;
+                break;
+            }
+
+            i++;
+            if (i > 5000) {
+                // assign task as next to do to an agent
+                console.log('no agent found')
+                controlState = false;
+                break;
+            }
+        }
+        // for (const agent of agents) {
+        //     if(agent.resting || agent.hasTraded){
+        //         console.log(agent.ID);
+        //     }
+        // }
     }
     /**
      * 

@@ -5,11 +5,12 @@ class Agent {
         this.playerTaskToExecute;
         this.playerTimer = 0;
         this.playerWorking = false;
-        this.ID = nf(id, 4);
+        this.ID = is_player ? `PLAYER_${nf(id, 4)}` : nf(id, 4);
         // or should start at 0?
         // might be accumulative or not
         this.restingTime = 0;//MINIMUM + Math.floor(Math.random() * MAXIMUM);
         this.resting = false;
+        this.restingTimer = 0;
         this.preferences = this.makePreferences(task_list);//preferences for each single task
         this.preferenceArchive = [];
         // the next attributes are used for the trading system,
@@ -79,6 +80,7 @@ class Agent {
         let str2 = (this.working == true ? 'doing this task : ' + this.currentTask : 'is not working') + BR;
         let str21 = 'working timer: ' + BR + this.workingTimer + BR;
         let str3 = (this.hasTraded === true ? 'has traded to do : ' + this.tradeTask : 'has not traded') + BR;
+        let str31 = (this.resting === true ? `is resting for: ${this.restingTimer}` : 'not resting') + BR;
         let str4 = 'feel like doing: ' + this.FLD + BR;
         let str5 = 'resting time: ' + this.restingTime + BR;
         let str6 = '<div class="toggle">preferences:';
@@ -98,7 +100,7 @@ class Agent {
             str6 += "</div><br>";
         });
         str6 += '</div>';
-        return str1 + str2 + str21 + str3 + str4 + str5 + str6;
+        return str1 + str2 + str21 + str3 + str31 + str4 + str5 + str6;
     }
     /**
      * 
@@ -180,12 +182,22 @@ class Agent {
             $('#timer').html(this.playerTimer);
             this.setInfo();
         }
+
+        if(this.resting){
+            this.restingTimer -= (1 / frameRate()) * TIME_SCALE;
+            this.setInfo();
+            if(this.restingTimer < 0){
+                this.resting = false;
+                this.setInfo();
+            }
+        }
+
         if (this.working && !this.isPlayer) {
 
-            console.log(this.workingTimer);
+            // console.log((1 / frameRate()) * TIME_SCALE);
             this.workingTimer -= (1 / frameRate()) * TIME_SCALE;
             this.setInfo();
-            if (this.workingTimer <= 0) {
+            if (this.workingTimer < 0) {
                 this.hasTraded = false;// reset to false, very IMPORTANT otherwise the agent will always be called to do a traded task
                 this.tradeTask = '';
                 this.working = false;
@@ -194,9 +206,9 @@ class Agent {
             }
         }
     }
-    setAgents(_agents) {
-        this.agents = _agents;
-    }
+    // setAgents(_agents) {
+    //     this.agents = _agents;
+    // }
     /**
      * We will need this later
      */
@@ -260,13 +272,14 @@ class Agent {
              * decrease resting time
              */
             // console.log(`too lazy FLD: ${this.FLD}, rest time : ${this.restingTime}`);
-            this.working = true;
-            this.workingTimer = 2 * TIME_SCALE;
+            // this.working = true;
+            // this.workingTimer = 2 * TIME_SCALE;
             // this.restingTime -= task.value;
             this.restingTime /= 2;// here add slider that chenges how much resting time is decreased
             // this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
             this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
             this.resting = true;
+            this.restingTimer = 2 * TIME_SCALE;
             // this.updateAttributes(task, true);
             this.setInfo();
             return true;
@@ -294,6 +307,8 @@ class Agent {
         $('.player-interface').toggle();
         // console.log($('.player-interface')[0].attributes[1].value)
         document.getElementById('task-name').innerHTML = task.type;
+        // $('#yes').val = this.ID;
+        document.getElementById('yes').value = this.ID;// we set the ID as value so we can use it later to find the agent in the array
         // let interactionP = document.createElement('p');
         // here we handle a positive answer
         // $('#yes').click(() => {
