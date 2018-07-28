@@ -18,7 +18,7 @@ class Agent {
         this.hasTraded = false;// if has traded than it will be selecteds for the trade task
         this.totalTaskCompleted = 0;
         this.totalTaskCompletedByAgents = 0;
-        this.agents = [];
+        // this.agents = [];
         this.currentTask = '';
         this.FLD = randomMinMAx();// feel like doing
         this.solidarity = randomMinMAx();
@@ -263,7 +263,8 @@ class Agent {
             // console.log(`execute task ${task.type}`);
             this.setInfo();
             return false;
-        } else if (this.FLD < 2 && this.restingTime > task.aot) {// if trading
+        } else if (this.FLD < 2 && this.restingTime > task.aot) {
+            // here we return the resting time to the task global resting time
             // this needs to be updated with the lazyness as a factor and available resting time
             /**
              * NOT DOING THE TASK

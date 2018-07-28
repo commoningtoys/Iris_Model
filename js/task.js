@@ -7,7 +7,8 @@ class Task {
      * @param {Number} x position 
      * @param {Number} y position
      */
-    constructor(task_object) {
+    constructor(task_object, global_resting_time) {
+        this.GRT = global_resting_time;
         /**
          * time needed to carry out the task
          */
@@ -69,29 +70,40 @@ class Task {
      */
     updateValue(agents) {
         // INVERSE TO THE NUMBER OF AGENTS WITH PREFERENCE FOR SUCH TASK
-        let counter = 0;// we start from 1 to avoid 0 as result, this will result in a minimum value
+        // here we remove some time from the amout of resting tim the task can give away
+        let counter = agents.length;// we start from 1 to avoid 0 as result, this will result in a minimum value
         const NUMBER_OF_AGENTS = agents.length;
         for (const agent of agents) {
             // we go through all the agents if their preferred task matches 
             // this task we add one to the counter
             let prefererence = agent.preferredTask();
             if (prefererence.includes(this.type)) {//string comparison
-                counter++;
+                counter--;
             }
         }
-        // we need to add exception in case there is no matching preferred task
-        if (counter == 0) {
-            // if there is no one preferring this task than we return the maximum value
-            this.value = 1 * TIME_SCALE;
-            return;
+
+        // else we return a value that is inverse proportional
+        // as many agents prefer that task as lower it is its value
+        let amountOfTime = (counter / NUMBER_OF_AGENTS) * TIME_SCALE;
+        if(this.GRT > 0)this.GRT -= amountOfTime;
+        console.log(this.GRT, amountOfTime);
+        if (this.GRT - amountOfTime > 0) {
+            this.value = amountOfTime;
+            console.log(`GRT ${this.type} above 0 value: ${this.value}`);
+        } else if (this.GRT > 0) {
+            this.value = this.GRT;
+            console.log(`GRT almost 0 ${this.GRT}`);
+            this.GRT = 0;
         } else {
-            // else we return a value that is inverse proportional
-            // as many agents prefer that task as lower it is its value
-            this.value = (1 - (counter / NUMBER_OF_AGENTS)) * TIME_SCALE;
-            // console.log(`value: ${this.type}, ${this.value}, number ${counter}`);
-            return;
+            console.log(`GRT is ${this.GRT}`)
+            this.value = 0;
+            this.GRT = 0;
         }
+        // this.value = (1 - (counter / NUMBER_OF_AGENTS)) * TIME_SCALE;
+        // console.log(`value: ${this.type}, ${this.value}, number ${counter}`);
+        return;
     }
+
     /**
      * The task chooses one agent from the available pool.
      * The task is assigned by picking enough agents that with 
@@ -195,7 +207,8 @@ class Task {
                 let skill = agent.getPreferences(this.type).skill_level;
                 let time = this.amountOfTimeBasedOnSkill(skill);
                 agent.work(time, this, agents);
-                console.log(`agent_${agent.ID} has been brute forced to do ${this.type}`)
+                // add this to the html text
+                // console.log(`agent_${agent.ID} has been brute forced to do ${this.type}`)
                 controlState = false;
                 break;
             }

@@ -2,6 +2,7 @@ class IrisModel {
     constructor(num_agents, num_players, num_task) {
         this.agents = [];
         this.tasks = [];
+        this.GLOBAL_RESTING_TIME = this.calcGlobalRestTime(num_agents, num_task);
         // add agents
         for (let i = 0; i < num_agents; i++) {
             this.agents.push(new Agent(TASK_LIST, i + 1, false));
@@ -11,13 +12,32 @@ class IrisModel {
             this.agents.push(new Agent(TASK_LIST, i + 1, true))
         }
         // add tasks
+        let restingTimePerTask = (this.GLOBAL_RESTING_TIME / num_agents) / TASK_LIST.length;
         for(let i = 0; i < num_task; i++){
             for (const task of TASK_LIST) {
-                this.tasks.push(new Task(task));
+                this.tasks.push(new Task(task, restingTimePerTask));
             }
         }
     }
-
+    /**
+     * calculates the global amount of time the agents have for resting
+     * it doubles the amount of time needed to finish all the tasks by an agent
+     * multiplied by two and by all the agents
+     * @param {Number} num_agents 
+     * @param {Number} num_task 
+     * @returns the global amount of time the agents have to rest
+     */
+    calcGlobalRestTime(num_agents, num_task){
+        let amountOfTime = 0;
+        for(let i = 0; i < num_task; i++){
+            let time = TASK_LIST.map(result => result.amount_of_time);//returns an array of amount of time
+            amountOfTime += time.reduce((a, b) => a + b);
+        }
+        amountOfTime *= 2;
+        amountOfTime *= num_agents;
+        console.log (amountOfTime);
+        return amountOfTime;
+    }
     update(){
         for (const agent of this.agents) {
             agent.show();
