@@ -184,7 +184,7 @@ class Agent {
         }
 
         if (this.resting) {
-            this.restingTimer -= (1 / frameRate()) * TIME_SCALE;
+            this.restingTimer -= timeUpdate();
             this.setInfo();
             if (this.restingTimer < 0) {
                 this.resting = false;
@@ -195,7 +195,7 @@ class Agent {
         if (this.working && !this.isPlayer) {
 
             // console.log((1 / frameRate()) * TIME_SCALE);
-            this.workingTimer -= (1 / frameRate()) * TIME_SCALE;
+            this.workingTimer -= timeUpdate();
             this.setInfo();
             if (this.workingTimer < 0) {
                 this.hasTraded = false;// reset to false, very IMPORTANT otherwise the agent will always be called to do a traded task

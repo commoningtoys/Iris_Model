@@ -9,6 +9,7 @@ class Task {
      */
     constructor(task_object, global_resting_time) {
         this.GRT = global_resting_time;
+        console.log(this.GRT)
         /**
          * time needed to carry out the task
          */
@@ -51,7 +52,7 @@ class Task {
      * the urgency when it reaches 0 it wil be reset to its original value.
      */
     updateUrgency(agents) {
-        this.urgency--;
+        this.urgency -= timeUpdate();
         if (this.urgency <= 0) {
             // console.log('choose agent for the task: ' + this.type);
             this.urgency = this.urgencyReset;
@@ -84,9 +85,14 @@ class Task {
 
         // else we return a value that is inverse proportional
         // as many agents prefer that task as lower it is its value
-        let amountOfTime = (counter / NUMBER_OF_AGENTS) * TIME_SCALE;
+        let amountOfTime = (counter / NUMBER_OF_AGENTS) * TIME_SCALE * TS_FRACTION;
+        amountOfTime = Math.round(amountOfTime);
+        // console.log(amountOfTime);
         // down here we remove time from the GRT if it reaches 0 it stays 0!
-        if(this.GRT > 0)this.GRT -= amountOfTime;
+        if (this.GRT > 0) {
+        this.GRT -= amountOfTime;
+        this.GRT = roundPrecision(this.GRT, 1)
+        }
         // console.log(this.GRT, amountOfTime);
         if (this.GRT - amountOfTime > 0) {
             // if there is still vailable GRT give it to the agent as value for the task
@@ -106,11 +112,11 @@ class Task {
         }
         // this.value = (1 - (counter / NUMBER_OF_AGENTS)) * TIME_SCALE;
         // console.log(`value: ${this.type}, ${this.value}, number ${counter}`);
-        console.log(`task ${this.type} has this value ${this.value}, and this GRT ${this.GRT}`);
+        // console.log(`task ${this.type} has this value ${this.value}, and this GRT ${this.GRT}`);
         return;
     }
 
-    updateGRT(amount_of_time){
+    updateGRT(amount_of_time) {
         this.GRT += amount_of_time;
         console.log(`GRT got updated by ${amount_of_time}, total GRT = ${this.GRT}`)
     }
@@ -208,9 +214,10 @@ class Task {
         // console.log('BRUTE FORCE!!!')
         let i = 0;
         let controlState = true;
-        while (controlState || i > 10000) {
+        while (controlState) {
             let index = Math.floor(Math.random() * agents.length);
             let agent = agents[index];
+            console.log(`working: ${agent.working}, resting: ${agent.resting}, traded: ${agent.hasTraded}`);
             if (!agent.working || agent.resting || agent.hasTraded) {
                 agent.resting = false;
                 agent.hasTraded = false;
@@ -254,10 +261,11 @@ class Task {
         // here we subtract the skill level the the medium skill level and we divide it 
         // by maximum to get a value between 0 and 1, that we multiply by the time scale.
         // the result will oscillate between -0.5 and +0.5 that we multiply by the time scale
-        let result = ((MEDIUM_SKILL - skill_level) / MAXIMUM) * TIME_SCALE;
+        let result = ((MEDIUM_SKILL - skill_level) / MAXIMUM) * TIME_SCALE * TS_FRACTION;
+        result = Math.round(result);
         result += this.aot;
         // console.log(`this is the skill level: ${skill_level} and this the median: 50. this is the amount of time: ${this.aot} and the result: ${result}`);
-        const MINIMUM_TIME = 0.25 * TIME_SCALE;// this is the minimum time an agent has to invest for an assigned task aka 15 minutes
+        const MINIMUM_TIME = TIME_SCALE * 2;// this is the minimum time an agent has to invest for an assigned task aka 15 minutes
         if (result <= MINIMUM_TIME) return MINIMUM_TIME;// if the result is less than the minimum time return the minimum time
         else return result;// else return the result
     }

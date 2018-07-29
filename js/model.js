@@ -59,7 +59,6 @@ class IrisModel {
     getTotalRestingTime(){
         let sumAgent = 0;
         for (const agent of this.agents) {
-            console.log(agent.restingTime);
             sumAgent += agent.restingTime;
         }
         let sumTask = 0;

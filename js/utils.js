@@ -44,6 +44,17 @@ function shuffleArray(array) {
         array[j] = temp;
     }
 }
+
+function timeUpdate(){
+    // return (1 / frameRate()) * TIME_SCALE;
+    return 1;
+}
+
+function roundPrecision(value, precision) {
+    let multiplier = Math.pow(10, precision || 0);
+    return Math.round(value * multiplier) / multiplier;
+}
+
 function saveRAWData(agents){
     let json = {};
     for (const agent of agents) {
