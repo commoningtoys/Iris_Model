@@ -133,7 +133,7 @@ class Agent {
         // here we extract preferences and we NEEDS REFACTORING!!
         let i = 2;
         for (const el of TASK_LIST) {
-            let pref = this.preferenceArchive.map(result => result.prefereces[el.type]);
+            let pref = this.preferenceArchive.map(result => result.preferences[el.type]);
             let taskSkill = pref.map(result => result.skill_level);
             let taskPref = pref.map(result => result.task_preference);
 
@@ -225,23 +225,85 @@ class Agent {
      */
     trade(task) {
         /**
+         * ATTENZIONE IMPORTANTE!!!!!!!!!!
+         * don't forget to update the fld 
+         * in task.js where the agent get brute-forced to do a task!
+         */
+        /**
          * CURIOUS BEHAVIOUR
          * Curious: tends to do as many different task as possible
          */
-        if(this.behavior === 'curious'){
+        if (this.behavior === 'curious') {
             if (this.preferenceArchive.length > 1) {
                 const lastIndex = this.preferenceArchive.length - 1;
                 const lastTask = this.preferenceArchive[lastIndex].executed_task;
-                console.log(lastTask);
-                if(task.type === lastTask){
+                // console.log(lastTask);
+                if (task.type === lastTask || this.FLD < 2) {
                     /**
                      * HERE THE AGENT TRADES
                      * either he takes another task or he rests
                      */
+                    if (this.FLD < 2) {
+                        // if the agent has enought resting time he rests
+                        if (this.restingTime >= task.aot) this.rest(task);
+                        else {
+                            // the agent trades the task
+                            this.stress++;
+                            if(task.type === lastTask)assignTask(this);// if the task is the same as the last one than assign a new task 
+                            else return false;// let the agent execute the task
+                        }
+                    } else {
+                        // here the agent trades for another task
+                        assignTask(this);
+                    }
+                    function assignTask(agent) {
+                        // let fld = this.preferenceArchive.map(result => result.feel_like_doing);
+                        // const max = Math.max(...otherTasksCompleted);// magic trick
+                        let index = agent.preferenceArchive.length - 1;
+                        if (index >= 0) {
+                            // let pref = agent.preferenceArchive.map(result => result.preferences[index]);
+                            let pref = agent.preferenceArchive[index].preferences;
+                            let completed = [];
+                            /**
+                             * here we check for the task that was executed less often
+                             */
+                            Object.keys(pref).forEach(key => {
+                                let objectAttr = pref[key]
+                                completed.push(objectAttr.completed)
+                            });
+                            const minimum = Math.min(...completed);
 
-                    console.log('same task');
+                            /**
+                             * here we make a pool of the task executed less often to be 
+                             * randomly picked
+                             */
+
+                            let taskPool = [];
+                            Object.keys(pref).forEach(key => {
+                                let objectAttr = pref[key]
+                                if (objectAttr.completed <= minimum) {
+                                    taskPool.push(objectAttr.task_name);
+                                }
+                            });
+
+                            /**
+                             * now we pick a random task from the pool
+                             */
+                            let randomIndex = Math.floor(Math.random() * taskPool.length);
+                            let toDoTask = taskPool[randomIndex];
+
+                            /**
+                             * now we assign the task to the agent
+                             */
+
+                            agent.hasTraded = true;
+                            // need to keep track how often the agent traded
+                            agent.tradeTask = toDoTask;// traded task should be different than this task
+                            agent.setInfo();
+                        }
+                    }
                     return true;
-                }else{
+                } else {
                     /**
                      * HERE HE EXECUTES THE TASK
                      * therefore we return true and the agent works
@@ -251,7 +313,6 @@ class Agent {
 
                     return false;
                 }
-                // noLoop()
             }
         }
 
@@ -492,7 +553,7 @@ class Agent {
          */
         let insert = JSON.parse(JSON.stringify(this.preferences));// the trick
         this.preferenceArchive.push({
-            prefereces: insert,
+            preferences: insert,
             executed_task: task.type,
             resting_time: this.restingTime,
             feel_like_doing: this.FLD,
