@@ -28,7 +28,9 @@ class Task {
          * on how often the task needs to be carried out.
          */
         this.urgency = Math.floor(DAY / task_object.executions_per_day);
-        // 
+        /**
+         * WE NEED TO MAKE THE URGENCY A LITTLE BIT MORE FLUCTUANT SO THAT THE TASK NEVER REALLY OVERLAP
+         */
         this.urgencyReset = this.urgency; //we need this to reset the urgency
         this.type = task_object.type;
         this.executed = 0;
@@ -90,8 +92,8 @@ class Task {
         // console.log(amountOfTime);
         // down here we remove time from the GRT if it reaches 0 it stays 0!
         if (this.GRT > 0) {
-        this.GRT -= amountOfTime;
-        this.GRT = roundPrecision(this.GRT, 1)
+            this.GRT -= amountOfTime;
+            this.GRT = roundPrecision(this.GRT, 1)
         }
         // console.log(this.GRT, amountOfTime);
         if (this.GRT - amountOfTime > 0) {
@@ -139,15 +141,20 @@ class Task {
         // here we check if the agent has traded before if yes he executes the task
         for (const agent of agents) {
             // skill = agent.getPreferences(this.type).skill_level;
-            if (agent.hasTraded && agent.tradeTask.includes(this.type)) {
+            if (agent.hasTraded && agent.tradeTask.includes(this.type) && (!agent.working || !agent.resting)) {
                 // this is where chooseTask() happens
                 if (agent.isPlayer) {
                     // if the agent is the player than make him work
                     agent.playerTaskToExecute = this;
                     agent.hasTraded = false; // reset here the traded boolean
                     agent.playerWorks(agents);
-                    return;
+                    return;// WE RETURN BECAUSE THE AGENT IS THE PLAYER THEREFORE WE DON'T NEED TO CHECK FOR MORE AGENTS TO DO THE TASK
                 } else {
+                    /**
+                     * I THINK THERE IS A LOGIC PROBLEM HERE
+                     * IT MIGHT BE BETTER TO PUT ALL THE AGENT THAT 
+                     * TRADED FOR THIS TASK ONTO A POOL AND THEN PICK A RANDOM ONE
+                     */
                     // this.agentsPool.push(agent);
                     this.tradingAgents++;
                     //////DEPRECATED//////
@@ -159,10 +166,10 @@ class Task {
                     agent.work(time, this, agents);//the agent works
                     // this.executed++;
                     // console.log('trading agent doing the task!');
-                    return;
+                    return;// IF THE AGENT HAS TRADED FOR THIS TASK THAN HE GETS PICKED THEREFORE WE RETURN
                 }
             } else if (!agent.working && agent.ability && !agent.hasTraded) {// maybe the trade happens once we have the pool
-                this.agentsPool.push(agent);
+                this.agentsPool.push(agent);// IF NONE OF THE ABOVE THINGS HAPPENED THAN WE PUSH THE AGENT INTO A POOL OF POSSIBLE CANDIDATE FOR THE TASK
             }
         }
         /**
@@ -188,7 +195,6 @@ class Task {
                 break;
             } else {
                 if (!agent.trade(this)) {
-
                     // if the agent has not traded 
                     // then he executes the task
                     skill = agent.getPreferences(this.type).skill_level;
@@ -206,7 +212,6 @@ class Task {
             }
             counter++;
         }
-        //CHOOSE RANDOM AGENT FROM THE POOL
     }
 
     bruteForceTask(agents) {
@@ -217,7 +222,7 @@ class Task {
         while (controlState) {
             let index = Math.floor(Math.random() * agents.length);
             let agent = agents[index];
-            console.log(`working: ${agent.working}, resting: ${agent.resting}, traded: ${agent.hasTraded}`);
+            // console.log(`working: ${agent.working}, resting: ${agent.resting}, traded: ${agent.hasTraded}`);
             if (!agent.working || agent.resting || agent.hasTraded) {
                 agent.resting = false;
                 agent.hasTraded = false;

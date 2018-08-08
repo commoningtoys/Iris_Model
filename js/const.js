@@ -24,7 +24,7 @@ const TASK_LIST = [
     SHOP
 ];
 // agent states 
-const AGENT_BEHAVIOURS = [
+const AGENT_BEHAVIORS = [
     'curious',
     'perfectionist',
     'geniesser',

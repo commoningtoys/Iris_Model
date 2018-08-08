@@ -1,13 +1,15 @@
 let autoScrolling = true; // thius is our variable for the autoscrolling
 class Agent {
-    constructor(task_list, id, is_player) {
+    constructor(task_list, id, is_player, _behavior) {
         this.isPlayer = is_player;
         this.playerTaskToExecute;
         this.playerTimer = 0;
         this.playerWorking = false;
         this.ID = is_player ? `PLAYER_${nf(id, 4)}` : nf(id, 4);
-        // or should start at 0?
-        // might be accumulative or not
+
+        this.behavior = _behavior;
+        // this.behaviour = new Behaviour(AGENT_BEHAVIOURS[0], this);
+
         this.restingTime = 0;//MINIMUM + Math.floor(Math.random() * MAXIMUM);
         this.resting = false;
         this.restingTimer = 0;
@@ -186,7 +188,7 @@ class Agent {
         if (this.resting) {
             this.restingTimer -= timeUpdate();
             this.setInfo();
-            if (this.restingTimer < 0) {
+            if (this.restingTimer <= 0) {
                 this.resting = false;
                 this.setInfo();
             }
@@ -197,7 +199,7 @@ class Agent {
             // console.log((1 / frameRate()) * TIME_SCALE);
             this.workingTimer -= timeUpdate();
             this.setInfo();
-            if (this.workingTimer < 0) {
+            if (this.workingTimer <= 0) {
                 this.hasTraded = false;// reset to false, very IMPORTANT otherwise the agent will always be called to do a traded task
                 this.tradeTask = '';
                 this.working = false;
@@ -221,14 +223,7 @@ class Agent {
      * @param {*} task 
      */
     trade(task) {
-        // lazyness should be a value that influences 
-        // the trade algorithm
-        // and resting time as well
-        // if an agent has no resting time he can't trade
-        // if(this.isPlayer){
-        //     console.log(this.ID);
-        //     return false;
-        // }
+        // this.behaviour.trade(task);
         // first we check if the agent is the human player
         // that has not traded
         if (this.isPlayer && !this.hasTraded) {
@@ -276,20 +271,20 @@ class Agent {
             // this.working = true;
             // this.workingTimer = 2 * TIME_SCALE;
             // if (this.restingTime > 0) {
-                
+
             // }
-            this.restingTime -= task.aot;
-            task.updateGRT(task.aot);
-            // this.restingTime /= 2;// here add slider that chenges how much resting time is decreased
-            // this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
-            this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
-            this.resting = true;
-            this.restingTimer = task.aot;
-            // this.updateAttributes(task, true);
-            this.setInfo();
+            // this.restingTime -= task.aot;
+            // task.updateGRT(task.aot);
+            // // this.restingTime /= 2;// here add slider that chenges how much resting time is decreased
+            // // this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
+            // this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
+            // this.resting = true;
+            // this.restingTimer = task.aot;
+            // // this.updateAttributes(task, true);
+            // this.setInfo();
+            this.rest(task);
             return true;
         } else {
-            //chooseTask()
             /**
              * therefore available for another task.
              */
@@ -377,6 +372,19 @@ class Agent {
         // this.makeInfo(`AGENT: ${this.ID} is executing ${task.type}. It will take ${amount_of_time} ticks`);
     }
 
+    rest(task) {
+        this.restingTime -= task.aot;
+        task.updateGRT(task.aot);
+        // this.restingTime /= 2;// here add slider that chenges how much resting time is decreased
+        // this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
+        console.log(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
+        this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
+        this.resting = true;
+        this.restingTimer = task.aot;
+        // this.updateAttributes(task, true);
+        this.setInfo();
+    }
+
     /**
      * @returns a random task
      */
@@ -401,8 +409,8 @@ class Agent {
     }
     /**
      * 
-     * @param {*} task 
-     * @param {*} agents 
+     * @param {Array} task 
+     * @param {Array} agents 
      */
     updateAttributes(task, agents) {
         /**

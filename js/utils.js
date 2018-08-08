@@ -34,7 +34,7 @@ function randomMinMAx() {
 /**
  * Randomize array element order in-place.
  * Using Durstenfeld shuffle algorithm.
- * @param {*} array 
+ * @param {Array} array 
 */
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -61,4 +61,8 @@ function saveRAWData(agents){
         json['AGENT_ID_' + agent.ID] = agent.preferenceArchive;
     }
     saveJSON(json, 'RAW_DATA.json');
+}
+
+function modelTime(){
+    return TS_FRACTION * TIME_SCALE;
 }
