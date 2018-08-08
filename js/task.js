@@ -224,14 +224,21 @@ class Task {
             let agent = agents[index];
             // console.log(`working: ${agent.working}, resting: ${agent.resting}, traded: ${agent.hasTraded}`);
             if (!agent.working || agent.resting || agent.hasTraded) {
+                /**
+                 * HERE WE NEED TO CHECK WHICH 
+                 * BEHAVIOR THE AGENT HAS
+                 * AND ACCORDING TO THAT THE FLD
+                 * NEEDS TO BE UPDATED ACCORDIGLY
+                 */
                 agent.resting = false;
                 agent.hasTraded = false;
                 agent.tradeTask = '';
                 let skill = agent.getPreferences(this.type).skill_level;
                 let time = this.amountOfTimeBasedOnSkill(skill);
                 agent.work(time, this, agents);
+                // agent.FLD /= 2;
                 // add this to the html text
-                // console.log(`agent_${agent.ID} has been brute forced to do ${this.type}`)
+                console.log(`agent_${agent.ID} has been brute forced to do ${this.type}`);
                 controlState = false;
                 break;
             }
