@@ -42,7 +42,7 @@ class Agent {
         this.totalTaskCompletedByAgents = 0;
 
         this.currentTask = '';
-        this.FLD = randomMinMAx();// feel like doing
+        this.FLD = this.behavior == 'capitalist' ? 100 : randomMinMAx();// feel like doing
         this.solidarity = randomMinMAx();
         this.stress = 0;// we will need this to see how stressed the agents are, the stress will increase when the agents can't rest while FLD is 0
         this.ability = true;
@@ -251,6 +251,7 @@ class Agent {
          * in task.js where the agent get brute-forced to do a task!
          */
         /**
+         * 😯
          * CURIOUS BEHAVIOUR
          * Curious: tends to do as many different task as possible
          */
@@ -344,6 +345,7 @@ class Agent {
 
 
         /**
+         * 👨‍🚀
          * PERFECTIONIST BEHAVIOR
          * tends to execute only the task he wants to master
          */
@@ -381,6 +383,7 @@ class Agent {
 
 
         /**
+         * 🏖
          * GENIESSER BEAHAVIOR
          * uses his resting time whenever he has enough
          */
@@ -395,7 +398,7 @@ class Agent {
                     this.stress++;
                     return false;// else he executes the task
                 }
-            }else{
+            } else {
                 // the agent does not trade
                 return false;
             }
@@ -403,13 +406,52 @@ class Agent {
 
 
         /**
+         * 🎩
          * Capitalist behavior
          * tries to accumulate as much as resting time as possible
          */
 
-         if(this.behavior === 'capitalist'){
+        if (this.behavior === 'capitalist') {
+            /**
+             * he takes all the tasks
+             * and he rests only if the value of the task is really low
+             */
+            let taskValues = [];
+            for (const task of TASK_LIST) {
+                let obj = {
+                    task_name: task.type,
+                    task_value: taskValue(task.type)
+                }
+                taskValues.push(obj);
+            }
+            // console.log(taskValues);
+            taskValues.sort((a, b) => a.task_value - b.task_value);
+            // console.log(taskValues, 'sorted');
+            if (this.FLD < 2 && taskValue(task.type) < 0.2 && this.restingTime >= task.aot) {
+                this.rest(task);
+                return true;
+            } else {
+                const lastElement = taskValues.length - 1
+                if(taskValues[lastElement].task_value >= 0.5){
+                    this.assignTradedTask(taskValues[lastElement].task_name);
+                    return true;
+                } else return false;
+            }
 
-         }
+            function taskValue(task_name) {
+                let counter = agents.length;
+                const NUMBER_OF_AGENTS = agents.length;
+                for (const agent of agents) {
+                    // we go through all the agents if their preferred task matches 
+                    // this task we add one to the counter
+                    let prefererence = agent.preferredTask();
+                    if (prefererence === task_name) {
+                        counter--;
+                    }
+                }
+                return ((NUMBER_OF_AGENTS - counter) / NUMBER_OF_AGENTS);
+            }
+        }
 
 
 
@@ -585,7 +627,7 @@ class Agent {
         task.updateGRT(task.aot);
         // this.restingTime /= 2;// here add slider that chenges how much resting time is decreased
         // this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
-        console.log(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
+        console.log(`AGENT: ${this.ID} is resting. Behavior ${this.behavior} Resting time ${this.restingTime}`);
         this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
         this.resting = true;
         this.restingTimer = task.aot;

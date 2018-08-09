@@ -87,7 +87,7 @@ class Task {
 
         // else we return a value that is inverse proportional
         // as many agents prefer that task as lower it is its value
-        let amountOfTime = (counter / NUMBER_OF_AGENTS) * TIME_SCALE * TS_FRACTION;
+        let amountOfTime = ((NUMBER_OF_AGENTS - counter) / NUMBER_OF_AGENTS) * TIME_SCALE * TS_FRACTION;
         amountOfTime = Math.round(amountOfTime);
         // console.log(amountOfTime);
         // down here we remove time from the GRT if it reaches 0 it stays 0!
