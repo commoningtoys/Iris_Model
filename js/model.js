@@ -5,7 +5,8 @@ class IrisModel {
         this.GLOBAL_RESTING_TIME = this.calcGlobalRestTime(num_agents, num_task);
         // add agents
         for (let i = 0; i < num_agents; i++) {
-            this.agents.push(new Agent(TASK_LIST, i + 1, false, AGENT_BEHAVIORS[i % 2 == 0 ? 0 : 1]));
+            let randomIndex = Math.floor(Math.random() * 4);
+            this.agents.push(new Agent(TASK_LIST, i + 1, false, AGENT_BEHAVIORS[randomIndex]));
         }
         // add players
         for(let i = 0; i < num_players || 0; i++){

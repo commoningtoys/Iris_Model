@@ -32,7 +32,7 @@ class Agent {
                 }
             });
             this.masterTask = result;
-            console.log(this.masterTask);
+            // console.log(this.masterTask);
         }
 
         // the next attributes are used for the trading system,
@@ -244,7 +244,7 @@ class Agent {
      * 
      * @param {*} task 
      */
-    trade(task) {
+    trade(task, agents) {
         /**
          * ATTENZIONE IMPORTANTE!!!!!!!!!!
          * don't forget to update the fld 
@@ -266,7 +266,10 @@ class Agent {
                      */
                     if (this.FLD < 2) {
                         // if the agent has enought resting time he rests
-                        if (this.restingTime >= task.aot) this.rest(task);
+                        if (this.restingTime >= task.aot) {
+                            this.rest(task);
+                            return true;
+                        }
                         else {
                             // the agent trades the task
                             this.stress++;
@@ -276,6 +279,7 @@ class Agent {
                     } else if (task.type === lastTask) {
                         // here the agent trades for another task
                         assignTask(this);
+                        return true;
                     }
 
                     function assignTask(agent) {
@@ -331,7 +335,7 @@ class Agent {
                      * therefore we return true and the agent works
                      * look it up in task.js lines 200 - 202
                      */
-                    console.log('executing the task');
+                    // console.log('executing the task');
 
                     return false;
                 }
@@ -361,8 +365,10 @@ class Agent {
                         }
                         else return false;// let the agent execute the task
                     }
-                }else if(task.type !== this.masterTask){
+                    return true;
+                } else if (task.type !== this.masterTask) {
                     this.assignTradedTask(this.masterTask);
+                    return true;
                 }
             } else {
                 /**
@@ -373,6 +379,37 @@ class Agent {
             }
         }
 
+
+        /**
+         * GENIESSER BEAHAVIOR
+         * uses his resting time whenever he has enough
+         */
+
+        if (this.behavior === 'geniesser') {
+            if (this.restingTime >= task.aot || this.FLD < 2) {
+                if (this.restingTime >= task.aot) {
+                    // if the agent has enough resting time than he always rests
+                    this.rest(task);
+                    return true;
+                } else {
+                    this.stress++;
+                    return false;// else he executes the task
+                }
+            }else{
+                // the agent does not trade
+                return false;
+            }
+        }
+
+
+        /**
+         * Capitalist behavior
+         * tries to accumulate as much as resting time as possible
+         */
+
+         if(this.behavior === 'capitalist'){
+
+         }
 
 
 

@@ -194,7 +194,7 @@ class Task {
                 // noLoop();
                 break;
             } else {
-                if (!agent.trade(this)) {
+                if (!agent.trade(this, agents)) {
                     // if the agent has not traded 
                     // then he executes the task
                     skill = agent.getPreferences(this.type).skill_level;
