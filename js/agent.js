@@ -8,19 +8,39 @@ class Agent {
         this.ID = is_player ? `PLAYER_${nf(id, 4)}` : nf(id, 4);
 
         this.behavior = _behavior;
-        // this.behaviour = new Behaviour(AGENT_BEHAVIOURS[0], this);
 
-        this.restingTime = 0;//MINIMUM + Math.floor(Math.random() * MAXIMUM);
+
+        this.restingTime = 0;
         this.resting = false;
         this.restingTimer = 0;
         this.preferences = this.makePreferences(task_list);//preferences for each single task
         this.preferenceArchive = [];
+        /**
+         * if the agent is perfectionist we need to define
+         * the task he wants to master
+         */
+        if (this.behavior === 'perfectionist') {
+            let max = 0;
+            let myObj = this.preferences;
+            let result = ''
+            Object.keys(myObj).forEach(key => {
+                let pref = myObj[key].skill_level;
+                let name = myObj[key].task_name;
+                if (pref > max) {
+                    max = pref;
+                    result = name;
+                }
+            });
+            this.masterTask = result;
+            console.log(this.masterTask);
+        }
+
         // the next attributes are used for the trading system,
         this.tradeTask = '';// this defines the task the agent wants to do
         this.hasTraded = false;// if has traded than it will be selecteds for the trade task
         this.totalTaskCompleted = 0;
         this.totalTaskCompletedByAgents = 0;
-        // this.agents = [];
+
         this.currentTask = '';
         this.FLD = randomMinMAx();// feel like doing
         this.solidarity = randomMinMAx();
@@ -80,6 +100,7 @@ class Agent {
     htmlText() {
         const BR = '<br>';
         let str1 = '<b>AGENT: ' + this.ID + '</b>' + BR;
+        let str11 = '<b>behavior: ' + this.behavior + '</b>' + BR;
         let str2 = (this.working == true ? 'doing this task : ' + this.currentTask : 'is not working') + BR;
         let str21 = 'working timer: ' + BR + this.workingTimer + BR;
         let str3 = (this.hasTraded === true ? 'has traded to do : ' + this.tradeTask : 'has not traded') + BR;
@@ -103,7 +124,7 @@ class Agent {
             str6 += "</div><br>";
         });
         str6 += '</div>';
-        return str1 + str2 + str21 + str3 + str31 + str4 + str5 + str6;
+        return str1 + str11 + str2 + str21 + str3 + str31 + str4 + str5 + str6;
     }
     /**
      * 
@@ -249,19 +270,20 @@ class Agent {
                         else {
                             // the agent trades the task
                             this.stress++;
-                            if(task.type === lastTask)assignTask(this);// if the task is the same as the last one than assign a new task 
+                            if (task.type === lastTask) assignTask(this);// if the task is the same as the last one than assign a new task 
                             else return false;// let the agent execute the task
                         }
-                    } else {
+                    } else if (task.type === lastTask) {
                         // here the agent trades for another task
                         assignTask(this);
                     }
+
                     function assignTask(agent) {
                         // let fld = this.preferenceArchive.map(result => result.feel_like_doing);
                         // const max = Math.max(...otherTasksCompleted);// magic trick
+                        // we always check the last entry of the preference archive
                         let index = agent.preferenceArchive.length - 1;
                         if (index >= 0) {
-                            // let pref = agent.preferenceArchive.map(result => result.preferences[index]);
                             let pref = agent.preferenceArchive[index].preferences;
                             let completed = [];
                             /**
@@ -313,6 +335,41 @@ class Agent {
 
                     return false;
                 }
+            }
+        }
+
+
+        /**
+         * PERFECTIONIST BEHAVIOR
+         * tends to execute only the task he wants to master
+         */
+
+        if (this.behavior === 'perfectionist') {
+            if (task.type !== this.masterTask || this.FLD < 2) {
+                if (this.FLD < 2) {
+                    // here we handle the case in which the agent wants to rest
+                    // if the agent has enought resting time he rests
+                    if (this.restingTime >= task.aot) this.rest(task);
+                    else {
+                        // if the agent has no resting time than he 
+                        // gets a random task assigned or he just executes
+                        // the task
+                        this.stress++;
+                        if (task.type !== this.masterTask) {
+                            // the agent decides to the task he wants to master
+                            this.assignTradedTask(this.masterTask);
+                        }
+                        else return false;// let the agent execute the task
+                    }
+                }else if(task.type !== this.masterTask){
+                    this.assignTradedTask(this.masterTask);
+                }
+            } else {
+                /**
+                 * the agent executes the task because
+                 * the type matches with the one he wants to master
+                 */
+                return false;
             }
         }
 
@@ -496,6 +553,12 @@ class Agent {
         this.resting = true;
         this.restingTimer = task.aot;
         // this.updateAttributes(task, true);
+        this.setInfo();
+    }
+
+    assignTradedTask(task_name) {
+        this.hasTraded = true;
+        this.tradeTask = task_name;
         this.setInfo();
     }
 
@@ -715,17 +778,6 @@ class Agent {
      */
     makePreferences(arr) { // MAYBE NEEDSD REFACTORING MAKING IT AN OBJECT RATHER THAN A ARRAY OF OBJECTS
         const PREFERENCE_OFFSET = 30;
-        // let result = [];
-        // for (const el of arr) {
-        //     let skill = randomMinMAx();
-        //     result.push({
-        //         task_name: el.type,
-        //         completed: 0, // how many the task has been completed
-        //         skill_level: skill,
-        //         task_preference: this.calculatePreference(skill, PREFERENCE_OFFSET)
-        //         // need to add a way to update the prefrence based on how often the same task has been completed
-        //     })
-        // }
 
         let result = {};
         for (const el of arr) {
@@ -736,15 +788,6 @@ class Agent {
                 skill_level: skill,
                 task_preference: this.calculatePreference(skill, PREFERENCE_OFFSET)
             }
-            // result.push({
-            //     task_name: {
-            //         // task_name: el.type,
-            //         completed: 0, // how many the task has been completed
-            //         skill_level: skill,
-            //         task_preference: this.calculatePreference(skill, PREFERENCE_OFFSET)
-            //     }
-            //     // need to add a way to update the prefrence based on how often the same task has been completed
-            // })
         }
         // console.log(result);
         return result;
