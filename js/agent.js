@@ -42,7 +42,7 @@ class Agent {
         this.totalTaskCompletedByAgents = 0;
 
         this.currentTask = '';
-        this.FLD = this.behavior == 'capitalist' ? 100 : randomMinMAx();// feel like doing
+        this.FLD = this.behavior === 'capitalist' ? 100 : randomMinMAx();// feel like doing
         this.solidarity = randomMinMAx();
         this.stress = 0;// we will need this to see how stressed the agents are, the stress will increase when the agents can't rest while FLD is 0
         this.ability = true;
@@ -60,7 +60,7 @@ class Agent {
         };
         this.showStatistics = false;
         this.preferenceColors = {
-            skill: color(255, 255, 0),
+            skill: color(0, 255, 0),
             preference: color(255, 0, 255),
             FLD: color(0, 255, 255),
             restingTime: color(255, 0, 0)
@@ -149,6 +149,12 @@ class Agent {
         let fld = this.preferenceArchive.map(result => result.feel_like_doing);
         let rt = this.preferenceArchive.map(result => result.resting_time);
         // and here we draw them in the infographic
+        stroke(255);
+        strokeWeight(1);
+        for (let i = 1; i < 6; i++) {
+            line(posX(0, MAXIMUM), posY(MAXIMUM, i), posX(0, MINIMUM), posY(MINIMUM, i));
+            line(posX(0, MAXIMUM), posY(MINIMUM, i), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, i));
+        }
         printGraphic(`AGENT_ID${this.ID}FLD`, fld, this.preferenceColors.FLD, 1);
         printGraphic('\nRESTING \nTIME', rt, this.preferenceColors.restingTime, 1);
         // here we extract preferences and we NEEDS REFACTORING!!
@@ -165,10 +171,7 @@ class Agent {
         function printGraphic(str, arr, col, row_number) {
             fill(255);
             noStroke();
-            text(str, PADDING, posY(MAXIMUM, row_number))
-            stroke(255);
-            line(posX(0, MAXIMUM), posY(MAXIMUM, row_number), posX(0, MINIMUM), posY(MINIMUM, row_number));
-            line(posX(0, MAXIMUM), posY(MINIMUM, row_number), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, row_number));
+            text(str, PADDING, posY(MAXIMUM, row_number));
             noFill();
             stroke(col);
             let i = 0;
@@ -432,7 +435,7 @@ class Agent {
                 return true;
             } else {
                 const lastElement = taskValues.length - 1
-                if(taskValues[lastElement].task_value >= 0.5){
+                if (taskValues[lastElement].task_value >= 0.5) {
                     this.assignTradedTask(taskValues[lastElement].task_name);
                     return true;
                 } else return false;
