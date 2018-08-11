@@ -63,7 +63,8 @@ class Agent {
             skill: color(0, 255, 0),
             preference: color(255, 0, 255),
             FLD: color(0, 255, 255),
-            restingTime: color(255, 0, 0)
+            restingTime: color(255, 0, 0),
+            stress: color(255, 255, 0)
         }
         // this.makeInfo();
         // this.setInfo();
@@ -145,9 +146,10 @@ class Agent {
         const INFO_HEIGHT = (height - (6 * PADDING)) / ROWS;
         const CT = this.currentTask;
         // console.log(this.currentTask);
-        // here we extract the values of FLD and resting time
+        // here we extract the values of FLD, resting time && stress
         let fld = this.preferenceArchive.map(result => result.feel_like_doing);
         let rt = this.preferenceArchive.map(result => result.resting_time);
+        let stress = this.preferenceArchive.map(result => result.stress_level);
         // and here we draw them in the infographic
         stroke(255);
         strokeWeight(1);
@@ -157,6 +159,7 @@ class Agent {
         }
         printGraphic(`AGENT_ID${this.ID}FLD`, fld, this.preferenceColors.FLD, 1);
         printGraphic('\nRESTING \nTIME', rt, this.preferenceColors.restingTime, 1);
+        printGraphic('\n\n\nSTRESS', stress, this.preferenceColors.stress, 1);
         // here we extract preferences and we NEEDS REFACTORING!!
         let i = 2;
         for (const el of TASK_LIST) {
@@ -399,6 +402,7 @@ class Agent {
                     return true;
                 } else {
                     this.stress++;
+                    this.stress = clamp(this.stress, MINIMUM, MAXIMUM);
                     return false;// else he executes the task
                 }
             } else {
@@ -423,14 +427,14 @@ class Agent {
             for (const task of TASK_LIST) {
                 let obj = {
                     task_name: task.type,
-                    task_value: taskValue(task.type)
+                    task_value: this.taskValue(agents, task.type)
                 }
                 taskValues.push(obj);
             }
             // console.log(taskValues);
             taskValues.sort((a, b) => a.task_value - b.task_value);
             // console.log(taskValues, 'sorted');
-            if (this.FLD < 2 && taskValue(task.type) < 0.2 && this.restingTime >= task.aot) {
+            if (this.FLD < 2 && this.taskValue(agents, task.type) < 0.2 && this.restingTime >= task.aot) {
                 this.rest(task);
                 return true;
             } else {
@@ -441,19 +445,7 @@ class Agent {
                 } else return false;
             }
 
-            function taskValue(task_name) {
-                let counter = agents.length;
-                const NUMBER_OF_AGENTS = agents.length;
-                for (const agent of agents) {
-                    // we go through all the agents if their preferred task matches 
-                    // this task we add one to the counter
-                    let prefererence = agent.preferredTask();
-                    if (prefererence === task_name) {
-                        counter--;
-                    }
-                }
-                return ((NUMBER_OF_AGENTS - counter) / NUMBER_OF_AGENTS);
-            }
+
         }
 
 
@@ -550,6 +542,21 @@ class Agent {
         //     return true;
         // }
     }
+
+    taskValue(agents, task_name) {
+        let counter = agents.length;
+        const NUMBER_OF_AGENTS = agents.length;
+        for (const agent of agents) {
+            // we go through all the agents if their preferred task matches 
+            // this task we add one to the counter
+            let prefererence = agent.preferredTask();
+            if (prefererence === task_name) {
+                counter--;
+            }
+        }
+        return ((NUMBER_OF_AGENTS - counter) / NUMBER_OF_AGENTS);
+    }
+
     /**
      * 
      * @param {*} task 
@@ -616,10 +623,10 @@ class Agent {
      * sets the agent at work for a given amount of time
      * @param {Number} amount_of_time 
      */
-    work(amount_of_time, task, agents) {
+    work(amount_of_time, task, agents, brute_forced) {
         this.working = true;
         this.workingTimer = amount_of_time;
-        this.updateAttributes(task, agents);
+        this.updateAttributes(task, agents, brute_forced);
         this.currentTask = task.type;// we set the current task according to the task the agent is currently working on
         this.setInfo();
         // this.makeInfo(`AGENT: ${this.ID} is executing ${task.type}. It will take ${amount_of_time} ticks`);
@@ -671,7 +678,7 @@ class Agent {
      * @param {Array} task 
      * @param {Array} agents 
      */
-    updateAttributes(task, agents) {
+    updateAttributes(task, agents, brute_forced) {
         /**
          * - resting time (++) increases by some value depending on the value of the task
          * - preference (could be fixed, or updating, as described on the left); 
@@ -686,7 +693,7 @@ class Agent {
         // this.workingTimer = task.aot;
         // let taskName = task.type;
         this.updateCompletedTasks(task.type);
-        this.updateFLD(agents);
+        this.updateFLD(agents, task, brute_forced);
         // this.FLD = ;
         // console.log(`${this.ID}_value: ${task.value}`);
         this.restingTime += task.value;// * task_executed == true ? 1 : -1;
@@ -702,6 +709,7 @@ class Agent {
             executed_task: task.type,
             resting_time: this.restingTime,
             feel_like_doing: this.FLD,
+            stress_level: this.stress,
             traded: this.hasTraded === true ? this.tradeTask : ''
         });
         if (this.preferenceArchive.length > 100) this.preferenceArchive.splice(0, 1);
@@ -762,7 +770,7 @@ class Agent {
         });
     }
 
-    updateFLD(agents) {
+    updateFLD(agents, task, brute_forced) {
         /**
           * this algorithm looks how much the other agents have been 
           * working. If the others are working more than this agent than
@@ -771,21 +779,46 @@ class Agent {
           * it could be possible to introduce the concept of groups here where 
           * the agents looks only how the group performs
           */
-        let otherTasksCompleted = [];
-        for (const agent of agents) {
-            if (agent !== this) otherTasksCompleted.push(agent.totalTaskCompleted);
-        }
 
-        const max = Math.max(...otherTasksCompleted);// magic trick
-        // let result = (this.totalTaskCompleted / (this.totalTaskCompletedByAgents / this.numberOfAgents));
-        let result = Math.floor((this.totalTaskCompleted / max) * 5);
-        this.FLD -= result;
+        if (brute_forced) {
+            // here we manage the decrease in FLD when the agents are forced to do a task
+            if (this.behavior === 'capitalist') {
+                if (this.taskValue(agents, task.type) < 0.2) this.FLD -= 2;
+            } else if (this.behavior === 'perfectionist') {
+                if (task.type !== this.masterTask) this.FLD /= 2;
+            } else {
+                this.FLD /= 2;
+            }
+        } else {
+            // here their normal behavior when executing a task
+            if (this.behavior === 'capitalist') {
+                /**
+                 * we check who has the highest amout of resting time if it is 
+                 * me the capitalist than the FLD drops 2 points or less
+                 * otherwise it drops by 0.5 points
+                 */
+                let agentsCopy = JSON.parse(JSON.stringify(agents));
+                const lastIndex = agentsCopy.length - 1;
+                agentsCopy.sort((a, b) => a.restingTime - b.restingTime);
+                // console.log(agentsCopy[lastIndex].ID, agentsCopy[lastIndex].restingTime, this.ID);
+                if (agentsCopy[lastIndex].ID === this.ID) {
+                    this.FLD -= 2;
+                } else {
+                    this.FLD -= 0.5;
+                }
+            } else {
+                let otherTasksCompleted = [];
+                for (const agent of agents) {
+                    if (agent !== this) otherTasksCompleted.push(agent.totalTaskCompleted);
+                }
+
+                const max = Math.max(...otherTasksCompleted);// magic trick
+                // let result = (this.totalTaskCompleted / (this.totalTaskCompletedByAgents / this.numberOfAgents));
+                let result = Math.floor((this.totalTaskCompleted / max) * 5);
+                this.FLD -= result;
+            }
+        }
         this.FLD = clamp(this.FLD, MINIMUM, MAXIMUM);
-        // console.log('update FLD: ', this.ID, this.totalTaskCompleted, max, result, this.FLD);
-        // if (result > 1) this.FLD--;
-        // else this.FLD++;
-        // result = (this.totalTaskCompleted / sum) * agents.length;
-        // console.log(this.totalTaskCompleted, sum, result);
     }
     // /**
     //  * updates the task_preference in this.preferences by adding +1

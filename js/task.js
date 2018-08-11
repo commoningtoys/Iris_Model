@@ -141,7 +141,7 @@ class Task {
         // here we check if the agent has traded before if yes he executes the task
         for (const agent of agents) {
             // skill = agent.getPreferences(this.type).skill_level;
-            if (agent.hasTraded && agent.tradeTask.includes(this.type) && (!agent.working || !agent.resting)) {
+            if (agent.hasTraded && agent.tradeTask === this.type && (!agent.working || !agent.resting)) {
                 // this is where chooseTask() happens
                 if (agent.isPlayer) {
                     // if the agent is the player than make him work
@@ -231,11 +231,14 @@ class Task {
                  * NEEDS TO BE UPDATED ACCORDIGLY
                  */
                 agent.resting = false;
+                // check resting timer!!!
                 agent.hasTraded = false;
                 agent.tradeTask = '';
+                agent.stress++;
+                agent.stress = clamp(agent.stress, MINIMUM, MAXIMUM);
                 let skill = agent.getPreferences(this.type).skill_level;
                 let time = this.amountOfTimeBasedOnSkill(skill);
-                agent.work(time, this, agents);
+                agent.work(time, this, agents, true);
                 // agent.FLD /= 2;
                 // add this to the html text
                 console.log(`agent_${agent.ID} has been brute forced to do ${this.type}`);
