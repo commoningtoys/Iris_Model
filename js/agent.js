@@ -653,7 +653,7 @@ class Agent {
             resting_time: this.restingTime,
             feel_like_doing: this.FLD,
             stress_level: this.stress,
-            amount_of_time: _amount_of_time,
+            amount_of_time: mappedAmountOfTime,
             traded: this.hasTraded === true ? this.tradeTask : ''
         });
         if (this.preferenceArchive.length > 100) this.preferenceArchive.splice(0, 1);
