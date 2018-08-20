@@ -230,7 +230,6 @@ class Task {
                  * AND ACCORDING TO THAT THE FLD
                  * NEEDS TO BE UPDATED ACCORDIGLY
                  */
-                console.log(`called for brute force resting? ${agent.resting} && resting timer = ${agent.restingTimer}`);
                 agent.resting = false;
                 agent.restingTimer = 0;
                 // check resting timer!!!
@@ -278,10 +277,10 @@ class Task {
         // here we subtract the skill level the the medium skill level and we divide it 
         // by maximum to get a value between 0 and 1, that we multiply by the time scale.
         // the result will oscillate between -0.5 and +0.5 that we multiply by the time scale
-        let result = ((MEDIUM_SKILL - skill_level) / MAXIMUM) * TIME_SCALE * TS_FRACTION;
+        let result = ((MEDIUM_SKILL - skill_level) / MAXIMUM) * this.aot;
         result = Math.round(result);
         result += this.aot;
-        // console.log(`this is the skill level: ${skill_level} and this the median: 50. this is the amount of time: ${this.aot} and the result: ${result}`);
+        console.log(`${this.type}this is the skill level: ${skill_level} and this the median: 50. this is the amount of time: ${this.aot} and the result: ${result}`);
         const MINIMUM_TIME = TIME_SCALE * 2;// this is the minimum time an agent has to invest for an assigned task aka 15 minutes
         if (result <= MINIMUM_TIME) return MINIMUM_TIME;// if the result is less than the minimum time return the minimum time
         else return result;// else return the result

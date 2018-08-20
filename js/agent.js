@@ -64,7 +64,8 @@ class Agent {
             preference: color(255, 0, 255),
             FLD: color(0, 255, 255),
             restingTime: color(255, 0, 0),
-            stress: color(255, 255, 0)
+            stress: color(255, 255, 0),
+            time: color(0, 0, 255)
         }
         // this.makeInfo();
         // this.setInfo();
@@ -150,6 +151,7 @@ class Agent {
         let fld = this.preferenceArchive.map(result => result.feel_like_doing);
         let rt = this.preferenceArchive.map(result => result.resting_time);
         let stress = this.preferenceArchive.map(result => result.stress_level);
+        let aot = this.preferenceArchive.map(result => result.amount_of_time);
         // and here we draw them in the infographic
         stroke(255);
         strokeWeight(1);
@@ -160,6 +162,7 @@ class Agent {
         printGraphic(`AGENT_ID${this.ID}FLD`, fld, this.preferenceColors.FLD, 1);
         printGraphic('\nRESTING \nTIME', rt, this.preferenceColors.restingTime, 1);
         printGraphic('\n\n\nSTRESS', stress, this.preferenceColors.stress, 1);
+        printGraphic('\n\n\nSTRESS', aot, this.preferenceColors.time, 1);
         // here we extract preferences and we NEEDS REFACTORING!!
         let i = 2;
         for (const el of TASK_LIST) {
@@ -563,68 +566,7 @@ class Agent {
         return ((NUMBER_OF_AGENTS - counter) / NUMBER_OF_AGENTS);
     }
 
-    /**
-     * 
-     * @param {*} task 
-     */
-    playerInteraction(task) {
-        this.playerTaskToExecute = task;
-        // needs to be done in the index.html
-        $('.player-interface').toggle();
-        // console.log($('.player-interface')[0].attributes[1].value)
-        document.getElementById('task-name').innerHTML = task.type;
-        // $('#yes').val = this.ID;
-        document.getElementById('yes').value = this.ID;// we set the ID as value so we can use it later to find the agent in the array
-        // let interactionP = document.createElement('p');
-        // here we handle a positive answer
-        // $('#yes').click(() => {
-        //     // here a new window should open
-        //     // this.work()
-        // });
-        // the following code is to keep the first option always selected
-        document.getElementById('other-tasks').options[0].selected = true;
-        let i = 0;
-        for (const t of TASK_LIST) {
-            if (t.type !== task.type) {
-                $('#task-' + (i + 1))
-                    .html(t.type)
-                    .val(t.type);
-                i++
-            }
-        }
-    }
-    /**
-     * ADD DESCRIPTION
-     * @param {*} agents 
-     */
-    playerWorks(agents) {
-        // here the player timer should start
-        noLoop();
-        console.log('noLoop');
-        $('.player-work').show();
-        this.working = true;
-        this.updateAttributes(this.playerTaskToExecute, agents);
-        this.currentTask = this.playerTaskToExecute.type;
 
-        this.setInfo();
-        // console.log('player works!', this.working);
-        // let skill = this.getPreferences(this.playerTaskToExecute.type).skill_level;
-        // console.log(skill);
-        // let time = this.playerTaskToExecute.amountOfTimeBasedOnSkill(skill);
-        // this.work(time, this.playerTaskToExecute, agents);
-    }
-    /**
-     * 
-     * @param {*} task_name 
-     */
-    playerTrades(task_name) {
-        this.hasTraded = true;
-        console.log(this.hasTraded);
-        this.tradeTask = task_name;
-        console.log(this.tradeTask);
-        this.setInfo();
-        // console.log(this);
-    }
     /**
      * sets the agent at work for a given amount of time
      * @param {Number} amount_of_time 
@@ -632,7 +574,7 @@ class Agent {
     work(amount_of_time, task, agents, brute_forced) {
         this.working = true;
         this.workingTimer = amount_of_time;
-        this.updateAttributes(task, agents, brute_forced);
+        this.updateAttributes(task, agents, brute_forced, amount_of_time);
         this.currentTask = task.type;// we set the current task according to the task the agent is currently working on
         this.setInfo();
         // this.makeInfo(`AGENT: ${this.ID} is executing ${task.type}. It will take ${amount_of_time} ticks`);
@@ -684,7 +626,7 @@ class Agent {
      * @param {Array} task 
      * @param {Array} agents 
      */
-    updateAttributes(task, agents, brute_forced) {
+    updateAttributes(task, agents, brute_forced, _amount_of_time) {
         /**
          * - resting time (++) increases by some value depending on the value of the task
          * - preference (could be fixed, or updating, as described on the left); 
@@ -695,20 +637,15 @@ class Agent {
          * - occupied (true) agent becomes occupied when doing the task (not trading);
          *   it stays occupied for the duration of Taks's amount of time
          */
-        // this.working = true;
-        // this.workingTimer = task.aot;
-        // let taskName = task.type;
         this.updateCompletedTasks(task.type);
         this.updateFLD(agents, task, brute_forced);
-        // this.FLD = ;
-        // console.log(`${this.ID}_value: ${task.value}`);
         this.restingTime += task.value;// * task_executed == true ? 1 : -1;
-        // console.log(this.restingTime);
         // console.log(`executed task: ${this.restingTime}, value: ${task.value}`);
         /**
-         * the magik trick below let us to push the preferences
+         * the magic trick below let us to push the preferences
          * without copying the reference to the original array 
          */
+        let mappedAmountOfTime = map(_amount_of_time, 0, ADMIN.amount_of_time + (ADMIN.amount_of_time / 2), MINIMUM, MAXIMUM)
         let insert = JSON.parse(JSON.stringify(this.preferences));// the trick
         this.preferenceArchive.push({
             preferences: insert,
@@ -716,6 +653,7 @@ class Agent {
             resting_time: this.restingTime,
             feel_like_doing: this.FLD,
             stress_level: this.stress,
+            amount_of_time: _amount_of_time,
             traded: this.hasTraded === true ? this.tradeTask : ''
         });
         if (this.preferenceArchive.length > 100) this.preferenceArchive.splice(0, 1);
@@ -927,6 +865,77 @@ class Agent {
         if (result > MAXIMUM) result = MAXIMUM
         return result;
     }
+
+
+
+
+    /**
+     * PLAYER ZONE
+     */
+
+    /**
+    * 
+    * @param {*} task 
+    */
+    playerInteraction(task) {
+        this.playerTaskToExecute = task;
+        // needs to be done in the index.html
+        $('.player-interface').toggle();
+        // console.log($('.player-interface')[0].attributes[1].value)
+        document.getElementById('task-name').innerHTML = task.type;
+        // $('#yes').val = this.ID;
+        document.getElementById('yes').value = this.ID;// we set the ID as value so we can use it later to find the agent in the array
+        // let interactionP = document.createElement('p');
+        // here we handle a positive answer
+        // $('#yes').click(() => {
+        //     // here a new window should open
+        //     // this.work()
+        // });
+        // the following code is to keep the first option always selected
+        document.getElementById('other-tasks').options[0].selected = true;
+        let i = 0;
+        for (const t of TASK_LIST) {
+            if (t.type !== task.type) {
+                $('#task-' + (i + 1))
+                    .html(t.type)
+                    .val(t.type);
+                i++
+            }
+        }
+    }
+    /**
+     * ADD DESCRIPTION
+     * @param {*} agents 
+     */
+    playerWorks(agents) {
+        // here the player timer should start
+        noLoop();
+        console.log('noLoop');
+        $('.player-work').show();
+        this.working = true;
+        this.updateAttributes(this.playerTaskToExecute, agents);
+        this.currentTask = this.playerTaskToExecute.type;
+
+        this.setInfo();
+        // console.log('player works!', this.working);
+        // let skill = this.getPreferences(this.playerTaskToExecute.type).skill_level;
+        // console.log(skill);
+        // let time = this.playerTaskToExecute.amountOfTimeBasedOnSkill(skill);
+        // this.work(time, this.playerTaskToExecute, agents);
+    }
+    /**
+     * 
+     * @param {*} task_name 
+     */
+    playerTrades(task_name) {
+        this.hasTraded = true;
+        console.log(this.hasTraded);
+        this.tradeTask = task_name;
+        console.log(this.tradeTask);
+        this.setInfo();
+        // console.log(this);
+    }
+
 }
 
 
