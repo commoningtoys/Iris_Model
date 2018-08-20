@@ -6,19 +6,20 @@ class IrisModel {
         // add agents
         for (let i = 0; i < num_agents; i++) {
             // let randomIndex = Math.floor(Math.random() * 4);
-            let index = i % AGENT_BEHAVIORS.length
+            let index = i % AGENT_BEHAVIORS.length;
             this.agents.push(new Agent(TASK_LIST, i + 1, false, AGENT_BEHAVIORS[index]));
         }
         // add players
         for(let i = 0; i < num_players || 0; i++){
             this.agents.push(new Agent(TASK_LIST, i + 1, true))
         }
+        // make the info for all of the agents
         for (const agent of this.agents) {
             agent.makeInfo(this.agents);
             agent.setInfo();
         }
         // add tasks
-        let restingTimePerTask = (this.GLOBAL_RESTING_TIME / TASK_LIST.length)
+        let restingTimePerTask = Math.floor(this.GLOBAL_RESTING_TIME / (TASK_LIST.length * num_task))
         for(let i = 0; i < num_task; i++){
             for (const task of TASK_LIST) {
                 this.tasks.push(new Task(task, restingTimePerTask));

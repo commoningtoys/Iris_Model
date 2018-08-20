@@ -280,6 +280,7 @@ class Agent {
                         else {
                             // the agent trades the task
                             this.stress++;
+                            this.stress = clamp(this.stress, MINIMUM, MAXIMUM);
                             if (task.type === lastTask) assignTask(this);// if the task is the same as the last one than assign a new task 
                             else return false;// let the agent execute the task
                         }
@@ -361,19 +362,24 @@ class Agent {
                 if (this.FLD < 2) {
                     // here we handle the case in which the agent wants to rest
                     // if the agent has enought resting time he rests
-                    if (this.restingTime >= task.aot) this.rest(task);
+                    if (this.restingTime >= task.aot) {
+                        this.rest(task);
+                        return true;
+                    }
                     else {
                         // if the agent has no resting time than he 
                         // gets a random task assigned or he just executes
                         // the task
                         this.stress++;
+                        this.stress = clamp(this.stress, MINIMUM, MAXIMUM);
                         if (task.type !== this.masterTask) {
                             // the agent decides to the task he wants to master
                             this.assignTradedTask(this.masterTask);
+                            return true;
                         }
                         else return false;// let the agent execute the task
                     }
-                    return true;
+                    // return true;
                 } else if (task.type !== this.masterTask) {
                     this.assignTradedTask(this.masterTask);
                     return true;

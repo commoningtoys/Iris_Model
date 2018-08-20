@@ -80,7 +80,7 @@ class Task {
             // we go through all the agents if their preferred task matches 
             // this task we add one to the counter
             let prefererence = agent.preferredTask();
-            if (prefererence.includes(this.type)) {//string comparison
+            if (prefererence === this.type) {//string comparison
                 counter--;
             }
         }
@@ -230,7 +230,9 @@ class Task {
                  * AND ACCORDING TO THAT THE FLD
                  * NEEDS TO BE UPDATED ACCORDIGLY
                  */
+                console.log(`called for brute force resting? ${agent.resting} && resting timer = ${agent.restingTimer}`);
                 agent.resting = false;
+                agent.restingTimer = 0;
                 // check resting timer!!!
                 agent.hasTraded = false;
                 agent.tradeTask = '';
