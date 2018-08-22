@@ -56,6 +56,17 @@ body {
 .preference{
     color: #f00;
 }
+
+.display-date{
+    position: fixed;
+    right: 0px;
+    top: 0px;
+    width: 33%;
+    height: min-content;
+    height: -moz-min-content;
+    height: -webkit-min-content;
+}
+
 #p5Sketch{
     position: fixed;
     width: 67%;

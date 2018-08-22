@@ -162,7 +162,7 @@ class Agent {
         printGraphic(`AGENT_ID${this.ID}FLD`, fld, this.preferenceColors.FLD, 1);
         printGraphic('\nRESTING \nTIME', rt, this.preferenceColors.restingTime, 1);
         printGraphic('\n\n\nSTRESS', stress, this.preferenceColors.stress, 1);
-        printGraphic('\n\n\nSTRESS', aot, this.preferenceColors.time, 1);
+        printGraphic('', aot, this.preferenceColors.time, 1);
         // here we extract preferences and we NEEDS REFACTORING!!
         let i = 2;
         for (const el of TASK_LIST) {
@@ -221,6 +221,8 @@ class Agent {
             this.setInfo();
             if (this.restingTimer <= 0) {
                 this.resting = false;
+                // when the agent has rested he also is less stressed
+                this.stress /= 1.5;
                 this.setInfo();
             }
         }

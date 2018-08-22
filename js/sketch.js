@@ -7,7 +7,7 @@ let tasks = [];
 let irisModel;
 function setup() {
   createCanvas(WIDTH(), windowHeight - 4);
-  irisModel = new IrisModel(10, 0, 2);
+  irisModel = new IrisModel(20, 0, 2);
 }
 
 function draw() {

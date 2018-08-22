@@ -41,7 +41,7 @@ class IrisModel {
             let time = TASK_LIST.map(result => result.amount_of_time);//returns an array of amount of time
             amountOfTime += time.reduce((a, b) => a + b);
         }
-        // amountOfTime *= 2;
+        amountOfTime /= 2;
         amountOfTime *= num_agents;
         console.log (amountOfTime);
         return amountOfTime;
