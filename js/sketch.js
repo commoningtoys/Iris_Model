@@ -19,12 +19,16 @@ function draw() {
   }
 
   irisModel.update();
+  // noLoop();
 }
 
 function windowResized() {
   resizeCanvas(WIDTH(), innerHeight);
 }
 
+// function mouseClicked(){
+//   irisModel.update();
+// }
 
 function drawInfos(agent) {
   let infos = agent.getPreferencesAsArray();

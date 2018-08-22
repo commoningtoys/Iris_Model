@@ -10,7 +10,7 @@ class IrisModel {
             this.agents.push(new Agent(TASK_LIST, i + 1, false, AGENT_BEHAVIORS[index]));
         }
         // add players
-        for(let i = 0; i < num_players || 0; i++){
+        for (let i = 0; i < num_players || 0; i++) {
             this.agents.push(new Agent(TASK_LIST, i + 1, true))
         }
         // make the info for all of the agents
@@ -20,11 +20,18 @@ class IrisModel {
         }
         // add tasks
         let restingTimePerTask = Math.floor(this.GLOBAL_RESTING_TIME / (TASK_LIST.length * num_task))
-        for(let i = 0; i < num_task; i++){
+        for (let i = 0; i < num_task; i++) {
             for (const task of TASK_LIST) {
                 this.tasks.push(new Task(task, restingTimePerTask));
             }
         }
+        this.timeUnit = TIME_SCALE;
+
+        this.hours = 0;
+        this.days = 0;
+        this.weeks = 0;
+        this.months = 0;
+        this.years = 0;
         this.getTotalRestingTime();
     }
     /**
@@ -35,45 +42,71 @@ class IrisModel {
      * @param {Number} num_task 
      * @returns the global amount of time the agents have to rest
      */
-    calcGlobalRestTime(num_agents, num_task){
+    calcGlobalRestTime(num_agents, num_task) {
         let amountOfTime = 0;
-        for(let i = 0; i < num_task; i++){
+        for (let i = 0; i < num_task; i++) {
             let time = TASK_LIST.map(result => result.amount_of_time);//returns an array of amount of time
             amountOfTime += time.reduce((a, b) => a + b);
         }
         amountOfTime /= 2;
         amountOfTime *= num_agents;
-        console.log (amountOfTime);
+        console.log(amountOfTime);
         return amountOfTime;
     }
-    update(){
+    update() {
         for (const agent of this.agents) {
             agent.show();
             agent.update();
             // drawInfos(agent);
             // agent.setInfo();
-          }
-        
-          for (const task of this.tasks) {
+        }
+
+        for (const task of this.tasks) {
             // task.show();
             task.updateUrgency(this.agents);
-          }
+        }
+
+        this.timeUnit++;
+        this.setModelTime();
     }
-    getTotalRestingTime(){
+
+    setModelTime() {
+            if (this.timeUnit > 0 && this.timeUnit % TS_FRACTION == 0) {
+                this.hours++;
+            }
+            if (this.hours > 0 && this.hours % 24 == 0) {
+                this.days++;
+                this.hours = 0;
+            }
+            if (this.days > 0 && this.days % 30 == 0) {
+                this.months++;
+                this.days = 0;
+            }
+            if (this.months > 0 && this.months % 12 == 0) {
+                this.years++;
+                this.months = 0;
+                this.weeks = 0;
+            }
+        let currentDate = `years: ${this.years}<br>months: ${this.months}<br>days: ${this.days}<br>hours: ${this.hours}`;
+        // console.log(currentDate);
+        document.getElementById('display-date').innerHTML = currentDate;
+    }
+
+    getTotalRestingTime() {
         let sumAgent = 0;
         for (const agent of this.agents) {
             sumAgent += agent.restingTime;
         }
         let sumTask = 0;
         for (const task of this.tasks) {
-            sumTask += task.GRT;            
+            sumTask += task.GRT;
         }
         console.log(`agent resting time: ${sumAgent}, task GRT: ${sumTask} GLOBAL ${this.GLOBAL_RESTING_TIME}`);
     }
     /**
      * player interactions below
      */
-   playerExecuteTask() {
+    playerExecuteTask() {
         // console.log('YES');
         let task_name = $('#task-name').text();
         // console.log(task_name);
@@ -90,9 +123,9 @@ class IrisModel {
         // })
         // loop();
         $('.player-interface').toggle();
-      }
-      
-      playerTradeTask() {
+    }
+
+    playerTradeTask() {
         let el = $('select#other-tasks option:selected');
         let agent = this.returnPlayerAgent();
         console.log(agent);
@@ -100,33 +133,33 @@ class IrisModel {
         loop();
         $('.player-interface').toggle();
         // console.log($('.player-interface')[0].attributes[1].value);
-      }
-      
-     startPlayerTime() {
+    }
+
+    startPlayerTime() {
         console.log('start');
         let agent = this.returnPlayerAgent();
         agent.playerTimer = 0;
         agent.playerWorking = true;
         console.log(agent.playerWorking);
         loop();
-      }
-      
-      stopPlayerTime() {
+    }
+
+    stopPlayerTime() {
         console.log('stop');
         let agent = this.returnPlayerAgent();
         agent.playerWorking = false;
         agent.working = false;
         if (agent.hasTraded) {
-          agent.hasTraded = false;
-          agent.tradeTask = '';
+            agent.hasTraded = false;
+            agent.tradeTask = '';
         }
         agent.setInfo();
         setTimeout(() => {
-          $('.player-work').hide('fast')
+            $('.player-work').hide('fast')
         }, 500)
-      }
-      
-     returnPlayerAgent() {
+    }
+
+    returnPlayerAgent() {
         return this.agents.filter(obj => obj.ID === document.getElementById('yes').value)[0];
-      }
+    }
 }

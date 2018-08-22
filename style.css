@@ -57,20 +57,27 @@ body {
     color: #f00;
 }
 
-.display-date{
-    position: fixed;
-    right: 0px;
-    top: 0px;
-    width: 33%;
+#display-date{
+    /* position: fixed; */
+    /* left: 0px; */
+    /* top: 0px; */
+    width: 100%;
     height: min-content;
     height: -moz-min-content;
     height: -webkit-min-content;
+    margin-bottom: 10px;
+    /* padding: 10px; */
+    z-index: 99999;
+    background-color: #0f0;
 }
 
 #p5Sketch{
     position: fixed;
     width: 67%;
 }
+
+/* PLAYER STYLING */
+
 .player-interface, .player-work{
     display: none;
     background-color: #0f0;
