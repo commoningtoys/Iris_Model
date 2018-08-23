@@ -120,7 +120,7 @@ class Task {
 
     updateGRT(amount_of_time) {
         this.GRT += amount_of_time;
-        console.log(`GRT got updated by ${amount_of_time}, total GRT = ${this.GRT}`)
+        // console.log(`GRT got updated by ${amount_of_time}, total GRT = ${this.GRT}`)
     }
 
     /**
@@ -162,8 +162,8 @@ class Task {
                     //////////////////////
                     skill = agent.getPreferences(this.type).skill_level;
                     let time = this.amountOfTimeBasedOnSkill(skill);
-                    agent.hasTraded = false; // reset here the traded boolean
                     agent.work(time, this, agents);//the agent works
+                    agent.hasTraded = false; // reset here the traded boolean | needs to be done after the the agent.work otherwise the it is not possible to visualize the trade happening
                     // this.executed++;
                     // console.log('trading agent doing the task!');
                     return;// IF THE AGENT HAS TRADED FOR THIS TASK THAN HE GETS PICKED THEREFORE WE RETURN
