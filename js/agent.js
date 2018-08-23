@@ -168,7 +168,6 @@ class Agent {
         let index1 = 0;
         for (const val of traded) {
             if(val === true){
-                console.log(`traded: ${val}`);
                 let x = posX(index1, traded.length);
                 line(x, 0, x, height);
             }
