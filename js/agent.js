@@ -168,25 +168,6 @@ class Agent {
         // here we draw when an agent has traded or has been brute forced to do a task
         drawLine(traded, this.preferenceColors.traded);
         drawLine(bruteForce, this.preferenceColors.brute_force);
-        // strokeWeight(0.5);
-        // stroke(0, 255, 100);
-        // let index1 = 0;
-        // for (const val of traded) {
-        //     if (val === true) {
-        //         let x = posX(index1, traded.length);
-        //         line(x, 0, x, height);
-        //     }
-        //     index1++;
-        // }
-        // stroke(255, 125, 0);
-        // let index2 = 0;
-        // for (const val of bruteForce) {
-        //     if (val === true) {
-        //         let x = posX(index2, bruteForce.length);
-        //         line(x, 0, x, height);
-        //     }
-        //     index2++;
-        // }
         // here below we draw the information about the preferences of the agent
         printGraphic(`AGENT_ID${this.ID}FLD`, fld, this.preferenceColors.FLD, 1);
         printGraphic('\nRESTING \nTIME', rt, this.preferenceColors.restingTime, 1);
@@ -215,10 +196,7 @@ class Agent {
                 strokeWeight(2);
                 let currX = posX(i, arr.length);
                 let currY = posY(val, row_number);
-                // line(prevX, prevY, currX, currY);
                 vertex(currX, currY);
-                // prevX = currX;
-                // prevY = currY;
                 i++;
             }
             endShape();
