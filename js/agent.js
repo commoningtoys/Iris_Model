@@ -44,6 +44,7 @@ class Agent {
         this.solidarity = randomMinMAx();
         this.stress = 0;// we will need this to see how stressed the agents are, the stress will increase when the agents can't rest while FLD is 0
         this.ability = true;
+        this.wasBruteForced = false;
         // working attributes
         this.working = false;
         this.workingTimer = 0;// how long is the agent at work
@@ -64,7 +65,9 @@ class Agent {
             FLD: color(0, 255, 255),
             restingTime: color(255, 0, 0),
             stress: color(255, 255, 0),
-            time: color(0, 0, 255)
+            time: color(0, 0, 255),
+            traded: color(0, 255, 100),
+            brute_force: color(255, 125, 0)
         }
         // this.makeInfo();
         // this.setInfo();
@@ -163,25 +166,27 @@ class Agent {
             line(posX(0, MAXIMUM), posY(MINIMUM, i), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, i));
         }
         // here we draw when an agent has traded or has been brute forced to do a task
-        strokeWeight(0.5);
-        stroke(0, 255, 100);
-        let index1 = 0;
-        for (const val of traded) {
-            if(val === true){
-                let x = posX(index1, traded.length);
-                line(x, 0, x, height);
-            }
-            index1++;
-        }
-        stroke(255, 125, 0);
-        let index2 = 0;
-        for (const val of bruteForce) {
-            if(val === true){
-                let x = posX(index2, bruteForce.length);
-                line(x, 0, x, height);
-            }
-            index2++;
-        }
+        drawLine(traded, this.preferenceColors.traded);
+        drawLine(bruteForce, this.preferenceColors.brute_force);
+        // strokeWeight(0.5);
+        // stroke(0, 255, 100);
+        // let index1 = 0;
+        // for (const val of traded) {
+        //     if (val === true) {
+        //         let x = posX(index1, traded.length);
+        //         line(x, 0, x, height);
+        //     }
+        //     index1++;
+        // }
+        // stroke(255, 125, 0);
+        // let index2 = 0;
+        // for (const val of bruteForce) {
+        //     if (val === true) {
+        //         let x = posX(index2, bruteForce.length);
+        //         line(x, 0, x, height);
+        //     }
+        //     index2++;
+        // }
         // here below we draw the information about the preferences of the agent
         printGraphic(`AGENT_ID${this.ID}FLD`, fld, this.preferenceColors.FLD, 1);
         printGraphic('\nRESTING \nTIME', rt, this.preferenceColors.restingTime, 1);
@@ -219,6 +224,20 @@ class Agent {
             endShape();
 
         }
+
+        function drawLine(arr, col) {
+            strokeWeight(0.5);
+            stroke(col);
+            let index = 0;
+            for (const val of arr) {
+                if (val === true) {
+                    let x = posX(index, arr.length);
+                    line(x, 0, x, height);
+                }
+                index++;
+            }
+        }
+
         function posX(index, max) {
             return LEFT_GUTTER + map(index, 0, max, 0, INFO_WIDTH - PADDING);
         }
@@ -667,12 +686,12 @@ class Agent {
         this.updateFLD(agents, task, brute_forced);
         this.restingTime += task.value;// * task_executed == true ? 1 : -1;
         // console.log(`executed task: ${this.restingTime}, value: ${task.value}`);
+        this.mappedAmountOfTime = map(_amount_of_time, 0, ADMIN.amount_of_time + (ADMIN.amount_of_time / 2), MINIMUM, MAXIMUM);
+        this.wasBruteForced = brute_forced || false;
         /**
          * the magic trick below let us to push the preferences
          * without copying the reference to the original array 
          */
-        // console.log(this.hasTraded);
-        this.mappedAmountOfTime = map(_amount_of_time, 0, ADMIN.amount_of_time + (ADMIN.amount_of_time / 2), MINIMUM, MAXIMUM);
         let insert = JSON.parse(JSON.stringify(this.preferences));// the trick
         this.preferenceArchive.push({
             preferences: insert,
@@ -682,7 +701,7 @@ class Agent {
             stress_level: this.stress,
             amount_of_time: this.mappedAmountOfTime,
             traded: this.hasTraded,// === true ? this.tradeTask : '',
-            brute_force: brute_forced || false
+            brute_force: this.wasBruteForced
         });
         if (this.preferenceArchive.length > 100) this.preferenceArchive.splice(0, 1);
         this.updatePreferences(task.type);
@@ -865,7 +884,7 @@ class Agent {
      * @param {Array} arr Array of task objects
      * @returns an Array of objects with the preference for each task
      */
-    makePreferences(arr) { // MAYBE NEEDSD REFACTORING MAKING IT AN OBJECT RATHER THAN A ARRAY OF OBJECTS
+    makePreferences(arr) { // MAYBE NEEDS REFACTORING MAKING IT AN OBJECT RATHER THAN A ARRAY OF OBJECTS
         const PREFERENCE_OFFSET = 30;
 
         let result = {};
