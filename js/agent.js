@@ -65,7 +65,7 @@ class Agent {
                 this.color = color(245, 45, 245);
                 break;
             default:
-            this.color = color(255);
+                this.color = color(255);
         }
         this.colors = {
             working: color(255, 0, 0),
@@ -151,7 +151,7 @@ class Agent {
     show() {
         if (this.showStatistics) {
             background(51)
-            this.infographic();
+            // this.infographic();
         }
     }
     /**
@@ -161,7 +161,8 @@ class Agent {
         const LEFT_GUTTER = 120;
         const INFO_WIDTH = width - LEFT_GUTTER;
         const ROWS = 5;
-        const INFO_HEIGHT = (height - (6 * PADDING)) / ROWS;
+        // const INFO_HEIGHT = (height - (6 * PADDING)) / ROWS;
+        const ROW_NUMBER = parseInt(this.ID);
         const CT = this.currentTask;
         // console.log(this.currentTask);
         // here we extract the values of FLD, resting time && stress && more
@@ -176,18 +177,20 @@ class Agent {
         stroke(255);
         strokeWeight(1);
         // FIrst we draw the infographic outline
-        for (let i = 1; i < 6; i++) {
-            line(posX(0, MAXIMUM), posY(MAXIMUM, i), posX(0, MINIMUM), posY(MINIMUM, i));
-            line(posX(0, MAXIMUM), posY(MINIMUM, i), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, i));
-        }
+        // for (let i = 1; i < 6; i++) {
+        //     line(posX(0, MAXIMUM), posY(MAXIMUM, i), posX(0, MINIMUM), posY(MINIMUM, i));
+        //     line(posX(0, MAXIMUM), posY(MINIMUM, i), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, i));
+        // }
+        line(posX(0, MAXIMUM), posY(MAXIMUM, ROW_NUMBER), posX(0, MINIMUM), posY(MINIMUM, ROW_NUMBER));
+        line(posX(0, MAXIMUM), posY(MINIMUM, ROW_NUMBER), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, ROW_NUMBER));
         // here we draw when an agent has traded or has been brute forced to do a task
-        drawLine(traded, this.preferenceColors.traded);
-        drawLine(bruteForce, this.preferenceColors.brute_force);
+        drawLine(traded, this.preferenceColors.traded, ROW_NUMBER);
+        drawLine(bruteForce, this.preferenceColors.brute_force, ROW_NUMBER);
         // here below we draw the information about the preferences of the agent
-        printGraphic(`AGENT_ID${this.ID}FLD`, fld, this.preferenceColors.FLD, 1);
-        printGraphic('\nRESTING \nTIME', rt, this.preferenceColors.restingTime, 1);
-        printGraphic('\n\n\nSTRESS', stress, this.preferenceColors.stress, 1);
-        printGraphic('', aot, this.preferenceColors.time, 1);
+        printGraphic(`AGENT_ID${this.ID}FLD`, fld, this.preferenceColors.FLD, ROW_NUMBER);
+        printGraphic('\nRESTING \nTIME', rt, this.preferenceColors.restingTime, ROW_NUMBER);
+        printGraphic('\n\n\nSTRESS', stress, this.preferenceColors.stress, ROW_NUMBER);
+        printGraphic('', aot, this.preferenceColors.time, ROW_NUMBER);
         // here we extract preferences and we NEEDS REFACTORING!!
         // let i = 2;
         // for (const el of TASK_LIST) {
@@ -208,7 +211,7 @@ class Agent {
             let i = 0;
             beginShape();
             for (const val of arr) {
-                strokeWeight(2);
+                // strokeWeight(2);
                 let currX = posX(i, arr.length);
                 let currY = posY(val, row_number);
                 vertex(currX, currY);
@@ -218,14 +221,14 @@ class Agent {
 
         }
 
-        function drawLine(arr, col) {
+        function drawLine(arr, col, row_number) {
             strokeWeight(0.5);
             stroke(col);
             let index = 0;
             for (const val of arr) {
                 if (val === true) {
                     let x = posX(index, arr.length);
-                    line(x, 0, x, height);
+                    line(x, posY(MINIMUM, row_number), x, posY(MAXIMUM, row_number)); //posY(MINIMUM, ROW_NUMBER), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, ROW_NUMBER)
                 }
                 index++;
             }

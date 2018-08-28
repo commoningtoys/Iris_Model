@@ -2,19 +2,21 @@ const PLAYER_ID = 'PLAYER'
 
 let singleView = true;
 function WIDTH() { return innerWidth * 0.64 };
-
+function HEIGHT() { return PADDING + (agentNum * (INFO_HEIGHT + PADDING)) }
 let agents = [];
 let tasks = [];
 let irisModel;
+let agentNum = 10;
 function setup() {
-  createCanvas(WIDTH(), windowHeight - 4);
-  irisModel = new IrisModel(10, 0, 2);
+  let h = PADDING + (agentNum * (INFO_HEIGHT + PADDING));
+  createCanvas(WIDTH(), HEIGHT());
+  irisModel = new IrisModel(agentNum, 0, 2);
 }
 
 function draw() {
   background(51);
 
-  for(let i = 0; i < 1; i++){
+  for (let i = 0; i < 10; i++) {
     irisModel.update();
     irisModel.show();
   }
@@ -22,7 +24,7 @@ function draw() {
 }
 
 function windowResized() {
-  resizeCanvas(WIDTH(), innerHeight);
+  resizeCanvas(WIDTH(), HEIGHT());
 }
 
 // function mouseClicked(){

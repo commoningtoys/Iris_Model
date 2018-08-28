@@ -8,6 +8,7 @@ const AGENT_NUM = 100;
 const PADDING = 30;
 const COL = 10;
 const COL_HEIGHT = innerHeight - 100;
+const INFO_HEIGHT = 120;
 // make our tasks
 /**
  * VERY IMPORTANT THE TASK CAN'T BE LESS THAN 1 HOUR FOR NOW

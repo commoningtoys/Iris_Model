@@ -68,7 +68,7 @@ class IrisModel {
     }
     update() {
         for (const agent of this.agents) {
-            if(singleView)agent.show();
+            if(singleView)agent.infographic();
             agent.update();
             // drawInfos(agent);
             // agent.setInfo();
