@@ -189,16 +189,16 @@ class Agent {
         printGraphic('\n\n\nSTRESS', stress, this.preferenceColors.stress, 1);
         printGraphic('', aot, this.preferenceColors.time, 1);
         // here we extract preferences and we NEEDS REFACTORING!!
-        let i = 2;
-        for (const el of TASK_LIST) {
-            let pref = this.preferenceArchive.map(result => result.preferences[el.type]);
-            let taskSkill = pref.map(result => result.skill_level);
-            let taskPref = pref.map(result => result.task_preference);
+        // let i = 2;
+        // for (const el of TASK_LIST) {
+        //     let pref = this.preferenceArchive.map(result => result.preferences[el.type]);
+        //     let taskSkill = pref.map(result => result.skill_level);
+        //     let taskPref = pref.map(result => result.task_preference);
 
-            printGraphic(el.type, taskSkill, this.preferenceColors.skill, i);
-            printGraphic('', taskPref, this.preferenceColors.preference, i);
-            i++;
-        }
+        //     printGraphic(el.type, taskSkill, this.preferenceColors.skill, i);
+        //     printGraphic('', taskPref, this.preferenceColors.preference, i);
+        //     i++;
+        // }
         function printGraphic(str, arr, col, row_number) {
             fill(255);
             noStroke();

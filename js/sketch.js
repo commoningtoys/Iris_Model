@@ -1,5 +1,6 @@
 const PLAYER_ID = 'PLAYER'
 
+let singleView = true;
 function WIDTH() { return innerWidth * 0.64 };
 
 let agents = [];
@@ -13,9 +14,9 @@ function setup() {
 function draw() {
   background(51);
 
-  for(let i = 0; i < 10; i++){
+  for(let i = 0; i < 1; i++){
     irisModel.update();
-    // irisModel.show();
+    irisModel.show();
   }
   // noLoop();
 }

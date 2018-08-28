@@ -68,7 +68,7 @@ class IrisModel {
     }
     update() {
         for (const agent of this.agents) {
-            agent.show();
+            if(singleView)agent.show();
             agent.update();
             // drawInfos(agent);
             // agent.setInfo();
@@ -89,13 +89,12 @@ class IrisModel {
     }
     show() {
         // console.log('show')
-        // for (let i = 0; i < COL; i++) {
-        // }
         for (const agent of this.agents) {
-            drawInfos(agent);
+            if(!singleView)drawInfos(agent);
         }
 
         function drawInfos(agent) {
+            strokeWeight(1);
             // needs to be done better
             const colors = [
                 color(0, 255, 0),
@@ -131,19 +130,10 @@ class IrisModel {
                     // if the value is a number
                     posY = map(infos[val], MINIMUM, MAXIMUM, height - PADDING, height - COL_HEIGHT);
                 }
-                // console.log(posX, posY)
-                // stroke(0, 255, 255, 70)
                 text(val, posX, height - COL_HEIGHT)
                 vertex(posX, posY);
                 i++;
             })
-            // let i = 0;
-            // for (const info of infos) {
-            //     let posX = map(i, 0, infos.length, PADDING, width - PADDING);
-            //     let posY = map(info, MINIMUM, MAXIMUM, height - PADDING, height - COL_HEIGHT);
-            //     vertex(posX, posY);
-            //     i++;
-            // }
             endShape();
             // console.log(infos);
         }
