@@ -95,17 +95,6 @@ class IrisModel {
 
         function drawInfos(agent) {
             strokeWeight(1);
-            // needs to be done better
-            const colors = [
-                color(0, 255, 0),
-                color(255, 0, 255),
-                color(0, 255, 255),
-                color(255, 0, 0),
-                color(255, 255, 0),
-                color(0, 0, 255),
-                color(0, 255, 100),
-                color(255, 125, 0)
-            ]
             let infos = agent.getPreferencesAsObject();
             let i = 0;
             // rect(100, 100, 100, 100)
@@ -130,14 +119,16 @@ class IrisModel {
                     // if the value is a number
                     posY = map(infos[val], MINIMUM, MAXIMUM, height - PADDING, height - COL_HEIGHT);
                 }
-                text(val, posX, height - COL_HEIGHT)
+                // text(val, posX, height - COL_HEIGHT)
                 vertex(posX, posY);
                 i++;
+
             })
             endShape();
             // console.log(infos);
         }
     }
+
     setModelTime() {
         if (this.timeUnit > 0 && this.timeUnit % TS_FRACTION == 0) {
             this.hours++;

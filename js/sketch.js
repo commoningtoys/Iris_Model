@@ -16,7 +16,7 @@ function setup() {
 function draw() {
   background(51);
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 20; i++) {
     irisModel.update();
     irisModel.show();
   }

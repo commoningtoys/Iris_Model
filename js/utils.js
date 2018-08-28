@@ -45,7 +45,7 @@ function shuffleArray(array) {
     }
 }
 
-function timeUpdate(){
+function timeUpdate() {
     // return (1 / frameRate()) * TIME_SCALE;
     return 1;
 }
@@ -55,14 +55,18 @@ function roundPrecision(value, precision) {
     return Math.round(value * multiplier) / multiplier;
 }
 
-function saveRAWData(agents){
+function saveRAWData(agents) {
     let json = {};
+    agents.sort(function (a, b) {
+        return a.ID - b.ID;
+    });
+    console.log(agents);
     for (const agent of agents) {
-        json['AGENT_ID_' + agent.ID] = agent.preferenceArchive;
+        json['AGENT_ID_' + agent.ID] = agent.data;
     }
     saveJSON(json, 'RAW_DATA.json');
 }
 
-function modelTime(){
+function modelTime() {
     return TS_FRACTION * TIME_SCALE;
 }
