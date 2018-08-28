@@ -7,7 +7,7 @@ const AGENT_NUM = 100;
 // animation const
 const PADDING = 30;
 const COL = 10;
-const COL_HEIGHT = 250;
+const COL_HEIGHT = innerHeight - 100;
 // make our tasks
 /**
  * VERY IMPORTANT THE TASK CAN'T BE LESS THAN 1 HOUR FOR NOW

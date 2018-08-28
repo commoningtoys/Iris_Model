@@ -9,7 +9,7 @@ class Task {
      */
     constructor(task_object, global_resting_time) {
         this.GRT = global_resting_time;
-        console.log(this.GRT)
+        // console.log(this.GRT)
         /**
          * time needed to carry out the task
          */
@@ -27,7 +27,8 @@ class Task {
          * here we need an algorithm that calculates the urgency based
          * on how often the task needs to be carried out.
          */
-        this.urgency = Math.floor(DAY / task_object.executions_per_day);
+        this.urgency = Math.floor(DAY / task_object.executions_per_day) + Math.floor(Math.random() * 10);
+        console.log(this.urgency);
         /**
          * WE NEED TO MAKE THE URGENCY A LITTLE BIT MORE FLUCTUANT SO THAT THE TASK NEVER REALLY OVERLAP
          */
@@ -84,12 +85,17 @@ class Task {
                 counter--;
             }
         }
-
-        // else we return a value that is inverse proportional
-        // as many agents prefer that task as lower it is its value
-        let amountOfTime = ((NUMBER_OF_AGENTS - counter) / NUMBER_OF_AGENTS) * TIME_SCALE * TS_FRACTION;
+        /**
+         * else we return a value that is inverse proportional
+         * as many agents prefer that task as lower it is its value
+         * but it can't be 0
+         * 
+         * If the model gives a minimum resting time than the capitalist
+         * are more stressed. if we let the model give 0 resting time 
+         * than th ecapitalist are the less stressed.
+         */
+        let amountOfTime = 1 + ((NUMBER_OF_AGENTS - counter) / NUMBER_OF_AGENTS) * TIME_SCALE * TS_FRACTION;
         amountOfTime = Math.round(amountOfTime);
-        // console.log(amountOfTime);
         // down here we remove time from the GRT if it reaches 0 it stays 0!
         if (this.GRT > 0) {
             this.GRT -= amountOfTime;
@@ -115,6 +121,10 @@ class Task {
         // this.value = (1 - (counter / NUMBER_OF_AGENTS)) * TIME_SCALE;
         // console.log(`value: ${this.type}, ${this.value}, number ${counter}`);
         // console.log(`task ${this.type} has this value ${this.value}, and this GRT ${this.GRT}`);
+        /**
+         * task shop has this value 0, and this GRT 23
+         * this is an error that I need to fix
+         */
         return;
     }
 
@@ -242,7 +252,7 @@ class Task {
                 agent.work(time, this, agents, true);
                 // agent.FLD /= 2;
                 // add this to the html text
-                console.log(`agent_${agent.ID} has been brute forced to do ${this.type}`);
+                // console.log(`agent_${agent.ID} has been brute forced to do ${this.type}`);
                 controlState = false;
                 break;
             }

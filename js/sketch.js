@@ -12,13 +12,11 @@ function setup() {
 
 function draw() {
   background(51);
-  for (let i = 0; i < COL; i++) {
-    let posX = map(i, 0, COL, PADDING, width - PADDING);
-    stroke(255);
-    line(posX, height - PADDING, posX, height - COL_HEIGHT);
-  }
 
-  irisModel.update();
+  for(let i = 0; i < 10; i++){
+    irisModel.update();
+    // irisModel.show();
+  }
   // noLoop();
 }
 

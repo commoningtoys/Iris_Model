@@ -25,7 +25,9 @@ class IrisModel {
                 this.tasks.push(new Task(task, restingTimePerTask));
             }
         }
-        this.timeUnit = TIME_SCALE;
+        this.counter = 0;
+
+        this.timeUnit = 0;
 
         this.hours = 0;
         this.days = 0;
@@ -33,6 +35,17 @@ class IrisModel {
         this.months = 0;
         this.years = 0;
         this.getTotalRestingTime();
+
+        this.colors = [
+            color(0, 255, 0),
+            color(255, 0, 255),
+            color(0, 255, 255),
+            color(255, 0, 0),
+            color(255, 255, 0),
+            color(0, 0, 255),
+            color(0, 255, 100),
+            color(255, 125, 0)
+        ]
     }
     /**
      * calculates the global amount of time the agents have for resting
@@ -65,28 +78,93 @@ class IrisModel {
             // task.show();
             task.updateUrgency(this.agents);
         }
+        // this needs refactoring
+        if (this.counter % TIME_SCALE == 0) {
+            this.timeUnit++;
 
-        this.timeUnit++;
-        this.setModelTime();
+            this.setModelTime();
+        }
+        this.counter++;
+        // console.log(this.counter, this.timeUnit);
     }
+    show() {
+        // console.log('show')
+        // for (let i = 0; i < COL; i++) {
+        // }
+        for (const agent of this.agents) {
+            drawInfos(agent);
+        }
 
+        function drawInfos(agent) {
+            // needs to be done better
+            const colors = [
+                color(0, 255, 0),
+                color(255, 0, 255),
+                color(0, 255, 255),
+                color(255, 0, 0),
+                color(255, 255, 0),
+                color(0, 0, 255),
+                color(0, 255, 100),
+                color(255, 125, 0)
+            ]
+            let infos = agent.getPreferencesAsObject();
+            let i = 0;
+            // rect(100, 100, 100, 100)
+            noFill();
+            stroke(255);
+            for (let index = 0; index < Object.keys(infos).length; index++) {
+                let diagramX = map(index, 0, Object.keys(infos).length, PADDING, width - PADDING);
+                line(diagramX, height - PADDING, diagramX, height - COL_HEIGHT);
+            }
+            stroke(agent.color);
+            beginShape();
+            Object.keys(infos).forEach(val => {
+
+                let posX = map(i, 0, Object.keys(infos).length, PADDING, width - PADDING);
+                let posY;
+                if (typeof infos[val] === 'boolean') {
+                    // if is a boolean
+                    let value = infos[val] === true ? 1 : 100;
+                    posY = map(value, MINIMUM, MAXIMUM, height - PADDING, height - COL_HEIGHT);
+                }
+                else {
+                    // if the value is a number
+                    posY = map(infos[val], MINIMUM, MAXIMUM, height - PADDING, height - COL_HEIGHT);
+                }
+                // console.log(posX, posY)
+                // stroke(0, 255, 255, 70)
+                text(val, posX, height - COL_HEIGHT)
+                vertex(posX, posY);
+                i++;
+            })
+            // let i = 0;
+            // for (const info of infos) {
+            //     let posX = map(i, 0, infos.length, PADDING, width - PADDING);
+            //     let posY = map(info, MINIMUM, MAXIMUM, height - PADDING, height - COL_HEIGHT);
+            //     vertex(posX, posY);
+            //     i++;
+            // }
+            endShape();
+            // console.log(infos);
+        }
+    }
     setModelTime() {
-            if (this.timeUnit > 0 && this.timeUnit % TS_FRACTION == 0) {
-                this.hours++;
-            }
-            if (this.hours > 0 && this.hours % 24 == 0) {
-                this.days++;
-                this.hours = 0;
-            }
-            if (this.days > 0 && this.days % 30 == 0) {
-                this.months++;
-                this.days = 0;
-            }
-            if (this.months > 0 && this.months % 12 == 0) {
-                this.years++;
-                this.months = 0;
-                this.weeks = 0;
-            }
+        if (this.timeUnit > 0 && this.timeUnit % TS_FRACTION == 0) {
+            this.hours++;
+        }
+        if (this.hours > 0 && this.hours % 24 == 0) {
+            this.days++;
+            this.hours = 0;
+        }
+        if (this.days > 0 && this.days % 30 == 0) {
+            this.months++;
+            this.days = 0;
+        }
+        if (this.months > 0 && this.months % 12 == 0) {
+            this.years++;
+            this.months = 0;
+            this.weeks = 0;
+        }
         let currentDate = `years: ${this.years}<br>months: ${this.months}<br>days: ${this.days}<br>hours: ${this.hours}`;
         // console.log(currentDate);
         document.getElementById('display-date').innerHTML = currentDate;

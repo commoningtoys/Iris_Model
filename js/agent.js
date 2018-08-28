@@ -49,9 +49,24 @@ class Agent {
         this.working = false;
         this.workingTimer = 0;// how long is the agent at work
         this.mappedAmountOfTime = 0;
-        // ANIMATION
-        // this.pos = createVector(x, y);
-        // this.r = 10;
+        // ANIMATION && colors
+        this.color = color(255);
+        switch (_behavior) {
+            case 'curious':
+                this.color = color(45, 245, 100);
+                break;
+            case 'perfectionist':
+                this.color = color(45, 100, 245);
+                break;
+            case 'geniesser':
+                this.color = color(245, 45, 100);
+                break;
+            case 'capitalist':
+                this.color = color(245, 45, 245);
+                break;
+            default:
+            this.color = color(255);
+        }
         this.colors = {
             working: color(255, 0, 0),
             available: color(0, 255, 0),
@@ -68,7 +83,7 @@ class Agent {
             time: color(0, 0, 255),
             traded: color(0, 255, 100),
             brute_force: color(255, 125, 0)
-        }
+        };
         // this.makeInfo();
         // this.setInfo();
     }
@@ -843,20 +858,27 @@ class Agent {
     /**
      * @returns the preferences as an array of 10 elements
      */
-    getPreferencesAsArray() {
-        let arr = [];
-        arr.push(this.FLD);
-        arr.push(this.restingTime);
-        arr.push(this.stress);
-        arr.push(this.mappedAmountOfTime);
+    getPreferencesAsObject() {
+        let obj = {
+            FLD: this.FLD,
+            stress: this.stress,
+            resting_time: this.restingTime,
+            amount_of_time_task: this.mappedAmountOfTime,
+            traded: this.hasTraded,
+            brute_force: this.wasBruteForced
+        };
+        // arr.push(this.FLD);
+        // arr.push(this.restingTime);
+        // arr.push(this.stress);
+        // arr.push(this.mappedAmountOfTime);
         Object.keys(this.preferences).forEach(val => {
             let keys = Object.keys(this.preferences[val]);
             let objAttribute = this.preferences[val];
             keys.forEach(key => {
-                if (key === 'skill_level' || key === 'task_preference') arr.push(objAttribute[key]);
+                if (key === 'skill_level' || key === 'task_preference') obj[key] = objAttribute[key];
             });
         });
-        return arr;
+        return obj;
     }
     /**
      * @param {Array} arr Array of task objects
