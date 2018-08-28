@@ -94,7 +94,7 @@ class Task {
          * are more stressed. if we let the model give 0 resting time 
          * than th ecapitalist are the less stressed.
          */
-        let amountOfTime = 1 + ((NUMBER_OF_AGENTS - counter) / NUMBER_OF_AGENTS) * TIME_SCALE * TS_FRACTION;
+        let amountOfTime = ((NUMBER_OF_AGENTS - counter) / NUMBER_OF_AGENTS) * TIME_SCALE * TS_FRACTION;
         amountOfTime = Math.round(amountOfTime);
         // down here we remove time from the GRT if it reaches 0 it stays 0!
         if (this.GRT > 0) {
