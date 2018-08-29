@@ -12,7 +12,7 @@
 
    2. open terminal on your computer 💻 (you can find the terminal in utilities folder 📁 of your mac)
 
-   3. if you have `git` already installed than skip to point 4️⃣, else download git [here](https://git-scm.com/download/mac)
+   3. if you have `git` already installed than skip to point vi, else download git [here](https://git-scm.com/download/mac)
 
    4. in the terminal type
 
