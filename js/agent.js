@@ -13,6 +13,7 @@ class Agent {
         this.restingTimer = 0;
         this.preferences = this.makePreferences(task_list);//preferences for each single task
         this.preferenceArchive = [];
+        this.data = [];
         /**
          * if the agent is perfectionist we need to define
          * the task he wants to master
@@ -80,9 +81,9 @@ class Agent {
             FLD: color(0, 255, 255),
             restingTime: color(255, 0, 0),
             stress: color(255, 255, 0),
-            time: color(0, 0, 255),
-            traded: color(0, 255, 100),
-            brute_force: color(255, 125, 0)
+            time: color(45, 105, 245),
+            traded: color(0, 255, 100, 100),
+            brute_force: color(255, 125, 0, 100)
         };
         // this.makeInfo();
         // this.setInfo();
@@ -690,6 +691,16 @@ class Agent {
          */
         let insert = JSON.parse(JSON.stringify(this.preferences));// the trick
         this.preferenceArchive.push({
+            preferences: insert,
+            executed_task: task.type,
+            resting_time: this.restingTime,
+            feel_like_doing: this.FLD,
+            stress_level: this.stress,
+            amount_of_time: this.mappedAmountOfTime,
+            traded: this.hasTraded,// === true ? this.tradeTask : '',
+            brute_force: this.wasBruteForced
+        });
+        this.data.push({
             preferences: insert,
             executed_task: task.type,
             resting_time: this.restingTime,
