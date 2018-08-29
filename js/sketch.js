@@ -6,19 +6,28 @@ function HEIGHT() { return PADDING + (agentNum * (INFO_HEIGHT + PADDING)) }
 let agents = [];
 let tasks = [];
 let irisModel;
-let agentNum = 10;
+
+
+let agentNum = 10; // here you define the number of agents in the model
+
+
+
 function setup() {
   createCanvas(WIDTH(), HEIGHT());
-  irisModel = new IrisModel(agentNum, 0, 2);
+  irisModel = new IrisModel(agentNum, 0, Math.floor(agentNum / 5));
 }
 
 function draw() {
   background(51);
 
-  for (let i = 0; i < 20; i++) {
+
+  let loops = 20; // chnage this number with an integer (1 - 100) to accelerate the model.
+
+
+  for (let i = 0; i < loops; i++) {
     irisModel.update();
-    irisModel.show();
   }
+  irisModel.show();
   // noLoop();
 }
 

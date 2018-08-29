@@ -30,8 +30,26 @@
 2. after that you need to download all the branches 🎋
 
    ```bash
-   $ git pull origin --all
-   # this will download all the branches on your machine
+   $ git branch -a
+       * master
+         remotes/origin/HEAD -> origin/master
+         remotes/origin/all-capitalist
+         remotes/origin/all-curious
+         remotes/origin/all-geniesser
+         remotes/origin/all-perfectionist
+         remotes/origin/master
+         remotes/origin/minimum-wage
+         remotes/origin/old-model
+   
+   # we need to create local branches that track also the remote branches
+   # to do this we create new local branches with the name matching the remote branches
+   # this is done by using the "git checkout" command followed by the branch name
+   
+   $ git checkout all-capitalist
+       Branch 'all-capitalist' set up to track remote branch 'all-capitalist' from 'origin'.
+       Switched to a new branch 'all-capitalist'
+   
+   # we need to do this for all the branches
    ```
 
 3. open the model with your favorite code editor

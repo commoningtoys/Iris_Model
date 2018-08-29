@@ -1,4 +1,9 @@
-const TIME_SCALE = 1; // each time unit is equivalent to 10 minutes
+/**
+ * Change the TIME_SCALE variable to change the speed of the 
+ * model increase the value to make model slower
+ */
+const TIME_SCALE = 1; // each time unit is equivalent to 10 minutes 
+
 const TS_FRACTION = 6;
 const DAY = 24 * TIME_SCALE * TS_FRACTION;// 1 day
 const MAXIMUM = 100; // we need this to clamp values for preferences
