@@ -92,7 +92,7 @@ class Task {
          * 
          * If the model gives a minimum resting time than the capitalist
          * are more stressed. if we let the model give 0 resting time 
-         * than th ecapitalist are the less stressed.
+         * than the capitalist are the less stressed.
          */
         let amountOfTime = 1 + ((NUMBER_OF_AGENTS - counter) / NUMBER_OF_AGENTS) * TIME_SCALE * TS_FRACTION;
         amountOfTime = Math.round(amountOfTime);
