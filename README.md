@@ -19,10 +19,12 @@
       ```bash
       $ cd pathTo/theDirectory
       # first we choose in which directory we want to save our model
-      # it also possible to just type "cd" and drag and drop the folder were you want the model to be saved onto the terminal
+      # it also possible to just type "cd" and drag and drop the folder
+      # where you want the model to be saved onto the terminal
       
       $ git clone https://github.com/commoningtoys/Iris_Model.git
-      # the url may change in the future therefore copy it from the "clone or download" window on the github page
+      # the url may change in the future therefore copy it
+      # from the "clone or download" window on the github page
       ```
 
 2. after that you need to download all the branches 🎋
