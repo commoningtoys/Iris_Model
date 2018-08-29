@@ -8,7 +8,6 @@ let tasks = [];
 let irisModel;
 let agentNum = 10;
 function setup() {
-  let h = PADDING + (agentNum * (INFO_HEIGHT + PADDING));
   createCanvas(WIDTH(), HEIGHT());
   irisModel = new IrisModel(agentNum, 0, 2);
 }
