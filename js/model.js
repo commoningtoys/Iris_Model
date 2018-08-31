@@ -67,7 +67,9 @@ class IrisModel {
         return amountOfTime;
     }
     update() {
+        // for(let i = 0; i < 10; i++){
         for (const agent of this.agents) {
+            // let agent = this.agents[i];
             if(singleView)agent.infographic();
             agent.update();
             // drawInfos(agent);

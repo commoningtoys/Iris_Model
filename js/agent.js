@@ -176,7 +176,6 @@ class Agent {
         let bruteForce = this.preferenceArchive.map(result => result.brute_force);
         // and here we draw them in the infographic
         stroke(255);
-        strokeWeight(1);
         // FIrst we draw the infographic outline
         // for (let i = 1; i < 6; i++) {
         //     line(posX(0, MAXIMUM), posY(MAXIMUM, i), posX(0, MINIMUM), posY(MINIMUM, i));
@@ -204,11 +203,12 @@ class Agent {
         //     i++;
         // }
         function printGraphic(str, arr, col, row_number) {
-            fill(255);
             noStroke();
+            fill(col);
             text(str, PADDING, posY(MAXIMUM, row_number));
             noFill();
             stroke(col);
+            strokeWeight(1);
             let i = 0;
             beginShape();
             for (const val of arr) {
@@ -296,6 +296,17 @@ class Agent {
      * @param {*} task 
      */
     trade(task, agents) {
+
+        if (this.isPlayer) {
+            // console.log(agent.ID);
+            noLoop();
+            console.log('noLoop');
+            // console.log(`noLoop ${agent.isPlayer}, ${agent.hasTraded}`)
+            this.playerInteraction(task);
+            return true;
+        }
+
+
         /**
          * ATTENZIONE IMPORTANTE!!!!!!!!!!
          * don't forget to update the fld 
@@ -721,7 +732,8 @@ class Agent {
          * as often as the same task is done as much skill you gain
          * but you also get bored of the task therefore you lose preference
          * while skill and preference get updated the skill and preference of the
-         * tasks that have not been executed  also get inversely updated
+         * tasks that have not been executed  also get inversely updated 
+         * a.k.a. you forget how to do a task
          */
         // here we check how often a task has been executed in a row
         let counter = 0;
@@ -795,11 +807,14 @@ class Agent {
                  * me the capitalist than the FLD drops 2 points or less
                  * otherwise it drops by 0.5 points
                  */
-                let agentsCopy = JSON.parse(JSON.stringify(agents));
-                const lastIndex = agentsCopy.length - 1;
-                agentsCopy.sort((a, b) => a.restingTime - b.restingTime);
+                console.log(agents.length);
+                // let agentsCopy = JSON.parse(JSON.stringify(agents));
+                // console.log(agentsCopy.length)
+                // const lastIndex = agentsCopy.length - 1;
+                const lastIndex = agents.length - 1;
+                agents.sort((a, b) => a.restingTime - b.restingTime);
                 // console.log(agentsCopy[lastIndex].ID, agentsCopy[lastIndex].restingTime, this.ID);
-                if (agentsCopy[lastIndex].ID === this.ID) {
+                if (agents[lastIndex].ID === this.ID) {
                     this.FLD -= 2;
                 } else {
                     this.FLD -= 0.5;

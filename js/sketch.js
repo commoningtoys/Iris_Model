@@ -2,7 +2,7 @@ const PLAYER_ID = 'PLAYER'
 
 let singleView = true;
 function WIDTH() { return innerWidth * 0.64 };
-function HEIGHT() { return PADDING + (agentNum * (INFO_HEIGHT + PADDING)) }
+// function HEIGHT() { return PADDING + (agentNum * (INFO_HEIGHT + PADDING)) }
 let agents = [];
 let tasks = [];
 let irisModel;
@@ -13,26 +13,27 @@ let agentNum = 10; // here you define the number of agents in the model
 
 
 function setup() {
-  createCanvas(WIDTH(), HEIGHT());
-  irisModel = new IrisModel(agentNum, 0, Math.floor(agentNum / 5));
+  createCanvas(WIDTH(), innerHeight);
+  irisModel = new IrisModel(agentNum, 1, Math.floor(agentNum / 5));
 }
 
 function draw() {
   background(51);
 
 
-  let loops = 20; // chnage this number with an integer (1 - 100) to accelerate the model.
+  let loops = 1; // chnage this number with an integer (1 - 100) to accelerate the model.
 
 
   for (let i = 0; i < loops; i++) {
     irisModel.update();
   }
   irisModel.show();
+  document.getElementById('whatFrameRate').innerHTML = 'Frame rate: ' + frameRate();
   // noLoop();
 }
 
 function windowResized() {
-  resizeCanvas(WIDTH(), HEIGHT());
+  resizeCanvas(WIDTH(), innerHeight);
 }
 
 // function mouseClicked(){

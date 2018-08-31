@@ -4,8 +4,7 @@ class Task {
      * for the amount of time the task takes how often neeeds to be executed each day
      * and the name of the task
      * @param {Object} task_object a task object
-     * @param {Number} x position 
-     * @param {Number} y position
+     * @param {Number} global_resting_time amount of time/value that the task can give to the agent 
      */
     constructor(task_object, global_resting_time) {
         this.GRT = global_resting_time;
@@ -260,7 +259,7 @@ class Task {
             i++;
             if (i > 5000) {
                 // assign task as next to do to an agent
-                console.log('no agent found')
+                console.log('no agent found');
                 controlState = false;
                 break;
             }
