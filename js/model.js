@@ -7,7 +7,7 @@ class IrisModel {
         for (let i = 0; i < num_agents; i++) {
             // let randomIndex = Math.floor(Math.random() * 4);
             let index = i % AGENT_BEHAVIORS.length;
-            this.agents.push(new Agent(TASK_LIST, i + 1, false, AGENT_BEHAVIORS[1]));
+            this.agents.push(new Agent(TASK_LIST, i + 1, false, AGENT_BEHAVIORS[3]));
         }
         // add players
         for (let i = 0; i < num_players || 0; i++) {
@@ -215,6 +215,8 @@ class IrisModel {
     stopPlayerTime() {
         console.log('stop');
         let agent = this.returnPlayerAgent();
+        // updateAttributes(task, agents, brute_forced, _amount_of_time)
+        agent.updateAttributes(agent.playerTaskToExecute, this.agents, false, agent.playerTimer);
         agent.playerWorking = false;
         agent.working = false;
         if (agent.hasTraded) {

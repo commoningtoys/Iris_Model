@@ -165,7 +165,6 @@ class Agent {
         // const INFO_HEIGHT = (height - (6 * PADDING)) / ROWS;
         let ROW_NUMBER;
         if (this.isPlayer) {
-            console.log(this.ID)
             let str = this.ID.substr(this.playerName.length, 4);
             // console.log(str);
             // console.log(`is player ${parseInt(str)}`);
@@ -510,6 +509,11 @@ class Agent {
                 this.rest(task);
                 return true;
             } else {
+                /**
+                 * the capitalist should look at the difference between the
+                 * current task value and the highest task value
+                 * and if it is above a certain value than he trades otherwise not
+                 */
                 const lastElement = taskValues.length - 1
                 if (taskValues[lastElement].task_value >= 0.5) {
                     this.assignTradedTask(taskValues[lastElement].task_name);
@@ -752,7 +756,7 @@ class Agent {
         let counter = 0;
         for (let i = this.preferenceArchive.length - 1; i >= 0; i--) {
             let pref = this.preferenceArchive[i];
-            if (pref.executed_task.includes(task_name)) counter++;
+            if (pref.executed_task === task_name) counter++;
             else break;
         }
         // console.log(counter);
@@ -1004,7 +1008,7 @@ class Agent {
         console.log('noLoop');
         $('.player-work').show();
         this.working = true;
-        this.updateAttributes(this.playerTaskToExecute, agents);
+        // this.updateAttributes(this.playerTaskToExecute, agents);
         this.currentTask = this.playerTaskToExecute.type;
 
         this.setInfo();
