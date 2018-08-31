@@ -14,12 +14,12 @@ let irisModel;
 
 function setup() {
   createCanvas(WIDTH(), innerHeight);
-  irisModel = new IrisModel(AGENT_NUM, 1, Math.floor(AGENT_NUM / 5));
+  irisModel = new IrisModel(AGENT_NUM, 0, Math.floor(AGENT_NUM / 5));
   textSize(9);
 }
 
 function draw() {
-  background(51);
+  // background(51);
 
 
   let loops = 1; // chnage this number with an integer (1 - 100) to accelerate the model.
@@ -28,7 +28,7 @@ function draw() {
   for (let i = 0; i < loops; i++) {
     irisModel.update();
   }
-  irisModel.show();
+  if(frameCount % 15 == 0)irisModel.show();
   document.getElementById('whatFrameRate').innerHTML = 'Frame rate: ' + frameRate();
   // noLoop();
 }

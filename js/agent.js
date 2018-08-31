@@ -718,7 +718,7 @@ class Agent {
         this.preferenceArchive.push({
             preferences: insert,
             executed_task: task.type,
-            resting_time: this.restingTime,
+            resting_time: this.restingTime / TIME_SCALE, // this maps the value to a better scale
             feel_like_doing: this.FLD,
             stress_level: this.stress,
             amount_of_time: this.mappedAmountOfTime,
