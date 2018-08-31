@@ -232,12 +232,14 @@ class Task {
             let index = Math.floor(Math.random() * agents.length);
             let agent = agents[index];
             // console.log(`working: ${agent.working}, resting: ${agent.resting}, traded: ${agent.hasTraded}`);
-            if (!agent.working || agent.resting || agent.hasTraded) {
+            if (!agent.working || agent.resting || agent.hasTraded || agent.isPlayer) {
                 /**
                  * HERE WE NEED TO CHECK WHICH 
                  * BEHAVIOR THE AGENT HAS
                  * AND ACCORDING TO THAT THE FLD
                  * NEEDS TO BE UPDATED ACCORDIGLY
+                 * 
+                 * For now it sdoesn't let player to be brute forced
                  */
                 agent.resting = false;
                 agent.restingTimer = 0;

@@ -7,7 +7,7 @@ class IrisModel {
         for (let i = 0; i < num_agents; i++) {
             // let randomIndex = Math.floor(Math.random() * 4);
             let index = i % AGENT_BEHAVIORS.length;
-            this.agents.push(new Agent(TASK_LIST, i + 1, false, AGENT_BEHAVIORS[index]));
+            this.agents.push(new Agent(TASK_LIST, i + 1, false, AGENT_BEHAVIORS[1]));
         }
         // add players
         for (let i = 0; i < num_players || 0; i++) {
@@ -70,7 +70,6 @@ class IrisModel {
         // for(let i = 0; i < 10; i++){
         for (const agent of this.agents) {
             // let agent = this.agents[i];
-            if(singleView)agent.infographic();
             agent.update();
             // drawInfos(agent);
             // agent.setInfo();
@@ -91,8 +90,16 @@ class IrisModel {
     }
     show() {
         // console.log('show')
+        /**
+         * here we sort the agents array that was shuffled 
+         * during the choose agent process of task.js
+         */
+        this.agents.sort((a, b) => a.ID - b.ID);
+        // for(let i = 0; i < 3; i++){
         for (const agent of this.agents) {
-            if(!singleView)drawInfos(agent);
+            // let agent = this.agents[i];
+            if (singleView) agent.infographic();
+            else drawInfos(agent);
         }
 
         function drawInfos(agent) {

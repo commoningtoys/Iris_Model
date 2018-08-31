@@ -5,7 +5,8 @@ class Agent {
         this.playerTaskToExecute;
         this.playerTimer = 0;
         this.playerWorking = false;
-        this.ID = is_player ? `PLAYER_${nf(id, 4)}` : nf(id, 4);
+        this.playerName = 'PLAYER_';
+        this.ID = is_player ? this.playerName + nf(id, 4) : nf(id, 4);
 
         this.behavior = _behavior;
         this.restingTime = 0;
@@ -54,16 +55,16 @@ class Agent {
         this.color = color(255);
         switch (_behavior) {
             case 'curious':
-                this.color = color(45, 245, 100);
+                this.color = color(45, 245, 100); // greenish
                 break;
             case 'perfectionist':
-                this.color = color(45, 100, 245);
+                this.color = color(45, 100, 245); // blueish
                 break;
             case 'geniesser':
-                this.color = color(245, 45, 100);
+                this.color = color(245, 45, 100); // reddish
                 break;
             case 'capitalist':
-                this.color = color(245, 45, 245);
+                this.color = color(245, 45, 245); // magentaish
                 break;
             default:
                 this.color = color(255);
@@ -159,11 +160,20 @@ class Agent {
      * 
      */
     infographic() {
-        const LEFT_GUTTER = 120;
         const INFO_WIDTH = width - LEFT_GUTTER;
         const ROWS = 5;
         // const INFO_HEIGHT = (height - (6 * PADDING)) / ROWS;
-        const ROW_NUMBER = parseInt(this.ID);
+        let ROW_NUMBER;
+        if (this.isPlayer) {
+            console.log(this.ID)
+            let str = this.ID.substr(this.playerName.length, 4);
+            // console.log(str);
+            // console.log(`is player ${parseInt(str)}`);
+            ROW_NUMBER = AGENT_NUM + parseInt(str);
+        } else {
+            ROW_NUMBER = parseInt(this.ID);
+        }
+
         const CT = this.currentTask;
         // console.log(this.currentTask);
         // here we extract the values of FLD, resting time && stress && more
@@ -187,9 +197,9 @@ class Agent {
         drawLine(traded, this.preferenceColors.traded, ROW_NUMBER);
         drawLine(bruteForce, this.preferenceColors.brute_force, ROW_NUMBER);
         // here below we draw the information about the preferences of the agent
-        printGraphic(`AGENT_ID${this.ID}\nFLD`, fld, this.preferenceColors.FLD, ROW_NUMBER);
-        printGraphic('\n\nRESTING TIME', rt, this.preferenceColors.restingTime, ROW_NUMBER);
-        printGraphic('\n\n\nSTRESS', stress, this.preferenceColors.stress, ROW_NUMBER);
+        printGraphic(`AGENT_ID${this.ID}\n${this.behavior}\nFLD`, fld, this.preferenceColors.FLD, ROW_NUMBER);
+        printGraphic('\n\n\nRESTING TIME', rt, this.preferenceColors.restingTime, ROW_NUMBER);
+        printGraphic('\n\n\n\nSTRESS', stress, this.preferenceColors.stress, ROW_NUMBER);
         printGraphic('', aot, this.preferenceColors.time, ROW_NUMBER);
         // here we extract preferences and we NEEDS REFACTORING!!
         // let i = 2;
@@ -711,6 +721,8 @@ class Agent {
             traded: this.hasTraded,// === true ? this.tradeTask : '',
             brute_force: this.wasBruteForced
         });
+
+
         this.data.push({
             preferences: insert,
             executed_task: task.type,
@@ -721,6 +733,7 @@ class Agent {
             traded: this.hasTraded,// === true ? this.tradeTask : '',
             brute_force: this.wasBruteForced
         });
+
         if (this.preferenceArchive.length > 100) this.preferenceArchive.splice(0, 1);
         this.updatePreferences(task.type);
         this.setInfo();
@@ -807,7 +820,7 @@ class Agent {
                  * me the capitalist than the FLD drops 2 points or less
                  * otherwise it drops by 0.5 points
                  */
-                console.log(agents.length);
+                // console.log(agents.length);
                 // let agentsCopy = JSON.parse(JSON.stringify(agents));
                 // console.log(agentsCopy.length)
                 // const lastIndex = agentsCopy.length - 1;
@@ -1012,6 +1025,10 @@ class Agent {
         console.log(this.tradeTask);
         this.setInfo();
         // console.log(this);
+    }
+
+    playerRests(){
+        
     }
 
 }
