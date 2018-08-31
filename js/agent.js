@@ -187,8 +187,8 @@ class Agent {
         drawLine(traded, this.preferenceColors.traded, ROW_NUMBER);
         drawLine(bruteForce, this.preferenceColors.brute_force, ROW_NUMBER);
         // here below we draw the information about the preferences of the agent
-        printGraphic(`AGENT_ID${this.ID}FLD`, fld, this.preferenceColors.FLD, ROW_NUMBER);
-        printGraphic('\nRESTING \nTIME', rt, this.preferenceColors.restingTime, ROW_NUMBER);
+        printGraphic(`AGENT_ID${this.ID}\nFLD`, fld, this.preferenceColors.FLD, ROW_NUMBER);
+        printGraphic('\n\nRESTING TIME', rt, this.preferenceColors.restingTime, ROW_NUMBER);
         printGraphic('\n\n\nSTRESS', stress, this.preferenceColors.stress, ROW_NUMBER);
         printGraphic('', aot, this.preferenceColors.time, ROW_NUMBER);
         // here we extract preferences and we NEEDS REFACTORING!!
@@ -205,7 +205,7 @@ class Agent {
         function printGraphic(str, arr, col, row_number) {
             noStroke();
             fill(col);
-            text(str, PADDING, posY(MAXIMUM, row_number));
+            text(str, PADDING / 2, posY(MAXIMUM, row_number));
             noFill();
             stroke(col);
             strokeWeight(1);

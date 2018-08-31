@@ -14,7 +14,8 @@ let agentNum = 10; // here you define the number of agents in the model
 
 function setup() {
   createCanvas(WIDTH(), innerHeight);
-  irisModel = new IrisModel(agentNum, 1, Math.floor(agentNum / 5));
+  irisModel = new IrisModel(agentNum, 0, Math.floor(agentNum / 5));
+  textSize(9);
 }
 
 function draw() {
