@@ -96,7 +96,9 @@ class IrisModel {
          */
         background(51);
         this.agents.sort((a, b) => a.ID - b.ID);
-        for(let i = 0; i < 10; i++){
+
+        // here we have to build the filter to visualize the agents
+        for(let i = 0; i < 6; i++){
         // for (const agent of this.agents) {
             let agent = this.agents[i];
             if (singleView) agent.infographic();

@@ -22,7 +22,7 @@ function draw() {
   // background(51);
 
 
-  let loops = 1; // chnage this number with an integer (1 - 100) to accelerate the model.
+  let loops = 10; // chnage this number with an integer (1 - 100) to accelerate the model.
 
 
   for (let i = 0; i < loops; i++) {

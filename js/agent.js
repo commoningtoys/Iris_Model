@@ -163,16 +163,16 @@ class Agent {
         const INFO_WIDTH = width - LEFT_GUTTER;
         const ROWS = 5;
         // const INFO_HEIGHT = (height - (6 * PADDING)) / ROWS;
-        let ROW_NUMBER;
+        let ROW_NUMBER = 1;
         if (this.isPlayer) {
             let str = this.ID.substr(this.playerName.length, 4);
             // console.log(str);
             // console.log(`is player ${parseInt(str)}`);
-            ROW_NUMBER = AGENT_NUM + parseInt(str);
+            ROW_NUMBER += (10 + AGENT_NUM + parseInt(str)) % 11;
         } else {
-            ROW_NUMBER = parseInt(this.ID);
+            ROW_NUMBER += (10 + parseInt(this.ID)) % 11;
         }
-
+        ROW_NUMBER *= 2;
         const CT = this.currentTask;
         // console.log(this.currentTask);
         // here we extract the values of FLD, resting time && stress && more
@@ -192,6 +192,12 @@ class Agent {
         // }
         line(posX(0, MAXIMUM), posY(MAXIMUM, ROW_NUMBER), posX(0, MINIMUM), posY(MINIMUM, ROW_NUMBER));
         line(posX(0, MAXIMUM), posY(MINIMUM, ROW_NUMBER), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, ROW_NUMBER));
+        let i = 0;
+        for (const el of TASK_LIST) {
+            line(posX(0, MAXIMUM, i, TASK_LIST.length), posY(MAXIMUM, ROW_NUMBER - 1), posX(0, MINIMUM, i, TASK_LIST.length), posY(MINIMUM, ROW_NUMBER - 1));
+            line(posX(0, MAXIMUM, i, TASK_LIST.length), posY(MINIMUM, ROW_NUMBER - 1), posX(MAXIMUM, MAXIMUM, i, TASK_LIST.length), posY(MINIMUM, ROW_NUMBER - 1));
+            i++;
+        }
         // here we draw when an agent has traded or has been brute forced to do a task
         drawLine(traded, this.preferenceColors.traded, ROW_NUMBER);
         drawLine(bruteForce, this.preferenceColors.brute_force, ROW_NUMBER);
@@ -201,17 +207,19 @@ class Agent {
         printGraphic('\n\n\n\nSTRESS', stress, this.preferenceColors.stress, ROW_NUMBER);
         printGraphic('', aot, this.preferenceColors.time, ROW_NUMBER);
         // here we extract preferences and we NEEDS REFACTORING!!
-        // let i = 2;
-        // for (const el of TASK_LIST) {
-        //     let pref = this.preferenceArchive.map(result => result.preferences[el.type]);
-        //     let taskSkill = pref.map(result => result.skill_level);
-        //     let taskPref = pref.map(result => result.task_preference);
+        let j = 0;
+        for (const el of TASK_LIST) {
+            let pref = this.preferenceArchive.map(result => result.preferences[el.type]);
+            let taskSkill = pref.map(result => result.skill_level);
+            let taskPref = pref.map(result => result.task_preference);
 
-        //     printGraphic(el.type, taskSkill, this.preferenceColors.skill, i);
-        //     printGraphic('', taskPref, this.preferenceColors.preference, i);
-        //     i++;
-        // }
-        function printGraphic(str, arr, col, row_number) {
+            printGraphic('', taskSkill, this.preferenceColors.skill, ROW_NUMBER - 1, j, TASK_LIST.length);
+            printGraphic('', taskPref, this.preferenceColors.preference, ROW_NUMBER - 1, j, TASK_LIST.length);
+            j++;
+        }
+        function printGraphic(str, arr, col, row_number, col_number, tot_col) {
+            let colNumber = col_number || 0;
+            let totCol = tot_col || 1;
             noStroke();
             fill(col);
             text(str, PADDING / 2, posY(MAXIMUM, row_number));
@@ -221,14 +229,12 @@ class Agent {
             let i = 0;
             beginShape();
             for (const val of arr) {
-                // strokeWeight(2);
-                let currX = posX(i, arr.length);
+                let currX = posX(i, arr.length, colNumber, totCol);
                 let currY = posY(val, row_number);
                 vertex(currX, currY);
                 i++;
             }
             endShape();
-
         }
 
         function drawLine(arr, col, row_number) {
@@ -244,8 +250,12 @@ class Agent {
             }
         }
 
-        function posX(index, max) {
-            return LEFT_GUTTER + map(index, 0, max, 0, INFO_WIDTH - PADDING);
+        function posX(index, max, col_number, tot_col) {
+            let col = col_number || 0;
+            let colNumber = tot_col || 1;
+            let W = (INFO_WIDTH - PADDING) / colNumber;
+
+            return LEFT_GUTTER + map(index, 0, max, col * W, (col + 1) * W);
         }
         function posY(val, row_number) {
             return ((INFO_HEIGHT + PADDING) * row_number) - map(val, MINIMUM, MAXIMUM, 0, INFO_HEIGHT);
@@ -753,26 +763,33 @@ class Agent {
          * a.k.a. you forget how to do a task
          */
         // here we check how often a task has been executed in a row
+        this.skillForget = 0.25;
         let counter = 0;
         for (let i = this.preferenceArchive.length - 1; i >= 0; i--) {
             let pref = this.preferenceArchive[i];
             if (pref.executed_task === task_name) counter++;
             else break;
         }
-        // console.log(counter);
+        counter = constrain(counter, 1, 10);
+        // console.log(counter, this.behavior);
         // here we adjust the skill and preference
         let myObj = this.preferences;
         Object.keys(myObj).forEach(key => {
             let pref = myObj[key];
-            if (pref.task_name.includes(task_name)) {
+            if (pref.task_name === task_name) {
                 // skill increases while preference decreases
-                pref.skill_level += counter;
-                pref.task_preference -= Math.pow(counter, 2);
+                pref.skill_level += counter * this.skillForget * 10;
+                let result = this.FLD / MAXIMUM;
+                let multiplier = 0;
+                if(result > 0.5) multiplier = 1 + abs(0.5 - result);
+                else multiplier = -(1 + abs(0.5 - result));
+                // console.log(multiplier, this.FLD);
+                pref.task_preference += counter * multiplier;
                 // pref.task_preference--;
             } else {
                 // the opposit for the other tasks
-                pref.skill_level--;
-                pref.task_preference += 2;
+                pref.skill_level -= this.skillForget * 3;
+                // pref.task_preference += 2;
                 // pref.task_preference += 1;
             }
             // we clamp the values between 1 and 100
@@ -1031,8 +1048,8 @@ class Agent {
         // console.log(this);
     }
 
-    playerRests(){
-        
+    playerRests() {
+
     }
 
 }
