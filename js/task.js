@@ -28,7 +28,7 @@ class Task {
          * on how often the task needs to be carried out.
          */
         this.urgency = Math.floor(DAY / task_object.executions_per_day) + Math.floor(Math.random() * 10);
-        console.log(this.urgency);
+        // console.log(this.urgency);
         /**
          * WE NEED TO MAKE THE URGENCY A LITTLE BIT MORE FLUCTUANT SO THAT THE TASK NEVER REALLY OVERLAP
          */

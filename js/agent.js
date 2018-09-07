@@ -727,16 +727,16 @@ class Agent {
         });
 
 
-        this.data.push({
-            preferences: insert,
-            executed_task: task.type,
-            resting_time: this.restingTime,
-            feel_like_doing: this.FLD,
-            stress_level: this.stress,
-            amount_of_time: this.mappedAmountOfTime,
-            traded: this.hasTraded,// === true ? this.tradeTask : '',
-            brute_force: this.wasBruteForced
-        });
+        // this.data.push({
+        //     preferences: insert,
+        //     executed_task: task.type,
+        //     resting_time: this.restingTime,
+        //     feel_like_doing: this.FLD,
+        //     stress_level: this.stress,
+        //     amount_of_time: this.mappedAmountOfTime,
+        //     traded: this.hasTraded,// === true ? this.tradeTask : '',
+        //     brute_force: this.wasBruteForced
+        // });
 
         if (this.preferenceArchive.length > 100) this.preferenceArchive.splice(0, 1);
         this.updatePreferences(task.type);

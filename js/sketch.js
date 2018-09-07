@@ -29,7 +29,7 @@ function draw() {
     irisModel.update();
   }
   if(frameCount % 15 == 0)irisModel.show();
-  document.getElementById('whatFrameRate').innerHTML = 'Frame rate: ' + frameRate();
+  document.getElementById('whatFrameRate').innerHTML = 'Frame rate: <br>' + frameRate();
   // noLoop();
 }
 

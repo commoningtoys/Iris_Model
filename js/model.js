@@ -96,9 +96,9 @@ class IrisModel {
          */
         background(51);
         this.agents.sort((a, b) => a.ID - b.ID);
-        // for(let i = 0; i < 10; i++){
-        for (const agent of this.agents) {
-            // let agent = this.agents[i];
+        for(let i = 0; i < 10; i++){
+        // for (const agent of this.agents) {
+            let agent = this.agents[i];
             if (singleView) agent.infographic();
             else drawInfos(agent);
         }
