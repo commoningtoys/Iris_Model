@@ -752,6 +752,7 @@ class Agent {
         this.updatePreferences(task.type);
         this.setInfo();
     }
+
     updatePreferences(task_name) {
         /**
          * the preferences (skill & preference for a task) get updated
@@ -799,8 +800,8 @@ class Agent {
         // for (const pref of this.preferences) {
         // }
         // console.log(this.preferenceArchive, counter, task_name);
-        extractData(this);
-        function extractData(agent) {
+        extractData(this, agents);
+        function extractData(agent, agents) {
             // console.log(agent);
             const tasks = ['admin', 'clean', 'cook', 'shop'];
             const forgetRate = 0.35;
@@ -815,13 +816,14 @@ class Agent {
                 if(lastPreferences[key].completed > max)max = lastPreferences[key].completed;
                 tasksCompleted[key] = lastPreferences[key].completed;
             });
-            console.log(max, tasksCompleted);
+            // console.log(max, tasksCompleted);
 
             for (const task of tasks) {
                 let currentCompletedTasks = tasksCompleted[task];
                 console.log(currentCompletedTasks);
                 // let sum = map(currentCompletedTasks, 0, max, -5, 5);
-                let sum = map(currentCompletedTasks, 0, max,MINIMUM, MAXIMUM);
+                // let sum = map(currentCompletedTasks, 0, max,MINIMUM, MAXIMUM);
+                let sum = (currentCompletedTasks / max) * MAXIMUM;//  map(currentCompletedTasks, 0, max,MINIMUM, MAXIMUM);
                 console.log(sum);
                 agent.preferences[task].skill_level = sum;
                 agent.preferences[task].skill_level = clamp(agent.preferences[task].skill_level, MINIMUM, MAXIMUM);
