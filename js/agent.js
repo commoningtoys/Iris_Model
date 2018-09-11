@@ -749,11 +749,11 @@ class Agent {
         });
 
         if (this.preferenceArchive.length > 100) this.preferenceArchive.splice(0, 1);
-        this.updatePreferences(task.type);
+        this.updatePreferences(task.type, agents);
         this.setInfo();
     }
 
-    updatePreferences(task_name) {
+    updatePreferences(task_name, agents) {
         /**
          * the preferences (skill & preference for a task) get updated
          * according on how often the same task has been done in a row
@@ -802,7 +802,7 @@ class Agent {
         // console.log(this.preferenceArchive, counter, task_name);
         extractData(this, agents);
         function extractData(agent, agents) {
-            // console.log(agent);
+            // console.log(agents);
             const tasks = ['admin', 'clean', 'cook', 'shop'];
             const forgetRate = 0.35;
             let lastPreferences = agent.preferenceArchive[agent.preferenceArchive.length - 1].preferences;
@@ -810,24 +810,47 @@ class Agent {
             let result = {};
             let executedTask = agent.preferenceArchive.map(result => result.executed_task);
             // console.log(executedTask); 
-            let max = 0;
-            Object.keys(lastPreferences).forEach(key => {
-                // console.log(key);
-                if(lastPreferences[key].completed > max)max = lastPreferences[key].completed;
-                tasksCompleted[key] = lastPreferences[key].completed;
-            });
-            // console.log(max, tasksCompleted);
-
             for (const task of tasks) {
-                let currentCompletedTasks = tasksCompleted[task];
-                console.log(currentCompletedTasks);
-                // let sum = map(currentCompletedTasks, 0, max, -5, 5);
-                // let sum = map(currentCompletedTasks, 0, max,MINIMUM, MAXIMUM);
-                let sum = (currentCompletedTasks / max) * MAXIMUM;//  map(currentCompletedTasks, 0, max,MINIMUM, MAXIMUM);
-                console.log(sum);
+                /**
+                 * here we compute the which agent has executed a task 
+                 * the most
+                 */
+                let maxx = 1;
+                for (const a of agents) {
+                    if (a.preferenceArchive.length > 0) {
+                        lastPreferences = a.preferenceArchive[a.preferenceArchive.length - 1].preferences;
+                        if (lastPreferences[task].completed > maxx) maxx = lastPreferences[task].completed;
+                        // console.log(task, lastPreferences, maxx);
+                    }
+                }
+                /**
+                 * here we check how often an agent has completed this task
+                 */
+                let completed = agent.preferenceArchive[agent.preferenceArchive.length - 1].preferences;
+                let sum = (completed[task].completed / maxx) * MAXIMUM;
+
+                // console.log(task, sum, maxx, completed[task].completed);
                 agent.preferences[task].skill_level = sum;
-                agent.preferences[task].skill_level = clamp(agent.preferences[task].skill_level, MINIMUM, MAXIMUM);
             }
+
+            // let max = 0;
+            // Object.keys(lastPreferences).forEach(key => {
+            //     // console.log(key);
+            //     if (lastPreferences[key].completed > max) max = lastPreferences[key].completed;
+            //     tasksCompleted[key] = lastPreferences[key].completed;
+            // });
+            // // console.log(max, tasksCompleted);
+
+            // for (const task of tasks) {
+            //     let currentCompletedTasks = tasksCompleted[task];
+            //     // console.log(currentCompletedTasks);
+            //     // let sum1 = map(currentCompletedTasks, 0, max, -15, 15);
+            //     // let sum = map(currentCompletedTasks, 0, max,MINIMUM, MAXIMUM);
+            //     let sum2 = (currentCompletedTasks / max) * MAXIMUM;
+            //     // console.log(sum);
+            //     agent.preferences[task].skill_level = sum2;
+            //     agent.preferences[task].skill_level = clamp(agent.preferences[task].skill_level, MINIMUM, MAXIMUM);
+            // }
             // /**
             //  * Historical look on the executed task 
             //  * here we add or remove skill depending
