@@ -763,42 +763,163 @@ class Agent {
          * a.k.a. you forget how to do a task
          */
         // here we check how often a task has been executed in a row
-        this.skillForget = 0.25;
-        let counter = 0;
-        for (let i = this.preferenceArchive.length - 1; i >= 0; i--) {
-            let pref = this.preferenceArchive[i];
-            if (pref.executed_task === task_name) counter++;
-            else break;
-        }
-        counter = constrain(counter, 1, 10);
-        // console.log(counter, this.behavior);
-        // here we adjust the skill and preference
-        let myObj = this.preferences;
-        Object.keys(myObj).forEach(key => {
-            let pref = myObj[key];
-            if (pref.task_name === task_name) {
-                // skill increases while preference decreases
-                pref.skill_level += counter * this.skillForget * 10;
-                let result = this.FLD / MAXIMUM;
-                let multiplier = 0;
-                if(result > 0.5) multiplier = 1 + abs(0.5 - result);
-                else multiplier = -(1 + abs(0.5 - result));
-                // console.log(multiplier, this.FLD);
-                pref.task_preference += counter * multiplier;
-                // pref.task_preference--;
-            } else {
-                // the opposit for the other tasks
-                pref.skill_level -= this.skillForget * 3;
-                // pref.task_preference += 2;
-                // pref.task_preference += 1;
-            }
-            // we clamp the values between 1 and 100
-            pref.skill_level = clamp(pref.skill_level, MINIMUM, MAXIMUM);
-            pref.task_preference = clamp(pref.task_preference, MINIMUM, MAXIMUM);
-        });
+        // this.skillForget = 0.25;
+        // let counter = 0;
+        // for (let i = this.preferenceArchive.length - 1; i >= 0; i--) {
+        //     let pref = this.preferenceArchive[i];
+        //     if (pref.executed_task === task_name) counter++;
+        //     else break;
+        // }
+        // counter = constrain(counter, 1, 10);
+        // // console.log(counter, this.behavior);
+        // // here we adjust the skill and preference
+        // let myObj = this.preferences;
+        // Object.keys(myObj).forEach(key => {
+        //     let pref = myObj[key];
+        //     if (pref.task_name === task_name) {
+        //         // skill increases while preference decreases
+        //         pref.skill_level += counter * this.skillForget * 10;
+        //         let result = this.FLD / MAXIMUM;
+        //         let multiplier = 0;
+        //         if(result > 0.5) multiplier = 1 + abs(0.5 - result);
+        //         else multiplier = -(1 + abs(0.5 - result));
+        //         // console.log(multiplier, this.FLD);
+        //         pref.task_preference += counter * multiplier;
+        //         // pref.task_preference--;
+        //     } else {
+        //         // the opposit for the other tasks
+        //         pref.skill_level -= this.skillForget * 3;
+        //         // pref.task_preference += 2;
+        //         // pref.task_preference += 1;
+        //     }
+        //     // we clamp the values between 1 and 100
+        //     pref.skill_level = clamp(pref.skill_level, MINIMUM, MAXIMUM);
+        //     pref.task_preference = clamp(pref.task_preference, MINIMUM, MAXIMUM);
+        // });
         // for (const pref of this.preferences) {
         // }
         // console.log(this.preferenceArchive, counter, task_name);
+        extractData(this);
+        function extractData(agent) {
+            // console.log(agent);
+            const tasks = ['admin', 'clean', 'cook', 'shop'];
+            const forgetRate = 0.35;
+            let lastPreferences = agent.preferenceArchive[agent.preferenceArchive.length - 1].preferences;
+            let tasksCompleted = {};
+            let result = {};
+            let executedTask = agent.preferenceArchive.map(result => result.executed_task);
+            // console.log(executedTask); 
+            let max = 0;
+            Object.keys(lastPreferences).forEach(key => {
+                // console.log(key);
+                if(lastPreferences[key].completed > max)max = lastPreferences[key].completed;
+                tasksCompleted[key] = lastPreferences[key].completed;
+            });
+            console.log(max, tasksCompleted);
+
+            for (const task of tasks) {
+                let currentCompletedTasks = tasksCompleted[task];
+                console.log(currentCompletedTasks);
+                // let sum = map(currentCompletedTasks, 0, max, -5, 5);
+                let sum = map(currentCompletedTasks, 0, max,MINIMUM, MAXIMUM);
+                console.log(sum);
+                agent.preferences[task].skill_level = sum;
+                agent.preferences[task].skill_level = clamp(agent.preferences[task].skill_level, MINIMUM, MAXIMUM);
+            }
+            // /**
+            //  * Historical look on the executed task 
+            //  * here we add or remove skill depending
+            //  * on the historical data of tasks
+            //  */
+            // for (const task of tasks) {
+
+            //     let taskPattern = [];
+            //     let sum = 0;
+            //     for (let i = 0; i < executedTask.length; i++) {
+            //         const executed = executedTask[i];
+            //         if (executed === task) {
+            //             // here we add up the executed tasks and we normalize it
+            //             sum += 1 / executedTask.length;
+            //             // than we push the position of that task
+            //             // to define the pattern in which the tasks repeat themselves
+            //             taskPattern.push(i);
+            //         }
+            //     }
+            //     /**
+            //      * here we make the task pattern
+            //      * this means looking how tasks have been executed
+            //      * how often they have been executed in a row or singularly
+            //      * this can give us better understanding on how to
+            //      * update skill and preference for a task
+            //      * 
+            //      * this returns an array of arrays listing the
+            //      * consecutive numbers of an array
+            //      */
+            //     const consecutiveNums = taskPattern.reduce((r, n) => {
+            //         const lastSubArray = r[r.length - 1];
+            //         if (!lastSubArray || lastSubArray[lastSubArray.length - 1] !== n - 1) {
+            //             r.push([]);
+            //         }
+            //         r[r.length - 1].push(n);
+            //         return r;
+            //     }, []);
+            //     let pattern = [];
+            //     for (const arr of consecutiveNums) {
+            //         pattern.push(arr.length);
+            //     }
+            //     // console.log(pattern);
+            //     let patternSum = 0;
+            //     let index = 0;
+            //     for (const num of pattern) {
+            //         if(num > 1)patternSum += num * (1 / (pattern.length * (index + 1) * 2))
+            //         index++;
+            //     }
+            //     // console.log(patternSum);
+            //     result[task] = sum - forgetRate;
+            //     sum -= forgetRate;
+            //     sum *= 10;
+
+            //     //   console.log(sum);
+            //     agent.preferences[task].skill_level += sum;
+            //     agent.preferences[task].skill_level = clamp(agent.preferences[task].skill_level, MINIMUM, MAXIMUM);
+            //     //   console.log(agent.preferences[task].skill_level);
+            // }
+
+
+            // for (const task of tasks) {
+            //     let taskPattern = [];
+            //     for (let i = 0; i < executedTask.length; i++) {
+            //         const executed = executedTask[i];
+            //         if (executed === task) taskPattern.push(i);
+            //     }
+
+
+            //     /**
+            //      * here we make the task pattern
+            //      * this means looking how tasks have been executed
+            //      * how often they have been executed in a row or singularly
+            //      * this can give us better understanding on how to
+            //      * update skill and preference for a task
+            //      * 
+            //      * this returns an array of arrays listing the
+            //      * consecutive numbers of an array
+            //      */
+            //     const consecutiveNums = taskPattern.reduce((r, n) => {
+            //         const lastSubArray = r[r.length - 1];
+            //         if (!lastSubArray || lastSubArray[lastSubArray.length - 1] !== n - 1) {
+            //             r.push([]);
+            //         }
+            //         r[r.length - 1].push(n);
+            //         return r;
+            //     }, []);
+            //     let pattern = [];
+            //     for (const arr of consecutiveNums) {
+            //         pattern.push(arr.length);
+            //     }
+            //     // result[task] = pattern;
+            // }
+            // console.log(result, tasksCompleted);
+        }
     }
     /**
      * updates the completed task preference by adding +1
