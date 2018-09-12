@@ -737,16 +737,16 @@ class Agent {
         });
 
 
-        this.data.push({
-            preferences: insert,
-            executed_task: task.type,
-            resting_time: this.restingTime,
-            feel_like_doing: this.FLD,
-            stress_level: this.stress,
-            amount_of_time: this.mappedAmountOfTime,
-            traded: this.hasTraded,// === true ? this.tradeTask : '',
-            brute_force: this.wasBruteForced
-        });
+        // this.data.push({
+        //     preferences: insert,
+        //     executed_task: task.type,
+        //     resting_time: this.restingTime,
+        //     feel_like_doing: this.FLD,
+        //     stress_level: this.stress,
+        //     amount_of_time: this.mappedAmountOfTime,
+        //     traded: this.hasTraded,// === true ? this.tradeTask : '',
+        //     brute_force: this.wasBruteForced
+        // });
 
         if (this.preferenceArchive.length > 100) this.preferenceArchive.splice(0, 1);
         this.updatePreferences(task.type, agents);
@@ -800,150 +800,141 @@ class Agent {
         // for (const pref of this.preferences) {
         // }
         // console.log(this.preferenceArchive, counter, task_name);
-        extractData(this, agents);
-        function extractData(agent, agents) {
-            // console.log(agents);
-            const tasks = ['admin', 'clean', 'cook', 'shop'];
-            const forgetRate = 0.35;
-            let lastPreferences = agent.preferenceArchive[agent.preferenceArchive.length - 1].preferences;
-            let tasksCompleted = {};
-            let result = {};
-            let executedTask = agent.preferenceArchive.map(result => result.executed_task);
-            // console.log(executedTask); 
-            for (const task of tasks) {
-                /**
-                 * here we compute the which agent has executed a task 
-                 * the most
-                 */
-                let maxx = 1;
-                for (const a of agents) {
-                    if (a.preferenceArchive.length > 0) {
-                        lastPreferences = a.preferenceArchive[a.preferenceArchive.length - 1].preferences;
-                        if (lastPreferences[task].completed > maxx) maxx = lastPreferences[task].completed;
-                        // console.log(task, lastPreferences, maxx);
-                    }
+        // console.log(agents);
+        const tasks = ['admin', 'clean', 'cook', 'shop'];
+        const forgetRate = 0.35;
+        let lastPreferences = this.preferenceArchive[this.preferenceArchive.length - 1].preferences;
+        let tasksCompleted = {};
+        let result = {};
+        let executedTask = this.preferenceArchive.map(result => result.executed_task);
+        // console.log(executedTask); 
+        /**
+         * here we compoute the skill of each single agent.
+         * The skill in our model is a quantitative measure,
+         * it looks how often the skill has been executed and compares it
+         * with how ofte the other have executed the same task.
+         * therefore the agent who has executed the task the most is the more 
+         * skilled, and so on. 
+         */
+        for (const task of tasks) {
+            /**
+             * here we compute the which agent has executed a task 
+             * the most
+             */
+            let max = 1;
+            for (const a of agents) {
+                if (a.preferenceArchive.length > 0) {
+                    lastPreferences = a.preferenceArchive[a.preferenceArchive.length - 1].preferences;
+                    if (lastPreferences[task].completed > max) max = lastPreferences[task].completed;
                 }
-                /**
-                 * here we check how often an agent has completed this task
-                 */
-                let completed = agent.preferenceArchive[agent.preferenceArchive.length - 1].preferences;
-                let sum = (completed[task].completed / maxx) * MAXIMUM;
-
-                // console.log(task, sum, maxx, completed[task].completed);
-                agent.preferences[task].skill_level = sum;
             }
+            /**
+             * here we check how often an agent has completed this task
+             */
+            let completed = this.preferenceArchive[this.preferenceArchive.length - 1].preferences;
+            let sum = (completed[task].completed / max) * MAXIMUM;
+            this.preferences[task].skill_level = sum;
+        }
+        /**
+         * here we compute the preference for a task.
+         * each behavior defines how the preference of each agentt develops.
+         * 
+         * 🏖
+         * geniesser have higher preference for tasks that take him less time to
+         * finish.
+         * 
+         * 👨‍🚀
+         * perfectionist have higher preference for the task they want to master
+         * 
+         * 😯
+         * have hihger preference for tasks they have executed the least
+         * 
+         * 🎩
+         * capitalist have higher preference for tasks they get the more resting time from
+         */
 
-            // let max = 0;
-            // Object.keys(lastPreferences).forEach(key => {
-            //     // console.log(key);
-            //     if (lastPreferences[key].completed > max) max = lastPreferences[key].completed;
-            //     tasksCompleted[key] = lastPreferences[key].completed;
-            // });
-            // // console.log(max, tasksCompleted);
+        let fldOffset = this.FLD / MAXIMUM > 0.5 ? 1 : -1;
 
-            // for (const task of tasks) {
-            //     let currentCompletedTasks = tasksCompleted[task];
-            //     // console.log(currentCompletedTasks);
-            //     // let sum1 = map(currentCompletedTasks, 0, max, -15, 15);
-            //     // let sum = map(currentCompletedTasks, 0, max,MINIMUM, MAXIMUM);
-            //     let sum2 = (currentCompletedTasks / max) * MAXIMUM;
-            //     // console.log(sum);
-            //     agent.preferences[task].skill_level = sum2;
-            //     agent.preferences[task].skill_level = clamp(agent.preferences[task].skill_level, MINIMUM, MAXIMUM);
-            // }
-            // /**
-            //  * Historical look on the executed task 
-            //  * here we add or remove skill depending
-            //  * on the historical data of tasks
-            //  */
-            // for (const task of tasks) {
+        if (this.behavior === 'curious') {
+            let completedTasks = [];
+            let tot = 0;
+            for (const task of tasks) {
+                let obj = {
+                    task_name: task,
+                    completed: lastPreferences[task].completed
+                }
+                tot += lastPreferences[task].completed;
+                completedTasks.push(obj);
+            }
+            for (const task of completedTasks) {
+                this.preferences[task.task_name].task_preference = ((task.completed / tot) * MAXIMUM) + fldOffset * 5;
+                this.preferences[task.task_name].task_preference = clamp(this.preferences[task.task_name].task_preference, MINIMUM, MAXIMUM);
+            }
+        }
+        if (this.behavior === 'perfectionist') { 
 
-            //     let taskPattern = [];
-            //     let sum = 0;
-            //     for (let i = 0; i < executedTask.length; i++) {
-            //         const executed = executedTask[i];
-            //         if (executed === task) {
-            //             // here we add up the executed tasks and we normalize it
-            //             sum += 1 / executedTask.length;
-            //             // than we push the position of that task
-            //             // to define the pattern in which the tasks repeat themselves
-            //             taskPattern.push(i);
-            //         }
-            //     }
-            //     /**
-            //      * here we make the task pattern
-            //      * this means looking how tasks have been executed
-            //      * how often they have been executed in a row or singularly
-            //      * this can give us better understanding on how to
-            //      * update skill and preference for a task
-            //      * 
-            //      * this returns an array of arrays listing the
-            //      * consecutive numbers of an array
-            //      */
-            //     const consecutiveNums = taskPattern.reduce((r, n) => {
-            //         const lastSubArray = r[r.length - 1];
-            //         if (!lastSubArray || lastSubArray[lastSubArray.length - 1] !== n - 1) {
-            //             r.push([]);
-            //         }
-            //         r[r.length - 1].push(n);
-            //         return r;
-            //     }, []);
-            //     let pattern = [];
-            //     for (const arr of consecutiveNums) {
-            //         pattern.push(arr.length);
-            //     }
-            //     // console.log(pattern);
-            //     let patternSum = 0;
-            //     let index = 0;
-            //     for (const num of pattern) {
-            //         if(num > 1)patternSum += num * (1 / (pattern.length * (index + 1) * 2))
-            //         index++;
-            //     }
-            //     // console.log(patternSum);
-            //     result[task] = sum - forgetRate;
-            //     sum -= forgetRate;
-            //     sum *= 10;
+        }
+        if (this.behavior === 'geniesser' || this.behavior === 'perfectionist') {
+            const MEDIUM_SKILL = MAXIMUM / 2;
+            let taskSkill = []
+            let x_s = [];
+            for (let i = 0; i < this.preferenceArchive.length; i++)x_s.push(i);
 
-            //     //   console.log(sum);
-            //     agent.preferences[task].skill_level += sum;
-            //     agent.preferences[task].skill_level = clamp(agent.preferences[task].skill_level, MINIMUM, MAXIMUM);
-            //     //   console.log(agent.preferences[task].skill_level);
+            for (const task of tasks) {
+
+                let y_s = this.preferenceArchive.map(result => result.preferences[task].skill_level);
+                let pref = this.preferences[task].skill_level;
+                let offset = 5 + (fldOffset * 3);
+                pref += linearRegression(y_s, x_s).slope > 0 ? offset : -offset;
+                // this.preferences[task].task_preference += linearRegression(y_s, x_s).slope > 0 ? -10 : 10;
+                this.preferences[task].task_preference = pref;
+                this.preferences[task].task_preference = clamp(this.preferences[task].task_preference, MINIMUM, MAXIMUM);
+            }
+            // console.log(linearRegression(y_s, x_s));
+            // for (const task of taskSkill) {
+            //     this.preferences[task.task_name].task_preference += task.task_skill_offset;
+            //     this.preferences[task.task_name].task_preference = clamp(this.preferences[task.task_name].task_preference, MINIMUM, MAXIMUM);
             // }
 
+            function linearRegression(y, x) {
+                let lr = {};
+                let n = y.length;
+                let sum_x = 0;
+                let sum_y = 0;
+                let sum_xy = 0;
+                let sum_xx = 0;
+                let sum_yy = 0;
 
-            // for (const task of tasks) {
-            //     let taskPattern = [];
-            //     for (let i = 0; i < executedTask.length; i++) {
-            //         const executed = executedTask[i];
-            //         if (executed === task) taskPattern.push(i);
-            //     }
+                for (let i = 0; i < n; i++) {
 
+                    sum_x += x[i];
+                    sum_y += y[i];
+                    sum_xy += (x[i] * y[i]);
+                    sum_xx += (x[i] * x[i]);
+                    sum_yy += (y[i] * y[i]);
+                }
 
-            //     /**
-            //      * here we make the task pattern
-            //      * this means looking how tasks have been executed
-            //      * how often they have been executed in a row or singularly
-            //      * this can give us better understanding on how to
-            //      * update skill and preference for a task
-            //      * 
-            //      * this returns an array of arrays listing the
-            //      * consecutive numbers of an array
-            //      */
-            //     const consecutiveNums = taskPattern.reduce((r, n) => {
-            //         const lastSubArray = r[r.length - 1];
-            //         if (!lastSubArray || lastSubArray[lastSubArray.length - 1] !== n - 1) {
-            //             r.push([]);
-            //         }
-            //         r[r.length - 1].push(n);
-            //         return r;
-            //     }, []);
-            //     let pattern = [];
-            //     for (const arr of consecutiveNums) {
-            //         pattern.push(arr.length);
-            //     }
-            //     // result[task] = pattern;
-            // }
-            // console.log(result, tasksCompleted);
+                lr['slope'] = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x * sum_x);
+                lr['intercept'] = (sum_y - lr.slope * sum_x) / n;
+                lr['r2'] = Math.pow((n * sum_xy - sum_x * sum_y) / Math.sqrt((n * sum_xx - sum_x * sum_x) * (n * sum_yy - sum_y * sum_y)), 2);
+
+                return lr;
+            }
+        }
+
+        if (this.behavior === 'capitalist') {
+            let taskValues = [];
+            for (const task of TASK_LIST) {
+                let obj = {
+                    task_name: task.type,
+                    task_value: this.taskValue(agents, task.type)
+                }
+                taskValues.push(obj);
+            }
+            for (const task of taskValues) {
+                this.preferences[task.task_name].task_preference = (task.task_value * MAXIMUM) + fldOffset * 5;
+                this.preferences[task.task_name].task_preference = clamp(this.preferences[task.task_name].task_preference, MINIMUM, MAXIMUM);
+            }
         }
     }
     /**
