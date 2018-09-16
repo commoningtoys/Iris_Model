@@ -6,12 +6,21 @@
     src: url(font/SourceCodePro-Medium.otf);
 }
 
-body {
+body{
     padding: 0;
     margin: 0;
     font-family: mono;
     font-size: 75%;
     hyphens: auto;
+}
+
+button{
+    font-family: mono;
+}
+
+#p5Sketch{
+    position: fixed;
+    width: 67%;
 }
 
 ::-webkit-scrollbar-track {
@@ -28,6 +37,38 @@ body {
     background-color: #f00;
     /* border: 2px solid #555555; */
 }
+
+.footer-menu{
+    position: fixed;
+    left: 0px;
+    bottom: 0px;
+    width: 100%;
+    height: 50px;
+    background-color: #00f;
+    /* margin: auto 0; */
+}
+.footer-menu button{
+    padding: 0.6em;
+    /* top: 50%;
+    transform: translate(0%, 50%);
+    -moz-transform: translate(0%, 50%);
+    -webkit-transform: translate(0%, 50%); */
+}
+
+.menu{
+    display: none;
+    background-color: #0f0;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+}
+/**
+* left column data
+*/
+
 .info::-webkit-scrollbar-thumb {
     background-color: #00f;
     /* border: 2px solid #555555; */
@@ -72,10 +113,6 @@ body {
     background-color: #0f0;
 }
 
-#p5Sketch{
-    position: fixed;
-    width: 67%;
-}
 
 /* PLAYER STYLING */
 

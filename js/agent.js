@@ -86,6 +86,8 @@ class Agent {
             traded: color(0, 255, 100, 100),
             brute_force: color(255, 125, 0, 100)
         };
+
+        this.recordData = false;
         // this.makeInfo();
         // this.setInfo();
     }
@@ -161,16 +163,15 @@ class Agent {
      */
     infographic() {
         const INFO_WIDTH = width - LEFT_GUTTER;
-        const ROWS = 5;
         // const INFO_HEIGHT = (height - (6 * PADDING)) / ROWS;
-        let ROW_NUMBER = 1;
+        let ROW_NUMBER = 0;
         if (this.isPlayer) {
             let str = this.ID.substr(this.playerName.length, 4);
             // console.log(str);
             // console.log(`is player ${parseInt(str)}`);
-            ROW_NUMBER += (10 + AGENT_NUM + parseInt(str)) % 11;
+            ROW_NUMBER += (ROWS + parseInt(str)) % ROWS;
         } else {
-            ROW_NUMBER += (10 + parseInt(this.ID)) % 11;
+            ROW_NUMBER += (ROWS + parseInt(this.ID)) % ROWS;
         }
         ROW_NUMBER *= 2;
         const CT = this.currentTask;
@@ -258,7 +259,7 @@ class Agent {
             return LEFT_GUTTER + map(index, 0, max, col * W, (col + 1) * W);
         }
         function posY(val, row_number) {
-            return ((INFO_HEIGHT + PADDING) * row_number) - map(val, MINIMUM, MAXIMUM, 0, INFO_HEIGHT);
+            return 2 * (INFO_HEIGHT + PADDING) + ((INFO_HEIGHT + PADDING) * row_number) - map(val, MINIMUM, MAXIMUM, 0, INFO_HEIGHT);
         }
     }
     /**
@@ -736,17 +737,18 @@ class Agent {
             brute_force: this.wasBruteForced
         });
 
-
-        // this.data.push({
-        //     preferences: insert,
-        //     executed_task: task.type,
-        //     resting_time: this.restingTime,
-        //     feel_like_doing: this.FLD,
-        //     stress_level: this.stress,
-        //     amount_of_time: this.mappedAmountOfTime,
-        //     traded: this.hasTraded,// === true ? this.tradeTask : '',
-        //     brute_force: this.wasBruteForced
-        // });
+        if (this.recordData) {
+            this.data.push({
+                preferences: insert,
+                executed_task: task.type,
+                resting_time: this.restingTime,
+                feel_like_doing: this.FLD,
+                stress_level: this.stress,
+                amount_of_time: this.mappedAmountOfTime,
+                traded: this.hasTraded,// === true ? this.tradeTask : '',
+                brute_force: this.wasBruteForced
+            });
+        }
 
         if (this.preferenceArchive.length > 100) this.preferenceArchive.splice(0, 1);
         this.updatePreferences(task.type, agents);
@@ -871,7 +873,7 @@ class Agent {
                 this.preferences[task.task_name].task_preference = clamp(this.preferences[task.task_name].task_preference, MINIMUM, MAXIMUM);
             }
         }
-        if (this.behavior === 'perfectionist') { 
+        if (this.behavior === 'perfectionist') {
 
         }
         if (this.behavior === 'geniesser' || this.behavior === 'perfectionist') {

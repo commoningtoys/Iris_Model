@@ -7,11 +7,11 @@ class IrisModel {
         for (let i = 0; i < num_agents; i++) {
             // let randomIndex = Math.floor(Math.random() * 4);
             let index = i % AGENT_BEHAVIORS.length;
-            this.agents.push(new Agent(TASK_LIST, i + 1, false, AGENT_BEHAVIORS[index]));
+            this.agents.push(new Agent(TASK_LIST, i, false, AGENT_BEHAVIORS[index]));
         }
         // add players
         for (let i = 0; i < num_players || 0; i++) {
-            this.agents.push(new Agent(TASK_LIST, i + 1, true))
+            this.agents.push(new Agent(TASK_LIST, i, true))
         }
         // make the info for all of the agents
         for (const agent of this.agents) {
@@ -98,7 +98,7 @@ class IrisModel {
         this.agents.sort((a, b) => a.ID - b.ID);
 
         // here we have to build the filter to visualize the agents
-        for(let i = 0; i < 6; i++){
+        for(let i = 0; i < 5; i++){
         // for (const agent of this.agents) {
             let agent = this.agents[i];
             if (singleView) agent.infographic();

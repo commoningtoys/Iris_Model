@@ -20,8 +20,11 @@
 </head>
 
 <body>
-  <button style="position: fixed; bottom:0px; left: 0px; padding: 0.6em" onclick="singleView = !singleView">CHANGE VIEW</button>
-  <button style="position: fixed; bottom:0px; left: 110px; padding: 0.6em" onclick="saveRAWData(irisModel.agents)">SAVE DATA</button>
+  <div class="footer-menu">
+    <button onclick="singleView = !singleView">CHANGE VIEW</button>
+    <button onclick="saveRAWData(irisModel.agents)">SAVE DATA</button>
+    <button id="show-menu">SHOW MENU</button>
+  </div>
   <div id="p5Sketch"></div>
   <!-- <div id="display-date"></div> -->
   <div class="info" id="info-window">
