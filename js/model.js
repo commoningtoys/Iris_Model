@@ -45,7 +45,11 @@ class IrisModel {
             color(0, 0, 255),
             color(0, 255, 100),
             color(255, 125, 0)
-        ]
+        ];
+
+        this.recordAgentsData = false;
+        this.recordDataCounter = 0;
+        this.dataCollected = 0;
     }
     /**
      * calculates the global amount of time the agents have for resting
@@ -87,6 +91,13 @@ class IrisModel {
         }
         this.counter++;
         // console.log(this.counter, this.timeUnit);
+        // if we are recording the data, we show how much has been collected
+        if(this.recordAgentsData){
+            for (const agent of this.agents) {
+                this.dataCollected += agent.data.length;
+            }
+            $('#data-collected').text(this.dataCollected);
+        }
     }
     show() {
         // console.log('show')
@@ -98,8 +109,8 @@ class IrisModel {
         this.agents.sort((a, b) => a.ID - b.ID);
 
         // here we have to build the filter to visualize the agents
-        for(let i = 0; i < 5; i++){
-        // for (const agent of this.agents) {
+        for (let i = 0; i < 5; i++) {
+            // for (const agent of this.agents) {
             let agent = this.agents[i];
             if (singleView) agent.infographic();
             else drawInfos(agent);
@@ -173,6 +184,42 @@ class IrisModel {
             sumTask += task.GRT;
         }
         console.log(`agent resting time: ${sumAgent}, task GRT: ${sumTask} GLOBAL ${this.GLOBAL_RESTING_TIME}`);
+    }
+
+    recordData() {
+        console.log('RECORDING');
+        this.recordAgentsData = !this.recordAgentsData;
+        if (this.recordAgentsData) {
+            for (const agent of this.agents) {
+                agent.data = []; // empty the data set
+                agent.recordData = true;
+            }
+            $('#record-data').html('<span id="data-collected"></span> entries<br>(click again to save)');
+        }else{
+            $('#record-data').text('RECORD DATA');
+            for (const agent of this.agents) {
+                agent.recordData = false;
+            }
+            saveRAWData(this.agents, this.recordDataCounter);
+            this.dataCollected = 0;
+            this.recordDataCounter++;
+        }
+    }
+
+    setMinWage(val){
+        console.log(val);
+        for (const task of tasks) {
+            task.minWage = val;
+        }
+        $('#set-min-wage').text(val);
+    }
+    setAgentsBehavior(behavior){
+        console.log(behavior);
+        for (const agent of this.agents) {
+            agent.behavior = behavior;
+            agent.makeInfo(this.agents);
+            agent.setInfo();
+        }
     }
     /**
      * player interactions below

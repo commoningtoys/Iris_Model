@@ -58,3 +58,30 @@ function drawInfos(agent) {
   endShape();
   // console.log(infos);
 }
+/**
+ * here we add all the event listeners 
+ */
+let recordData = document.getElementById('record-data')
+recordData.addEventListener('click', () =>{
+  irisModel.recordData();
+});
+
+$('#show-menu').click(()=>{
+  $('.menu').toggle('fast');
+})
+
+$('#close-menu').click(()=>{
+  $('.menu').toggle('fast');
+})
+
+$('#select-behavior').click(el =>{
+  // console.log($("#select-behavior option:selected").val());
+  const behavior = $("#select-behavior option:selected").val();
+  irisModel.setAgentsBehavior(behavior);
+})
+
+let slider = document.getElementById('min-wage');
+slider.addEventListener('change', event =>{
+  // console.log(slider.value);
+  irisModel.setMinWage(slider.value);
+})

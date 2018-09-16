@@ -19,21 +19,21 @@ class Agent {
          * if the agent is perfectionist we need to define
          * the task he wants to master
          */
-        if (this.behavior === 'perfectionist') {
-            let max = 0;
-            let myObj = this.preferences;
-            let result = ''
-            Object.keys(myObj).forEach(key => {
-                let pref = myObj[key].skill_level;
-                let name = myObj[key].task_name;
-                if (pref > max) {
-                    max = pref;
-                    result = name;
-                }
-            });
-            this.masterTask = result;
-            // console.log(this.masterTask);
-        }
+        // if (this.behavior === 'perfectionist') {
+        let max = 0;
+        let myObj = this.preferences;
+        let result = ''
+        Object.keys(myObj).forEach(key => {
+            let pref = myObj[key].skill_level;
+            let name = myObj[key].task_name;
+            if (pref > max) {
+                max = pref;
+                result = name;
+            }
+        });
+        this.masterTask = result;
+        // console.log(this.masterTask);
+        // }
 
         // the next attributes are used for the trading system,
         this.tradeTask = '';// this defines the task the agent wants to do
@@ -745,7 +745,7 @@ class Agent {
                 feel_like_doing: this.FLD,
                 stress_level: this.stress,
                 amount_of_time: this.mappedAmountOfTime,
-                traded: this.hasTraded,// === true ? this.tradeTask : '',
+                traded: this.hasTraded,
                 brute_force: this.wasBruteForced
             });
         }

@@ -20,6 +20,7 @@ class Task {
          * The value goes down every time an agent (or agents) decide to 'carry out' the task.
          */
         this.value = 0;// BETWEEN 1 - 100
+        this.minWage = 0;
         this.agentsPool = [];// this is the pool of availabale agents where task picks a random one
         this.tradingAgents = 0;// to keep track of the agents that traded
         /**
@@ -94,7 +95,7 @@ class Task {
          * are more stressed. if we let the model give 0 resting time 
          * than the capitalist are the less stressed.
          */
-        let amountOfTime = ((NUMBER_OF_AGENTS - counter) / NUMBER_OF_AGENTS) * TIME_SCALE * TS_FRACTION;
+        let amountOfTime = this.minWage + ((NUMBER_OF_AGENTS - counter) / NUMBER_OF_AGENTS) * TIME_SCALE * TS_FRACTION;
         amountOfTime = Math.round(amountOfTime);
         // down here we remove time from the GRT if it reaches 0 it stays 0!
         if (this.GRT > 0) {

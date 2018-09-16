@@ -55,7 +55,7 @@ function roundPrecision(value, precision) {
     return Math.round(value * multiplier) / multiplier;
 }
 
-function saveRAWData(agents) {
+function saveRAWData(agents, id) {
     let json = {};
     agents.sort(function (a, b) {
         return a.ID - b.ID;
@@ -64,7 +64,7 @@ function saveRAWData(agents) {
     for (const agent of agents) {
         json['AGENT_ID_' + agent.ID] = agent.data;
     }
-    saveJSON(json, 'RAW_DATA.json');
+    saveJSON(json, 'RAW_DATA_' + nf(id, 4) + '.json');
 }
 
 function modelTime() {
