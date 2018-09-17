@@ -8,7 +8,6 @@
   <script src="js/libraries/jquery-3.3.1.min.js"></script>
   <script src="js/libraries/p5.min.js"></script>
   <script src="js/libraries/p5.dom.min.js"></script>
-  <script src="js/libraries/p5.sound.min.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -60,32 +59,33 @@
   <div class="menu">
     <button id="close-menu">CLOSE ❌</button>
     <div class="menu-content">
-      <p>
-        <input id="restart-model" type="checkbox"> restart model? <span id="yes/no">no</span>
-      </p>
-      <p>
-        set minimum wage to: <span id="set-min-wage">0</span> <br>
-        <input type="range" min="0" max="10" value="0" id="min-wage">
-      </p>
-      <p>
-        set the model to: <br>
-        <select multiple id="select-behavior">
-            <option value="curious">ALL CURIOUS</option>
-            <option value="perfectionist">ALL PERFECTIONISTS</option>
-            <option value="geniesser">ALL GENIESSER</option>
-            <option value="capitalist">ALL CAPITALISTS</option>
-        </select> <br> <br>
-        set custom number of behaviors in % <br> <u><i>(this will restart the model)</i></u> <br> <br>
-        <input type="text" value="0" class="custom" name="curious"> curious % <br>
-        <input type="text" value="0" class="custom" name="perfectionist"> perfectionists % <br>
-        <input type="text" value="0" class="custom" name="geniesser"> geniesser % <br>
-        <input type="text" value="0" class="custom" name="capitalist"> capitalists % <br> <br>
-        <button>RESTART</button>
-      </p>
+      <!-- <input id="restart-model" type="checkbox"> restart model? <span id="yes/no">no</span> -->
+      <br>
+      set minimum wage to: <span id="set-min-wage">0</span> <br>
+      <input type="range" min="0" max="10" value="0" id="min-wage"> <br>
+      How many agents: <br>
+      <input type="text" value="10" class="custom" id="how-many-agents"> <br>
+      How many task-sets: <br>
+      <u><i>(each set is composed by 4 tasks)</i></u> <input type="text" value="1" id="how-many-task" class="custom">
+      <br>
+      set the model to: <br>
+      <select multiple id="select-behavior">
+        <option value="curious">ALL CURIOUS</option>
+        <option value="perfectionist">ALL PERFECTIONISTS</option>
+        <option value="geniesser">ALL GENIESSER</option>
+        <option value="capitalist">ALL CAPITALISTS</option>
+      </select>
+      <br> <br>
+      set custom number of behaviors <br> <u><i>(this will restart the model)</i></u> <br> <br>
+      <input type="text" value="0" class="custom-behavior" name="curious"> curious<br>
+      <input type="text" value="0" class="custom-behavior" name="perfectionist"> perfectionists<br>
+      <input type="text" value="0" class="custom-behavior" name="geniesser"> geniesser<br>
+      <input type="text" value="0" class="custom-behavior" name="capitalist"> capitalists<br> <br>
+
+      <button onclick="restartModel()">RESTART</button>
 
     </div>
   </div>
-
   <script src="js/utils.js"></script>
   <script src="js/const.js"></script>
   <script src="js/behaviour.js"></script>

@@ -75,8 +75,9 @@ button#close-menu {
     top: 0px;
     right: 0px;
 }
-.custom{
+.custom, .custom-behavior{
     max-width: 50px;
+    margin: 5px;
 }
 .menu-content{
     color: #0f0;
