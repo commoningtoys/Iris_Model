@@ -23,7 +23,7 @@ function setup() {
 
   let min_wage = 0;
   let tasks_num = 2;
-  let players = 0;
+  let players = 1;
   irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
   textSize(9);
 }
@@ -32,7 +32,7 @@ function draw() {
   // background(51);
 
 
-  let loops = 10; // chnage this number with an integer (1 - 100) to accelerate the model.
+  let loops = 1; // chnage this number with an integer (1 - 100) to accelerate the model.
 
 
   for (let i = 0; i < loops; i++) {
