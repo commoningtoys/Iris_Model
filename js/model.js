@@ -3,14 +3,32 @@ class IrisModel {
         console.log(behaviours);
         this.agents = [];
         this.tasks = [];
+        /**
+         * here below we fill our Agents array
+         * 
+         * first we extract all the behaviors that
+         * have been passed from the object into an array
+         */
+        let behaviorList = [];
         let agentsNum = 0;
         Object.keys(behaviours).forEach(key => {
             console.log(key, behaviours[key]);
             for (let i = 0; i < behaviours[key]; i++) {
-                this.agents.push(new Agent(TASK_LIST, agentsNum, false, key));
+                behaviorList.push(key);
                 agentsNum++;
             }
-        })
+        });
+        /**
+         * in order to have them more omogenous distributed we 
+         * shuffle the array containing the bahaviors
+         * and than we fill the agents array and we assign their behaviors
+         */
+        shuffleArray(behaviorList);
+        let index = 0;
+        for (const behavior of behaviorList) {
+            this.agents.push(new Agent(TASK_LIST, index, false, behavior));
+            index++;
+        }
         // here we set the max value of the slider that shows the agents
         const slider = document.getElementById('view')
         slider.max = agentsNum;
@@ -237,8 +255,8 @@ class IrisModel {
 
         this.showFrom = val - 2;
         this.showTo = val + 3;
-        if(this.showFrom < 0)this.showFrom = 0;
-        if(this.showTo > this.agents.length)this.showTo = this.agents.length;
+        if (this.showFrom < 0) this.showFrom = 0;
+        if (this.showTo > this.agents.length) this.showTo = this.agents.length;
     }
     /**
      * player interactions below

@@ -17,7 +17,7 @@ function setup() {
   let behaviors = {
     curious: 3,
     perfectionist: 3,
-    geniesser: 20,
+    geniesser: 2,
     capitalist: 2
   };
 
