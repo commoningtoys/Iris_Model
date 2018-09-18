@@ -121,12 +121,14 @@ minWage.addEventListener('change', event => {
 $('.custom-behavior').change(() => {
   let sum = 0;
   const agentsNumber = document.getElementById('how-many-agents');
+  const taskNumber = document.getElementById('how-many-task');
   const inputCustom = document.getElementsByClassName('custom-behavior');
   for (const el of inputCustom) {
     sum += parseInt(el.value);
   }
   console.log(sum);
   agentsNumber.value = sum;
+  taskNumber.value = Math.floor(sum / 5);
 });
 
 function restartModel() {
