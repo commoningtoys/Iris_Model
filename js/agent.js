@@ -166,7 +166,7 @@ class Agent {
         // const INFO_HEIGHT = (height - (6 * PADDING)) / ROWS;
         let ROW_NUMBER = 0;
         // NEED TO FIX THE VIZ FOR THE PLAYER AGENT!!!!!!
-        
+
         // if (this.isPlayer) {
         //     let str = this.ID.substr(this.playerName.length, 4);
         //     // console.log(str);
@@ -325,7 +325,7 @@ class Agent {
             noLoop();
             console.log('noLoop');
             // console.log(`noLoop ${agent.isPlayer}, ${agent.hasTraded}`)
-            this.playerInteraction(task);
+            this.playerInteraction(task, agents);
             return true;
         }
 
@@ -1103,7 +1103,7 @@ class Agent {
     * 
     * @param {*} task 
     */
-    playerInteraction(task) {
+    playerInteraction(task, agents) {
         this.playerTaskToExecute = task;
         // needs to be done in the index.html
         $('.player-interface').toggle();
@@ -1123,11 +1123,13 @@ class Agent {
         for (const t of TASK_LIST) {
             if (t.type !== task.type) {
                 $('#task-' + (i + 1))
-                    .html(t.type)
+                    .text(t.type + ': ' + Math.floor(this.taskValue(agents, t.type) * TIME_SCALE * TS_FRACTION))
                     .val(t.type);
                 i++
             }
         }
+        this.taskValue(agents, task.type)
+        document.getElementById('task-value').textContent = task.value;
     }
     /**
      * ADD DESCRIPTION
