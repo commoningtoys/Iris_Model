@@ -13,6 +13,7 @@ const AGENT_NUM = 10;
 const LEFT_GUTTER = 80;
 const PADDING = 15;
 const COL = 10;
+const ROWS = 5;
 const COL_HEIGHT = innerHeight - 100;
 const INFO_HEIGHT = 55;
 // make our tasks

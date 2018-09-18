@@ -19,21 +19,21 @@ class Agent {
          * if the agent is perfectionist we need to define
          * the task he wants to master
          */
-        if (this.behavior === 'perfectionist') {
-            let max = 0;
-            let myObj = this.preferences;
-            let result = ''
-            Object.keys(myObj).forEach(key => {
-                let pref = myObj[key].skill_level;
-                let name = myObj[key].task_name;
-                if (pref > max) {
-                    max = pref;
-                    result = name;
-                }
-            });
-            this.masterTask = result;
-            // console.log(this.masterTask);
-        }
+        // if (this.behavior === 'perfectionist') {
+        let max = 0;
+        let myObj = this.preferences;
+        let result = ''
+        Object.keys(myObj).forEach(key => {
+            let pref = myObj[key].skill_level;
+            let name = myObj[key].task_name;
+            if (pref > max) {
+                max = pref;
+                result = name;
+            }
+        });
+        this.masterTask = result;
+        // console.log(this.masterTask);
+        // }
 
         // the next attributes are used for the trading system,
         this.tradeTask = '';// this defines the task the agent wants to do
@@ -86,6 +86,8 @@ class Agent {
             traded: color(0, 255, 100, 100),
             brute_force: color(255, 125, 0, 100)
         };
+
+        this.recordData = false;
         // this.makeInfo();
         // this.setInfo();
     }
@@ -161,18 +163,17 @@ class Agent {
      */
     infographic() {
         const INFO_WIDTH = width - LEFT_GUTTER;
-        const ROWS = 5;
         // const INFO_HEIGHT = (height - (6 * PADDING)) / ROWS;
-        let ROW_NUMBER;
+        let ROW_NUMBER = 0;
         if (this.isPlayer) {
             let str = this.ID.substr(this.playerName.length, 4);
             // console.log(str);
             // console.log(`is player ${parseInt(str)}`);
-            ROW_NUMBER = AGENT_NUM + parseInt(str);
+            ROW_NUMBER += (ROWS + parseInt(str)) % ROWS;
         } else {
-            ROW_NUMBER = parseInt(this.ID);
+            ROW_NUMBER += (ROWS + parseInt(this.ID)) % ROWS;
         }
-
+        ROW_NUMBER *= 2;
         const CT = this.currentTask;
         // console.log(this.currentTask);
         // here we extract the values of FLD, resting time && stress && more
@@ -192,6 +193,12 @@ class Agent {
         // }
         line(posX(0, MAXIMUM), posY(MAXIMUM, ROW_NUMBER), posX(0, MINIMUM), posY(MINIMUM, ROW_NUMBER));
         line(posX(0, MAXIMUM), posY(MINIMUM, ROW_NUMBER), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, ROW_NUMBER));
+        let i = 0;
+        for (const el of TASK_LIST) {
+            line(posX(0, MAXIMUM, i, TASK_LIST.length), posY(MAXIMUM, ROW_NUMBER - 1), posX(0, MINIMUM, i, TASK_LIST.length), posY(MINIMUM, ROW_NUMBER - 1));
+            line(posX(0, MAXIMUM, i, TASK_LIST.length), posY(MINIMUM, ROW_NUMBER - 1), posX(MAXIMUM, MAXIMUM, i, TASK_LIST.length), posY(MINIMUM, ROW_NUMBER - 1));
+            i++;
+        }
         // here we draw when an agent has traded or has been brute forced to do a task
         drawLine(traded, this.preferenceColors.traded, ROW_NUMBER);
         drawLine(bruteForce, this.preferenceColors.brute_force, ROW_NUMBER);
@@ -201,17 +208,19 @@ class Agent {
         printGraphic('\n\n\n\nSTRESS', stress, this.preferenceColors.stress, ROW_NUMBER);
         printGraphic('', aot, this.preferenceColors.time, ROW_NUMBER);
         // here we extract preferences and we NEEDS REFACTORING!!
-        // let i = 2;
-        // for (const el of TASK_LIST) {
-        //     let pref = this.preferenceArchive.map(result => result.preferences[el.type]);
-        //     let taskSkill = pref.map(result => result.skill_level);
-        //     let taskPref = pref.map(result => result.task_preference);
+        let j = 0;
+        for (const el of TASK_LIST) {
+            let pref = this.preferenceArchive.map(result => result.preferences[el.type]);
+            let taskSkill = pref.map(result => result.skill_level);
+            let taskPref = pref.map(result => result.task_preference);
 
-        //     printGraphic(el.type, taskSkill, this.preferenceColors.skill, i);
-        //     printGraphic('', taskPref, this.preferenceColors.preference, i);
-        //     i++;
-        // }
-        function printGraphic(str, arr, col, row_number) {
+            printGraphic('', taskSkill, this.preferenceColors.skill, ROW_NUMBER - 1, j, TASK_LIST.length);
+            printGraphic('', taskPref, this.preferenceColors.preference, ROW_NUMBER - 1, j, TASK_LIST.length);
+            j++;
+        }
+        function printGraphic(str, arr, col, row_number, col_number, tot_col) {
+            let colNumber = col_number || 0;
+            let totCol = tot_col || 1;
             noStroke();
             fill(col);
             text(str, PADDING / 2, posY(MAXIMUM, row_number));
@@ -221,14 +230,12 @@ class Agent {
             let i = 0;
             beginShape();
             for (const val of arr) {
-                // strokeWeight(2);
-                let currX = posX(i, arr.length);
+                let currX = posX(i, arr.length, colNumber, totCol);
                 let currY = posY(val, row_number);
                 vertex(currX, currY);
                 i++;
             }
             endShape();
-
         }
 
         function drawLine(arr, col, row_number) {
@@ -244,11 +251,15 @@ class Agent {
             }
         }
 
-        function posX(index, max) {
-            return LEFT_GUTTER + map(index, 0, max, 0, INFO_WIDTH - PADDING);
+        function posX(index, max, col_number, tot_col) {
+            let col = col_number || 0;
+            let colNumber = tot_col || 1;
+            let W = (INFO_WIDTH - PADDING) / colNumber;
+
+            return LEFT_GUTTER + map(index, 0, max, col * W, (col + 1) * W);
         }
         function posY(val, row_number) {
-            return ((INFO_HEIGHT + PADDING) * row_number) - map(val, MINIMUM, MAXIMUM, 0, INFO_HEIGHT);
+            return 2 * (INFO_HEIGHT + PADDING) + ((INFO_HEIGHT + PADDING) * row_number) - map(val, MINIMUM, MAXIMUM, 0, INFO_HEIGHT);
         }
     }
     /**
@@ -726,23 +737,25 @@ class Agent {
             brute_force: this.wasBruteForced
         });
 
-
-        this.data.push({
-            preferences: insert,
-            executed_task: task.type,
-            resting_time: this.restingTime,
-            feel_like_doing: this.FLD,
-            stress_level: this.stress,
-            amount_of_time: this.mappedAmountOfTime,
-            traded: this.hasTraded,// === true ? this.tradeTask : '',
-            brute_force: this.wasBruteForced
-        });
+        if (this.recordData) {
+            this.data.push({
+                preferences: insert,
+                executed_task: task.type,
+                resting_time: this.restingTime,
+                feel_like_doing: this.FLD,
+                stress_level: this.stress,
+                amount_of_time: this.mappedAmountOfTime,
+                traded: this.hasTraded,
+                brute_force: this.wasBruteForced
+            });
+        }
 
         if (this.preferenceArchive.length > 100) this.preferenceArchive.splice(0, 1);
-        this.updatePreferences(task.type);
+        this.updatePreferences(task.type, agents);
         this.setInfo();
     }
-    updatePreferences(task_name) {
+
+    updatePreferences(task_name, agents) {
         /**
          * the preferences (skill & preference for a task) get updated
          * according on how often the same task has been done in a row
@@ -753,36 +766,150 @@ class Agent {
          * a.k.a. you forget how to do a task
          */
         // here we check how often a task has been executed in a row
-        let counter = 0;
-        for (let i = this.preferenceArchive.length - 1; i >= 0; i--) {
-            let pref = this.preferenceArchive[i];
-            if (pref.executed_task === task_name) counter++;
-            else break;
-        }
-        // console.log(counter);
-        // here we adjust the skill and preference
-        let myObj = this.preferences;
-        Object.keys(myObj).forEach(key => {
-            let pref = myObj[key];
-            if (pref.task_name.includes(task_name)) {
-                // skill increases while preference decreases
-                pref.skill_level += counter;
-                pref.task_preference -= Math.pow(counter, 2);
-                // pref.task_preference--;
-            } else {
-                // the opposit for the other tasks
-                pref.skill_level--;
-                pref.task_preference += 2;
-                // pref.task_preference += 1;
-            }
-            // we clamp the values between 1 and 100
-            pref.skill_level = clamp(pref.skill_level, MINIMUM, MAXIMUM);
-            pref.task_preference = clamp(pref.task_preference, MINIMUM, MAXIMUM);
-        });
+        // this.skillForget = 0.25;
+        // let counter = 0;
+        // for (let i = this.preferenceArchive.length - 1; i >= 0; i--) {
+        //     let pref = this.preferenceArchive[i];
+        //     if (pref.executed_task === task_name) counter++;
+        //     else break;
+        // }
+        // counter = constrain(counter, 1, 10);
+        // // console.log(counter, this.behavior);
+        // // here we adjust the skill and preference
+        // let myObj = this.preferences;
+        // Object.keys(myObj).forEach(key => {
+        //     let pref = myObj[key];
+        //     if (pref.task_name === task_name) {
+        //         // skill increases while preference decreases
+        //         pref.skill_level += counter * this.skillForget * 10;
+        //         let result = this.FLD / MAXIMUM;
+        //         let multiplier = 0;
+        //         if(result > 0.5) multiplier = 1 + abs(0.5 - result);
+        //         else multiplier = -(1 + abs(0.5 - result));
+        //         // console.log(multiplier, this.FLD);
+        //         pref.task_preference += counter * multiplier;
+        //         // pref.task_preference--;
+        //     } else {
+        //         // the opposit for the other tasks
+        //         pref.skill_level -= this.skillForget * 3;
+        //         // pref.task_preference += 2;
+        //         // pref.task_preference += 1;
+        //     }
+        //     // we clamp the values between 1 and 100
+        //     pref.skill_level = clamp(pref.skill_level, MINIMUM, MAXIMUM);
+        //     pref.task_preference = clamp(pref.task_preference, MINIMUM, MAXIMUM);
+        // });
         // for (const pref of this.preferences) {
         // }
         // console.log(this.preferenceArchive, counter, task_name);
-        
+        // console.log(agents);
+        const tasks = ['admin', 'clean', 'cook', 'shop'];
+        const forgetRate = 0.35;
+        let lastPreferences = this.preferenceArchive[this.preferenceArchive.length - 1].preferences;
+        let tasksCompleted = {};
+        let result = {};
+        let executedTask = this.preferenceArchive.map(result => result.executed_task);
+        // console.log(executedTask); 
+        /**
+         * here we compoute the skill of each single agent.
+         * The skill in our model is a quantitative measure,
+         * it looks how often the skill has been executed and compares it
+         * with how ofte the other have executed the same task.
+         * therefore the agent who has executed the task the most is the more 
+         * skilled, and so on. 
+         */
+        for (const task of tasks) {
+            /**
+             * here we compute the which agent has executed a task 
+             * the most
+             */
+            let max = 1;
+            for (const a of agents) {
+                if (a.preferenceArchive.length > 0) {
+                    lastPreferences = a.preferenceArchive[a.preferenceArchive.length - 1].preferences;
+                    if (lastPreferences[task].completed > max) max = lastPreferences[task].completed;
+                }
+            }
+            /**
+             * here we check how often an agent has completed this task
+             */
+            let completed = this.preferenceArchive[this.preferenceArchive.length - 1].preferences;
+            let sum = (completed[task].completed / max) * MAXIMUM;
+            this.preferences[task].skill_level = sum;
+        }
+        /**
+         * here we compute the preference for a task.
+         * each behavior defines how the preference of each agentt develops.
+         * 
+         * 🏖
+         * geniesser have higher preference for tasks that take him less time to
+         * finish.
+         * 
+         * 👨‍🚀
+         * perfectionist have higher preference for the task they want to master
+         * 
+         * 😯
+         * have hihger preference for tasks they have executed the least
+         * 
+         * 🎩
+         * capitalist have higher preference for tasks they get the more resting time from
+         */
+
+        let fldOffset = this.FLD / MAXIMUM > 0.5 ? 1 : -1;
+
+        if (this.behavior === 'curious') {
+            let completedTasks = [];
+            let tot = 0;
+            for (const task of tasks) {
+                let obj = {
+                    task_name: task,
+                    completed: lastPreferences[task].completed
+                }
+                tot += lastPreferences[task].completed;
+                completedTasks.push(obj);
+            }
+            for (const task of completedTasks) {
+                this.preferences[task.task_name].task_preference = ((task.completed / tot) * MAXIMUM) + fldOffset * 5;
+                this.preferences[task.task_name].task_preference = clamp(this.preferences[task.task_name].task_preference, MINIMUM, MAXIMUM);
+            }
+        }
+        if (this.behavior === 'perfectionist') {
+
+        }
+        if (this.behavior === 'geniesser' || this.behavior === 'perfectionist') {
+            /**
+             * both geniesser and perfectionist have their preference for the
+             * skill with higher value. but the preference offsets from the
+             * skill value depending on how slope of the skill over time.
+             */
+            let x_s = [];// x_s they represent the time units that
+            for (let i = 0; i < this.preferenceArchive.length; i++)x_s.push(i);// here we fill it 
+
+            for (const task of tasks) {
+                // here we fill the y_s with all the values of the skill
+                let y_s = this.preferenceArchive.map(result => result.preferences[task].skill_level);
+                let pref = this.preferences[task].skill_level;
+                let offset = 5 + (fldOffset * 3);
+                pref += linearRegression(y_s, x_s).slope > 0 ? offset : -offset; // here we compute the slope and we look if it is positive or negative
+                this.preferences[task].task_preference = pref;
+                this.preferences[task].task_preference = clamp(this.preferences[task].task_preference, MINIMUM, MAXIMUM);
+            }
+        }
+
+        if (this.behavior === 'capitalist') {
+            let taskValues = [];
+            for (const task of TASK_LIST) {
+                let obj = {
+                    task_name: task.type,
+                    task_value: this.taskValue(agents, task.type)
+                }
+                taskValues.push(obj);
+            }
+            for (const task of taskValues) {
+                this.preferences[task.task_name].task_preference = (task.task_value * MAXIMUM) + fldOffset * 5;
+                this.preferences[task.task_name].task_preference = clamp(this.preferences[task.task_name].task_preference, MINIMUM, MAXIMUM);
+            }
+        }
     }
     /**
      * updates the completed task preference by adding +1
@@ -1032,8 +1159,8 @@ class Agent {
         // console.log(this);
     }
 
-    playerRests(){
-        
+    playerRests() {
+
     }
 
 }
