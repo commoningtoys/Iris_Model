@@ -284,7 +284,7 @@ class IrisModel {
     playerTradeTask() {
         let el = $('select#other-tasks option:selected');
         let agent = this.returnPlayerAgent();
-        console.log(agent);
+        // console.log(agent);
         agent.playerTrades(el.text());
         loop();
         $('.player-interface').toggle();
