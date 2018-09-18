@@ -6,7 +6,7 @@ class Agent {
         this.playerTimer = 0;
         this.playerWorking = false;
         this.playerName = 'PLAYER_';
-        this.ID = is_player ? this.playerName + nf(id, 4) : nf(id, 4);
+        this.ID = nf(id, 4);//is_player ? this.playerName + nf(id, 4) : nf(id, 4);
 
         this.behavior = _behavior;
         this.restingTime = 0;
@@ -165,14 +165,17 @@ class Agent {
         const INFO_WIDTH = width - LEFT_GUTTER;
         // const INFO_HEIGHT = (height - (6 * PADDING)) / ROWS;
         let ROW_NUMBER = 0;
-        if (this.isPlayer) {
-            let str = this.ID.substr(this.playerName.length, 4);
-            // console.log(str);
-            // console.log(`is player ${parseInt(str)}`);
-            ROW_NUMBER += (ROWS + parseInt(str)) % ROWS;
-        } else {
-            ROW_NUMBER += (ROWS + parseInt(this.ID)) % ROWS;
-        }
+        // NEED TO FIX THE VIZ FOR THE PLAYER AGENT!!!!!!
+        
+        // if (this.isPlayer) {
+        //     let str = this.ID.substr(this.playerName.length, 4);
+        //     // console.log(str);
+        //     // console.log(`is player ${parseInt(str)}`);
+        //     ROW_NUMBER += (ROWS + parseInt(str)) % ROWS;
+        // } else {
+        //     ROW_NUMBER += (ROWS + parseInt(this.ID)) % ROWS;
+        // }
+        ROW_NUMBER += (ROWS + parseInt(this.ID)) % ROWS;
         ROW_NUMBER *= 2;
         const CT = this.currentTask;
         // console.log(this.currentTask);

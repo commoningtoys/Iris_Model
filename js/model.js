@@ -29,15 +29,16 @@ class IrisModel {
             this.agents.push(new Agent(TASK_LIST, index, false, behavior));
             index++;
         }
+        // add players
+        for (let i = 0; i < num_players || 0; i++) {
+            this.agents.push(new Agent(TASK_LIST, agentsNum + i, true, 'curious'))
+            agentsNum++;
+        }
         // here we set the max value of the slider that shows the agents
         const slider = document.getElementById('view')
         slider.max = agentsNum;
 
         this.GLOBAL_RESTING_TIME = this.calcGlobalRestTime(agentsNum, num_task);
-        // add players
-        for (let i = 0; i < num_players || 0; i++) {
-            this.agents.push(new Agent(TASK_LIST, i, true))
-        }
         // make the info for all of the agents
         for (const agent of this.agents) {
             agent.makeInfo(this.agents);
@@ -141,8 +142,9 @@ class IrisModel {
         for (let i = this.showFrom; i < this.showTo; i++) {
             // for (const agent of this.agents) {
             let agent = this.agents[i];
-            if (singleView && !agent.isPlayer) agent.infographic();
-            // else drawInfos(agent);
+            console.log(agent);
+            if (singleView) agent.infographic();
+            else drawInfos(agent);
         }
 
         function drawInfos(agent) {
