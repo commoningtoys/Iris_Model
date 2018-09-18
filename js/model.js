@@ -1,14 +1,21 @@
 class IrisModel {
-    constructor(num_agents, num_players, num_task) {
+    constructor(behaviours, min_wage, num_task, num_players) {
+        console.log(behaviours);
         this.agents = [];
         this.tasks = [];
-        this.GLOBAL_RESTING_TIME = this.calcGlobalRestTime(num_agents, num_task);
-        // add agents
-        for (let i = 0; i < num_agents; i++) {
-            // let randomIndex = Math.floor(Math.random() * 4);
-            let index = i % AGENT_BEHAVIORS.length;
-            this.agents.push(new Agent(TASK_LIST, i, false, AGENT_BEHAVIORS[index]));
-        }
+        let agentsNum = 0;
+        Object.keys(behaviours).forEach(key => {
+            console.log(key, behaviours[key]);
+            for (let i = 0; i < behaviours[key]; i++) {
+                this.agents.push(new Agent(TASK_LIST, agentsNum, false, key));
+                agentsNum++;
+            }
+        })
+        // here we set the max value of the slider that shows the agents
+        const slider = document.getElementById('view')
+        slider.max = agentsNum;
+
+        this.GLOBAL_RESTING_TIME = this.calcGlobalRestTime(agentsNum, num_task);
         // add players
         for (let i = 0; i < num_players || 0; i++) {
             this.agents.push(new Agent(TASK_LIST, i, true))
@@ -22,7 +29,7 @@ class IrisModel {
         let restingTimePerTask = Math.floor(this.GLOBAL_RESTING_TIME / (TASK_LIST.length * num_task))
         for (let i = 0; i < num_task; i++) {
             for (const task of TASK_LIST) {
-                this.tasks.push(new Task(task, restingTimePerTask));
+                this.tasks.push(new Task(task, restingTimePerTask, min_wage));
             }
         }
         this.counter = 0;
@@ -46,6 +53,10 @@ class IrisModel {
             color(0, 255, 100),
             color(255, 125, 0)
         ];
+
+        this.numShowAgents = 5;
+        this.showFrom = 0;
+        this.showTo = this.numShowAgents;
 
         this.recordAgentsData = false;
         this.recordDataCounter = 0;
@@ -92,7 +103,7 @@ class IrisModel {
         this.counter++;
         // console.log(this.counter, this.timeUnit);
         // if we are recording the data, we show how much has been collected
-        if(this.recordAgentsData){
+        if (this.recordAgentsData) {
             for (const agent of this.agents) {
                 this.dataCollected += agent.data.length;
             }
@@ -109,7 +120,7 @@ class IrisModel {
         this.agents.sort((a, b) => a.ID - b.ID);
 
         // here we have to build the filter to visualize the agents
-        for (let i = 0; i < 5; i++) {
+        for (let i = this.showFrom; i < this.showTo; i++) {
             // for (const agent of this.agents) {
             let agent = this.agents[i];
             if (singleView) agent.infographic();
@@ -195,7 +206,7 @@ class IrisModel {
                 agent.recordData = true;
             }
             $('#record-data').html('<span id="data-collected"></span> entries<br>(click again to save)');
-        }else{
+        } else {
             $('#record-data').text('RECORD DATA');
             for (const agent of this.agents) {
                 agent.recordData = false;
@@ -206,20 +217,28 @@ class IrisModel {
         }
     }
 
-    setMinWage(val){
+    setMinWage(val) {
         console.log(val);
         for (const task of tasks) {
             task.minWage = val;
         }
         $('#set-min-wage').text(val);
     }
-    setAgentsBehavior(behavior){
+    setAgentsBehavior(behavior) {
         console.log(behavior);
         for (const agent of this.agents) {
             agent.behavior = behavior;
             agent.makeInfo(this.agents);
             agent.setInfo();
         }
+    }
+    setView(val) {
+        console.log(val);
+
+        this.showFrom = val - 2;
+        this.showTo = val + 3;
+        if(this.showFrom < 0)this.showFrom = 0;
+        if(this.showTo > this.agents.length)this.showTo = this.agents.length;
     }
     /**
      * player interactions below

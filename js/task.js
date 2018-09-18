@@ -6,7 +6,7 @@ class Task {
      * @param {Object} task_object a task object
      * @param {Number} global_resting_time amount of time/value that the task can give to the agent 
      */
-    constructor(task_object, global_resting_time) {
+    constructor(task_object, global_resting_time, min_wage) {
         this.GRT = global_resting_time;
         // console.log(this.GRT)
         /**
@@ -20,7 +20,7 @@ class Task {
          * The value goes down every time an agent (or agents) decide to 'carry out' the task.
          */
         this.value = 0;// BETWEEN 1 - 100
-        this.minWage = 0;
+        this.minWage = min_wage;
         this.agentsPool = [];// this is the pool of availabale agents where task picks a random one
         this.tradingAgents = 0;// to keep track of the agents that traded
         /**

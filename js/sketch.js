@@ -14,7 +14,17 @@ let irisModel;
 
 function setup() {
   createCanvas(WIDTH(), innerHeight);
-  irisModel = new IrisModel(AGENT_NUM, 0, Math.floor(AGENT_NUM / 5));
+  let behaviors = {
+    curious: 3,
+    perfectionist: 3,
+    geniesser: 20,
+    capitalist: 2
+  };
+
+  let min_wage = 0;
+  let tasks_num = 2;
+  let players = 0;
+  irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
   textSize(9);
 }
 
@@ -123,14 +133,21 @@ function restartModel() {
   const customBehavior = document.getElementsByClassName('custom-behavior');
   const minWage = document.getElementById('min-wage');
   const tasksNum = document.getElementById('how-many-task');
-    let obj = {
-    curious: customBehavior.curious.value,
-    perfectionist: customBehavior.perfectionist.value,
-    geniesser: customBehavior.geniesser.value,
-    capitalist: customBehavior.capitalist.value,
-    min_wage: minWage.value,
-    tasks_num: tasksNum.value,
-    players: 0
+  let behaviors = {
+    curious: parseInt(customBehavior.curious.value),
+    perfectionist: parseInt(customBehavior.perfectionist.value),
+    geniesser: parseInt(customBehavior.geniesser.value),
+    capitalist: parseInt(customBehavior.capitalist.value)
   }
-  console.log(obj);
+
+  let min_wage = parseInt(minWage.value);
+  let tasks_num = parseInt(tasksNum.value);
+  let players = 0;
+  irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
+}
+
+function updateView(){
+  // console.log('hello');
+  const view = document.getElementById('view');
+  irisModel.setView(parseInt(view.value));
 }

@@ -16,6 +16,7 @@
     <button onclick="singleView = !singleView">CHANGE VIEW</button>
     <button id="record-data">RECORD DATA</button>
     <button id="show-menu">SHOW MENU</button>
+    <input type="range" min="1" max="10" value="1" id="view" onchange="updateView()">
   </div>
   <div id="p5Sketch"></div>
   <!-- <div id="display-date"></div> -->
@@ -77,10 +78,10 @@
       </select>
       <br> <br>
       set custom number of behaviors <br> <u><i>(this will restart the model)</i></u> <br> <br>
-      <input type="text" value="0" class="custom-behavior" name="curious"> curious<br>
-      <input type="text" value="0" class="custom-behavior" name="perfectionist"> perfectionists<br>
-      <input type="text" value="0" class="custom-behavior" name="geniesser"> geniesser<br>
-      <input type="text" value="0" class="custom-behavior" name="capitalist"> capitalists<br> <br>
+      <input type="text" value="3" class="custom-behavior" name="curious"> curious<br>
+      <input type="text" value="3" class="custom-behavior" name="perfectionist"> perfectionists<br>
+      <input type="text" value="2" class="custom-behavior" name="geniesser"> geniesser<br>
+      <input type="text" value="2" class="custom-behavior" name="capitalist"> capitalists<br> <br>
 
       <button onclick="restartModel()">RESTART</button>
 
