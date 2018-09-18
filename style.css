@@ -48,8 +48,9 @@ button{
     /* margin: auto 0; */
 }
 .footer-menu button{
-    padding: 0.6em;
-    max-width: 100px
+    padding: 0.3em;
+    max-width: 100px;
+    margin-top: 2px;
     /* top: 50%;
     transform: translate(0%, 50%);
     -moz-transform: translate(0%, 50%);

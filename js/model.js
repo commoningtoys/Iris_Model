@@ -142,7 +142,6 @@ class IrisModel {
         for (let i = this.showFrom; i < this.showTo; i++) {
             // for (const agent of this.agents) {
             let agent = this.agents[i];
-            console.log(agent);
             if (singleView) agent.infographic();
             else drawInfos(agent);
         }
