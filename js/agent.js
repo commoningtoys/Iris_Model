@@ -1156,9 +1156,11 @@ class Agent {
      * @param {*} task_name 
      */
     playerTrades(task_name) {
+        const task_to_trade = task_name.replace(/[\d\W]/g, '');
+        console.log(task_to_trade);
         this.hasTraded = true;
         console.log(this.hasTraded);
-        this.tradeTask = task_name;
+        this.tradeTask = task_to_trade;
         console.log(this.tradeTask);
         this.setInfo();
         // console.log(this);

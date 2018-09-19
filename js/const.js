@@ -4,7 +4,7 @@
  * 
  * increase the value to make model slower
  */
-const TIME_SCALE = 10; // each time unit is equivalent to 10 minutes 
+const TIME_SCALE = 1; // each time unit is equivalent to 10 minutes 
 
 const TS_FRACTION = 6;
 const DAY = 24 * TIME_SCALE * TS_FRACTION;// 1 day
