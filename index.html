@@ -12,13 +12,6 @@
 </head>
 
 <body>
-  <div class="footer-menu">
-    <button onclick="singleView = !singleView">CHANGE VIEW</button>
-    <button id="record-data">RECORD DATA</button>
-    <button id="show-menu">SHOW MENU</button>
-    <input type="range" min="1" max="10" value="1" id="view" onchange="updateView()"> <br>
-    <button onclick="loop()">loop</button>
-  </div>
   <div id="p5Sketch"></div>
   <!-- <div id="display-date"></div> -->
   <div class="info" id="info-window">
@@ -53,10 +46,16 @@
           <option value="" id="task-3"></option>
         </select>
         <br>
-        task value: <h1><span id="task-value"></span></h1>
-        <br> OR
-        <br> Do you want to rest?
-        <button id="player-rest" onclick="irisModel.playerRest()">rest</button>
+        task value: <h2><span id="task-value"></span></h2>
+        current resting time: <br>
+        <h2><span id="resting-time"></span></h2>
+        <br>
+        <span id="rest-interaction">
+          OR <br>
+          Do you want to rest?
+          <button id="player-rest" onclick="irisModel.playerRest()">rest</button>
+          <br> for so much <span id="spending-resting-time"></span> resting time
+        </span>
       </p>
     </div>
   </div>
@@ -90,6 +89,14 @@
       <button onclick="restartModel()">RESTART</button>
 
     </div>
+  </div>
+  <div class="footer-menu" id="footer">
+    <button onclick="singleView = !singleView">CHANGE VIEW</button>
+    <button id="record-data">RECORD DATA</button>
+    <button id="show-menu">SHOW MENU</button>
+    <button id="show-sidebar">HIDE SIDEBAR</button>
+    <input type="range" min="1" max="10" value="1" id="view" onchange="updateView()"> <br>
+    <button onclick="loop()">loop</button>
   </div>
   <script src="js/utils.js"></script>
   <script src="js/const.js"></script>

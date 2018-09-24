@@ -171,3 +171,7 @@ button#close-menu {
     text-align: center;
     background-color: #f00;
 }
+
+#rest-interaction{
+    display: none;
+}

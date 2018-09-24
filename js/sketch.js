@@ -6,6 +6,12 @@ function WIDTH() {
   const w = info.getBoundingClientRect().width;
   return innerWidth - w;
 };
+
+function HEIGHT(){
+  const footer = document.getElementById('footer');
+  const h = footer.getBoundingClientRect().height;
+  return innerHeight - h;
+}
 // function HEIGHT() { return PADDING + (agentNum * (INFO_HEIGHT + PADDING)) }
 let agents = [];
 let tasks = [];
@@ -13,7 +19,7 @@ let irisModel;
 
 
 function setup() {
-  createCanvas(WIDTH(), innerHeight);
+  createCanvas(WIDTH(), HEIGHT());
   let behaviors = {
     curious: 3,
     perfectionist: 3,
@@ -44,7 +50,7 @@ function draw() {
 }
 
 function windowResized() {
-  resizeCanvas(WIDTH(), innerHeight);
+  resizeCanvas(WIDTH(), HEIGHT());
   let info = document.getElementById('info-window')
   console.log(info.getBoundingClientRect().width);
 }
@@ -69,11 +75,22 @@ function drawInfos(agent) {
   // console.log(infos);
 }
 /**
- * here we add all the event listeners 
+ * here we add all the event listeners for the menu
  */
 let recordData = document.getElementById('record-data')
 recordData.addEventListener('click', () => {
   irisModel.recordData();
+});
+let showSideBar = true;
+$('#show-sidebar').click(() => {
+  showSideBar = !showSideBar;
+  $('#show-sidebar').text(showSideBar == false ? 'SHOW SIDEBAR' : 'HIDE SIDEBAR');
+  $('#info-window').toggle('fast', () => {
+    // whe the window is closed resize the sketch
+    resizeCanvas(WIDTH(), HEIGHT());
+    let info = document.getElementById('info-window')
+    console.log(info.getBoundingClientRect().width);
+  });
 });
 
 $('#show-menu').click(() => {
@@ -148,7 +165,7 @@ function restartModel() {
   irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
 }
 
-function updateView(){
+function updateView() {
   // console.log('hello');
   const view = document.getElementById('view');
   irisModel.setView(parseInt(view.value));

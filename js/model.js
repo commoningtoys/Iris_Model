@@ -294,7 +294,7 @@ class IrisModel {
     playerRest(){
         console.log('REST');
         const agent = this.returnPlayerAgent();
-        agent.rest()
+        agent.playerRests()
         loop();
         $('.player-interface').toggle();
     }

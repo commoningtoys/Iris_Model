@@ -325,6 +325,7 @@ class Agent {
             noLoop();
             console.log('noLoop');
             // console.log(`noLoop ${agent.isPlayer}, ${agent.hasTraded}`)
+            this.playerTaskToExecute = task;
             this.playerInteraction(task, agents);
             return true;
         }
@@ -721,7 +722,6 @@ class Agent {
          */
         this.updateCompletedTasks(task.type);
         this.updateFLD(agents, task, brute_forced);
-        console.log(task.value, task.type);
         this.restingTime += task.value;// * task_executed == true ? 1 : -1;
         // console.log(`executed task: ${this.restingTime}, value: ${task.value}`);
         this.mappedAmountOfTime = map(_amount_of_time, 0, ADMIN.amount_of_time + (ADMIN.amount_of_time / 2), MINIMUM, MAXIMUM);
@@ -1132,6 +1132,14 @@ class Agent {
         }
         this.taskValue(agents, task.type)
         document.getElementById('task-value').textContent = task.value;
+        document.getElementById('resting-time').textContent = this.restingTime;
+        document.getElementById('spending-resting-time').textContent = task.aot;
+        if (this.restingTime <= task.aot) {
+            document.getElementById('rest-interaction').style.display = 'none';
+        }
+        else {
+            document.getElementById('rest-interaction').style.display = 'block';
+        }
     }
     /**
      * ADD DESCRIPTION
@@ -1169,7 +1177,19 @@ class Agent {
     }
 
     playerRests() {
-
+        console.log(this.playerTaskToExecute);
+        const task = this.playerTaskToExecute;
+        this.restingTime -= task.aot;
+        task.updateGRT(task.aot);
+        // this.restingTime /= 2;// here add slider that chenges how much resting time is decreased
+        // this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
+        // console.log(`AGENT: ${this.ID} is resting. Behavior ${this.behavior} Resting time ${this.restingTime}`);
+        this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
+        this.resting = true;
+        this.restingTimer = task.aot;
+        loop();
+        // this.updateAttributes(task, true);
+        this.setInfo();
     }
 
 }
