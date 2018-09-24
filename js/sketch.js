@@ -23,7 +23,7 @@ function setup() {
 
   let min_wage = 0;
   let tasks_num = 2;
-  let players = 1; // here you set the players for the game
+  let players = 0; // here you set the players for the game
   irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
   textSize(9);
 }

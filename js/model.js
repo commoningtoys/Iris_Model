@@ -292,6 +292,7 @@ class IrisModel {
     }
 
     playerRest(){
+        console.log('REST');
         const agent = this.returnPlayerAgent();
         agent.rest()
         loop();

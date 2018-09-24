@@ -13,6 +13,7 @@ class Task {
          * time needed to carry out the task
          */
         this.aot = task_object.amount_of_time;
+        console.log(this.aot);
         this.GRT = 4 * this.aot; // quick fix to have the resting time hooked to the task
         /**
          * Value of a task expresses the relative exchange rate to other task.
