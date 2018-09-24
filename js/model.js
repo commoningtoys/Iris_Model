@@ -291,6 +291,13 @@ class IrisModel {
         // console.log($('.player-interface')[0].attributes[1].value);
     }
 
+    playerRest(){
+        const agent = this.returnPlayerAgent();
+        agent.rest()
+        loop();
+        $('.player-interface').toggle();
+    }
+
     startPlayerTime() {
         console.log('start');
         let agent = this.returnPlayerAgent();
