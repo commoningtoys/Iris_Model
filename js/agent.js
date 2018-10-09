@@ -664,7 +664,6 @@ class Agent {
 
     rest(task) {
         this.restingTime -= task.aot;
-        console.log(task.aot);
         task.updateGRT(task.aot);
         // this.restingTime /= 2;// here add slider that chenges how much resting time is decreased
         // this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
@@ -755,7 +754,7 @@ class Agent {
             });
         }
 
-        if (this.preferenceArchive.length > 100) this.preferenceArchive.splice(0, 1);
+        if (this.preferenceArchive.length > MAXIMUM) this.preferenceArchive.splice(0, 1);
         this.updatePreferences(task.type, agents);
         this.setInfo();
     }

@@ -1,6 +1,6 @@
 class IrisModel {
-    constructor(behaviours, min_wage, num_task, num_players) {
-        console.log(behaviours);
+    constructor(parent, behaviours, min_wage, num_task, num_players) {
+        // console.log(behaviours);
         this.agents = [];
         this.tasks = [];
         /**
@@ -62,6 +62,11 @@ class IrisModel {
         this.years = 0;
         this.getTotalRestingTime();
 
+        /**
+         * PLOT
+         */
+        this.plot = new Plot(parent, 20, 20);
+        this.pointIndex = 0;
         this.colors = [
             color(0, 255, 0),
             color(255, 0, 255),
@@ -136,15 +141,63 @@ class IrisModel {
          * during the choose agent process of task.js
          */
         background(51);
+        /**
+            let fld = this.preferenceArchive.map(result => result.feel_like_doing);
+            let rt = this.preferenceArchive.map(result => result.resting_time);
+            let stress = this.preferenceArchive.map(result => result.stress_level);
+            let aot = this.preferenceArchive.map(result => result.amount_of_time);
+            let traded = this.preferenceArchive.map(result => result.traded);
+            // console.log(traded);
+            let bruteForce = this.preferenceArchive.map(result => result.brute_force);
+         */
+        // here we extract all the curious agents
+        let curious = this.agents.filter(result => result.behavior === 'curious');
+        // here we need to extract all the preferences values 
+        // and calculate the median
+        const len = curious.length;
+        let result = {
+            fld: [],
+            rt: [],
+            stress: [],
+            aot: [],
+            traded: [],
+            brute_force: []
+        }
+        for (const agent of curious) {
+            const fld = agent.preferenceArchive.map(result => result.feel_like_doing);
+            const rt = agent.preferenceArchive.map(result => result.resting_time);
+            const stress = agent.preferenceArchive.map(result => result.stress_level);
+            const aot = agent.preferenceArchive.map(result => result.amount_of_time);
+            const traded = agent.preferenceArchive.map(result => result.traded);
+            const bruteForce = agent.preferenceArchive.map(result => result.brute_force);
+            // sumArray(result.fld, fld);
+            result.fld.push(fld);
+        }
+
+        // console.log(result.fld);
+        // here we get the array with the lowest amount of elements
+        const minLen = Math.min(...result.fld.map(result => result.length));
+        let sum = [];
+        for(let i = 0; i < result.fld.length; i++){
+            for(let j = 0; j < minLen; j++){
+                // console.log(i, j, result.fld[i], result.fld[0][j])
+                if(sum[j] === undefined || sum[j] === null)sum[j] = 0;
+                sum[j] += result.fld[i][j];
+            }
+        }
+        // get the median
+        for (let i = 0; i < sum.length; i++)sum[i] /= len;
+        this.plot.show(sum[sum.length - 1], this.pointIndex);
+        this.pointIndex++;
         this.agents.sort((a, b) => a.ID - b.ID);
 
         // here we have to build the filter to visualize the agents
-        for (let i = this.showFrom; i < this.showTo; i++) {
-            // for (const agent of this.agents) {
-            let agent = this.agents[i];
-            if (singleView) agent.infographic();
-            else drawInfos(agent);
-        }
+        // for (let i = this.showFrom; i < this.showTo; i++) {
+        //     // for (const agent of this.agents) {
+        //     let agent = this.agents[i];
+        //     if (singleView) agent.infographic();
+        //     else drawInfos(agent);
+        // }
 
         function drawInfos(agent) {
             strokeWeight(1);
@@ -291,7 +344,7 @@ class IrisModel {
         // console.log($('.player-interface')[0].attributes[1].value);
     }
 
-    playerRest(){
+    playerRest() {
         console.log('REST');
         const agent = this.returnPlayerAgent();
         agent.playerRests()

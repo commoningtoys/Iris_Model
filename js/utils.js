@@ -45,6 +45,12 @@ function shuffleArray(array) {
     }
 }
 
+function sumArray(arr1, arr2){
+    for(let i = 0; i < arr2.length; i++){
+        if(arr1[i] === undefined || arr1[i] === null)arr1[i] = 0;
+        arr1[i] += arr2[i]
+    }
+}
 function timeUpdate() {
     // return (1 / frameRate()) * TIME_SCALE;
     return 1;
