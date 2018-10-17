@@ -1,6 +1,6 @@
 class IrisModel {
-    constructor(parent, behaviours, min_wage, num_task, num_players) {
-        // console.log(behaviours);
+    constructor(behaviors, min_wage, num_task, num_players) {
+        // console.log(behaviors);
         this.agents = [];
         this.tasks = [];
         /**
@@ -11,9 +11,9 @@ class IrisModel {
          */
         let behaviorList = [];
         let agentsNum = 0;
-        Object.keys(behaviours).forEach(key => {
-            console.log(key, behaviours[key]);
-            for (let i = 0; i < behaviours[key]; i++) {
+        Object.keys(behaviors).forEach(key => {
+            console.log(key, behaviors[key]);
+            for (let i = 0; i < behaviors[key]; i++) {
                 behaviorList.push(key);
                 agentsNum++;
             }
@@ -65,18 +65,20 @@ class IrisModel {
         /**
          * PLOT
          */
-        this.plot = new Plot(parent, 20, 20);
+
+        this.colors = {
+            // skill: color(0, 255, 0),
+            // preference: color(255, 0, 255),
+            fld: color(0, 255, 255),
+            rt: color(255, 0, 0),
+            stress: color(255, 255, 0),
+            aot: color(45, 105, 245),
+            traded: color(0, 255, 100, 150),
+            brute_force: color(255, 125, 0, 150)
+        };
+
+        // this.plot = new Plot(parent, 20, 20, this.colors);
         this.pointIndex = 0;
-        this.colors = [
-            color(0, 255, 0),
-            color(255, 0, 255),
-            color(0, 255, 255),
-            color(255, 0, 0),
-            color(255, 255, 0),
-            color(0, 0, 255),
-            color(0, 255, 100),
-            color(255, 125, 0)
-        ];
 
         this.numShowAgents = 5;
         this.showFrom = 0;
@@ -150,44 +152,75 @@ class IrisModel {
             // console.log(traded);
             let bruteForce = this.preferenceArchive.map(result => result.brute_force);
          */
-        // here we extract all the curious agents
-        let curious = this.agents.filter(result => result.behavior === 'curious');
-        // here we need to extract all the preferences values 
-        // and calculate the median
-        const len = curious.length;
-        let result = {
-            fld: [],
-            rt: [],
-            stress: [],
-            aot: [],
-            traded: [],
-            brute_force: []
-        }
-        for (const agent of curious) {
-            const fld = agent.preferenceArchive.map(result => result.feel_like_doing);
-            const rt = agent.preferenceArchive.map(result => result.resting_time);
-            const stress = agent.preferenceArchive.map(result => result.stress_level);
-            const aot = agent.preferenceArchive.map(result => result.amount_of_time);
-            const traded = agent.preferenceArchive.map(result => result.traded);
-            const bruteForce = agent.preferenceArchive.map(result => result.brute_force);
-            // sumArray(result.fld, fld);
-            result.fld.push(fld);
-        }
-
-        // console.log(result.fld);
-        // here we get the array with the lowest amount of elements
-        const minLen = Math.min(...result.fld.map(result => result.length));
-        let sum = [];
-        for(let i = 0; i < result.fld.length; i++){
-            for(let j = 0; j < minLen; j++){
-                // console.log(i, j, result.fld[i], result.fld[0][j])
-                if(sum[j] === undefined || sum[j] === null)sum[j] = 0;
-                sum[j] += result.fld[i][j];
+        const medianValuesByBehavior = {};
+        for (const behavior of AGENT_BEHAVIORS) {
+            const median = {};
+            // here we extract the preferences of the agents by behavior
+            const extractedAgents = this.agents.filter(result => result.behavior === behavior);
+            if(extractedAgents.length == 0) continue;// if there is no extracted agent, than we skip to the next behavior
+            // here we get the lenght of our data set
+            const len = extractedAgents.length;
+            const agentsData = {
+                fld: [],
+                rt: [],
+                stress: [],
+                aot: [],
+                traded: [],
+                brute_force: []
             }
+            // here we extract all the preferences values 
+            for (const agent of extractedAgents) {
+                const fld = agent.preferenceArchive.map(result => result.feel_like_doing);
+                const rt = agent.preferenceArchive.map(result => result.resting_time);
+                const stress = agent.preferenceArchive.map(result => result.stress_level);
+                const aot = agent.preferenceArchive.map(result => result.amount_of_time);
+                const traded = agent.preferenceArchive.map(result => result.traded);
+                const bruteForce = agent.preferenceArchive.map(result => result.brute_force);
+                // sumArray(result.fld, fld);
+                agentsData.fld.push(fld);
+                agentsData.rt.push(rt);
+                agentsData.stress.push(stress);
+                agentsData.aot.push(aot);
+                agentsData.traded.push(traded);
+                agentsData.brute_force.push(bruteForce);
+            }
+            // const median = {};
+            // and calculate the median
+            Object.keys(agentsData).forEach(key => {
+                // console.log(result.fld);
+                // here we get the array with the lowest amount of elements
+                // to calculate the median we need all the arrays to be the same length
+                // threfore we compute the minimum length of all the arrays
+                // console.log(agentsData);
+                const minLen = Math.min(...agentsData[key].map(result => result.length));
+                // console.log(minLen);
+                let sum = Array(minLen).fill(0);
+                // console.log(sum);
+                for (let i = 0; i < agentsData[key].length; i++) {
+                    for (let j = 0; j < minLen; j++) {
+                        // console.log(i, j, agentsData.fld[i], agentsData.fld[0][j])
+                        // if (sum[j] === undefined || sum[j] === null) sum[j] = 0;
+                        if (key === 'traded' || key === 'brute_force') {
+                            sum[j] += agentsData[key][i][j] == true ? 1 : 0;
+                        } else {
+                            sum[j] += agentsData[key][i][j];
+                        }
+                    }
+                }
+                // console.log(result.fld);
+                // get the median
+                if (key === 'traded' || key === 'brute_force') { } else {
+                    for (let i = 0; i < sum.length; i++)sum[i] /= len;
+                }
+                median[key] = sum;
+            });
+            // console.log(median, behavior);
+            medianValuesByBehavior[behavior] = median;
         }
-        // get the median
-        for (let i = 0; i < sum.length; i++)sum[i] /= len;
-        this.plot.show(sum[sum.length - 1], this.pointIndex);
+        // console.log(medianValuesByBehavior);
+        this.infographic(medianValuesByBehavior);
+        // console.log(medianValuesByBehavior);
+        // this.plot.show(median, this.pointIndex);
         this.pointIndex++;
         this.agents.sort((a, b) => a.ID - b.ID);
 
@@ -234,6 +267,109 @@ class IrisModel {
             // console.log(infos);
         }
     }
+    infographic(data) {
+        const INFO_WIDTH = (width - ((2 * LEFT_GUTTER) + (2 * PADDING))) / 2;
+        const INFO_HEIGHT = (height - (3 * PADDING)) / 2;
+        let infoX = LEFT_GUTTER;
+        let infoY = PADDING;
+        let i = 0;
+        Object.keys(data).forEach(key => {
+            // console.log(data[key], key)
+            infoX = LEFT_GUTTER + ((width / 2) * (i % 2));
+            if (i > 1) {
+                // infoX = LEFT_GUTTER;
+                infoY = 2 * PADDING + INFO_HEIGHT;
+            }
+            fill(0);
+            noStroke();
+            rect(infoX, infoY, INFO_WIDTH, INFO_HEIGHT);
+            fill(255);
+            textAlign(CENTER, CENTER)
+            text(key, infoX, infoY - PADDING, INFO_WIDTH, PADDING);
+            let lines = 0;
+            Object.keys(this.colors).forEach(pref => {
+                textAlign(RIGHT, CENTER);
+                fill(this.colors[pref])
+                text(pref, infoX - 10, (infoY + 50) + (lines * TEXT_SIZE));
+                lines++;
+            })
+            const preferences = data[key];
+            Object.keys(preferences).forEach(pref => {
+                if (pref === 'traded' || pref === 'brute_force') {
+                    // console.log(pref);
+                    drawLine(preferences[pref], infoX, infoY, this.colors[pref], pref)
+                } else {
+                    printGraphic(preferences[pref], infoX, infoY, this.colors[pref]);
+                }
+            })
+            i++;
+        })
+
+        function printGraphic(arr, x, y, col) {
+            // let colNumber = col_number || 0;
+            // let totCol = tot_col || 1;
+            // noStroke();
+            // fill(col);
+            // text(str, PADDING / 2, posY(MAXIMUM, row_number));
+            noFill();
+            stroke(col);
+            strokeWeight(1);
+            let i = 0;
+            push();
+            translate(x, y)
+            beginShape();
+            for (const val of arr) {
+                let currX = map(i, 0, arr.length, 0, INFO_WIDTH);//posX(i, arr.length, colNumber, totCol);
+                let currY = INFO_HEIGHT - map(val, 0, MAXIMUM, 0, INFO_HEIGHT);//posY(val, row_number);
+                vertex(currX, currY);
+                i++;
+            }
+            endShape();
+            pop();
+        }
+
+        function drawLine(arr, x, y, col, type, type2) {
+            strokeWeight(1);
+            stroke(col);
+            push()
+            translate(x, y)
+            let index = 0;
+            for (const val of arr) {
+                // if (val) {
+                    const max = INFO_WIDTH / DATA_POINTS;
+                    let r = map(val, 0, 10, 0, max);
+                    let h = map(val, 0, 15, 1, INFO_HEIGHT * 0.2)
+                    // console.log(INFO_WIDTH / DATA_POINTS, INFO_WIDTH, DATA_POINTS, val)
+                    const currX = map(index, 0, arr.length, 0, INFO_WIDTH);
+                    let currY;
+                    let positionY;
+                    if (type === 'traded') {
+                        // ellipse(currX + (r / 2), INFO_HEIGHT * 0.33333, r);
+                        rect(currX + (r / 2), INFO_HEIGHT * 0.33333, 1, -h);
+                        // line(currX, y, currX, INFO_HEIGHT / 2);
+                    } else {
+                        // ellipse(currX + ((r * 10)/ 2), INFO_HEIGHT * 0.66666, r * 10);
+                        rect(currX + ((r * 10)/ 2), INFO_HEIGHT * 0.66666, 1, -h);
+                    }
+
+                    // line(currX, positionY, currX, currY); //posY(MINIMUM, ROW_NUMBER), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, ROW_NUMBER)
+                    index++;
+                // }
+            }
+            pop();
+        }
+
+        function posX(index, max, col_number, tot_col) {
+            let col = col_number || 0;
+            let colNumber = tot_col || 1;
+            let W = (INFO_WIDTH - PADDING) / colNumber;
+
+            return LEFT_GUTTER + map(index, 0, max, col * W, (col + 1) * W);
+        }
+        function posY(val, row_number) {
+            return 2 * (INFO_HEIGHT + PADDING) + ((INFO_HEIGHT + PADDING) * row_number) - map(val, MINIMUM, MAXIMUM, 0, INFO_HEIGHT);
+        }
+    }
 
     setModelTime() {
         if (this.timeUnit > 0 && this.timeUnit % TS_FRACTION == 0) {
@@ -270,7 +406,7 @@ class IrisModel {
     }
 
     recordData() {
-        console.log('RECORDING');
+        console.log('RECORDING...');
         this.recordAgentsData = !this.recordAgentsData;
         if (this.recordAgentsData) {
             for (const agent of this.agents) {

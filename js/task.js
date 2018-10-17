@@ -1,4 +1,4 @@
-class Task {
+    class Task {
     /**
      * The task Object it takes a a task_object with the specification
      * for the amount of time the task takes how often neeeds to be executed each day
@@ -13,7 +13,7 @@ class Task {
          * time needed to carry out the task
          */
         this.aot = task_object.amount_of_time;
-        console.log(this.aot);
+        // console.log(this.aot);
         this.GRT = 4 * this.aot; // quick fix to have the resting time hooked to the task
         /**
          * Value of a task expresses the relative exchange rate to other task.
@@ -228,7 +228,7 @@ class Task {
 
     bruteForceTask(agents) {
         //assigns the task to someone as next task to do.
-        // console.log('BRUTE FORCE!!!')
+        console.log('BRUTE FORCE!!!')
         let i = 0;
         let controlState = true;
         while (controlState) {

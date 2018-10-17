@@ -11,13 +11,15 @@ const DAY = 24 * TIME_SCALE * TS_FRACTION;// 1 day
 const MAXIMUM = 100; // we need this to clamp values for preferences
 const MINIMUM = 1;
 const AGENT_NUM = 10;
+const DATA_POINTS = 1000;
 // animation const
+const TEXT_SIZE = 12;
 const LEFT_GUTTER = 80;
-const PADDING = 15;
+const PADDING = 30;
 const COL = 10;
 const ROWS = 5;
 const COL_HEIGHT = innerHeight - 100;
-const INFO_HEIGHT = 55;
+// const INFO_HEIGHT = 55;
 // make our tasks
 /**
  * VERY IMPORTANT THE TASK CAN'T BE LESS THAN 1 HOUR FOR NOW

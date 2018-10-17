@@ -56,6 +56,19 @@ function timeUpdate() {
     return 1;
 }
 
+
+function WIDTH() {
+    const info = document.getElementById('info-window');
+    const w = info.getBoundingClientRect().width;
+    return innerWidth - w;
+  };
+  
+  function HEIGHT(){
+    const footer = document.getElementById('footer');
+    const h = footer.getBoundingClientRect().height;
+    return innerHeight - h;
+  }
+
 function roundPrecision(value, precision) {
     let multiplier = Math.pow(10, precision || 0);
     return Math.round(value * multiplier) / multiplier;

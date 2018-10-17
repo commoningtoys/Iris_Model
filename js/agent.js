@@ -754,7 +754,7 @@ class Agent {
             });
         }
 
-        if (this.preferenceArchive.length > MAXIMUM) this.preferenceArchive.splice(0, 1);
+        if (this.preferenceArchive.length > DATA_POINTS) this.preferenceArchive.splice(0, 1);
         this.updatePreferences(task.type, agents);
         this.setInfo();
     }

@@ -1,17 +1,6 @@
 const PLAYER_ID = 'PLAYER';
 
 let singleView = true;
-function WIDTH() {
-  const info = document.getElementById('info-window');
-  const w = info.getBoundingClientRect().width;
-  return innerWidth - w;
-};
-
-function HEIGHT(){
-  const footer = document.getElementById('footer');
-  const h = footer.getBoundingClientRect().height;
-  return innerHeight - h;
-}
 // function HEIGHT() { return PADDING + (agentNum * (INFO_HEIGHT + PADDING)) }
 let agents = [];
 let tasks = [];
@@ -30,8 +19,8 @@ function setup() {
   let min_wage = 0;
   let tasks_num = 2;
   let players = 0; // here you set the players for the game
-  irisModel = new IrisModel(this, behaviors, min_wage, tasks_num, players);
-  textSize(9);
+  irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
+  textSize(TEXT_SIZE);
 }
 
 function draw() {
