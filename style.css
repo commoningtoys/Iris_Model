@@ -89,6 +89,22 @@ button#close-menu {
     margin: 20px auto;
     padding: 10px;
 }
+.menu-content button{
+    text-align: center;
+    font-size: 1.5em;
+    color: #fff;
+    background-color: #f00;
+    border-radius: 50px;
+    border: solid 2px #fff; 
+}
+.menu-content button:hover{
+    /* font-style: italic; */
+    border-radius: 0px;
+    color: #ff0;
+    border: solid 2px #ff0;
+    cursor: pointer;
+
+}
 /* .menu-content p{
     line-height: 1.8em;
 } */

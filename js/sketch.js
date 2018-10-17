@@ -5,7 +5,7 @@ let singleView = true;
 let agents = [];
 let tasks = [];
 let irisModel;
-
+let loops = 1;
 
 function setup() {
   createCanvas(WIDTH(), HEIGHT());
@@ -24,10 +24,6 @@ function setup() {
 }
 
 function draw() {
-  // background(51);
-
-
-  let loops = 1; // chnage this number with an integer (1 - 100) to accelerate the model.
 
 
   for (let i = 0; i < loops; i++) {
@@ -70,6 +66,7 @@ let recordData = document.getElementById('record-data')
 recordData.addEventListener('click', () => {
   irisModel.recordData();
 });
+
 let showSideBar = true;
 $('#show-sidebar').click(() => {
   showSideBar = !showSideBar;
@@ -93,7 +90,7 @@ $('#close-menu').click(() => {
 $('#select-behavior').click(el => {
   // console.log($("#select-behavior option:selected").val());
   const behavior = $("#select-behavior option:selected").val();
-  irisModel.setAgentsBehavior(behavior);
+  // irisModel.setAgentsBehavior(behavior);
   const agentsNumber = document.getElementById('how-many-agents');
   const inputCustom = document.getElementsByClassName('custom-behavior');
   // const behavior = $("#select-behavior option:selected").val();
@@ -118,10 +115,14 @@ $('#select-behavior').click(el => {
   }
 })
 
-let minWage = document.getElementById('min-wage');
+const setSpeed = document.getElementById('model-speed');
+setSpeed.addEventListener('change', event => {
+  loops = setSpeed.value;
+})
+
+const minWage = document.getElementById('min-wage');
 minWage.addEventListener('change', event => {
-  // console.log(slider.value);
-  irisModel.setMinWage(minWage.value);
+  $('#set-min-wage').text(minWage.value);
 })
 
 $('.custom-behavior').change(() => {
@@ -141,16 +142,16 @@ function restartModel() {
   const customBehavior = document.getElementsByClassName('custom-behavior');
   const minWage = document.getElementById('min-wage');
   const tasksNum = document.getElementById('how-many-task');
-  let behaviors = {
+  const behaviors = {
     curious: parseInt(customBehavior.curious.value),
     perfectionist: parseInt(customBehavior.perfectionist.value),
     geniesser: parseInt(customBehavior.geniesser.value),
     capitalist: parseInt(customBehavior.capitalist.value)
   }
 
-  let min_wage = parseInt(minWage.value);
-  let tasks_num = parseInt(tasksNum.value);
-  let players = 0;
+  const min_wage = parseInt(minWage.value);
+  const tasks_num = parseInt(tasksNum.value);
+  const players = 0;
   irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
 }
 

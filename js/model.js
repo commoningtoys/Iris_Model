@@ -3,6 +3,7 @@ class IrisModel {
         // console.log(behaviors);
         this.agents = [];
         this.tasks = [];
+        this.behaviors = behaviors;
         /**
          * here below we fill our Agents array
          * 
@@ -157,7 +158,7 @@ class IrisModel {
             const median = {};
             // here we extract the preferences of the agents by behavior
             const extractedAgents = this.agents.filter(result => result.behavior === behavior);
-            if(extractedAgents.length == 0) continue;// if there is no extracted agent, than we skip to the next behavior
+            if (extractedAgents.length == 0) continue;// if there is no extracted agent, than we skip to the next behavior
             // here we get the lenght of our data set
             const len = extractedAgents.length;
             const agentsData = {
@@ -214,6 +215,8 @@ class IrisModel {
                 }
                 median[key] = sum;
             });
+            // median.number_of_agents = len;
+            // median['agents'] = len;
             // console.log(median, behavior);
             medianValuesByBehavior[behavior] = median;
         }
@@ -231,41 +234,6 @@ class IrisModel {
         //     if (singleView) agent.infographic();
         //     else drawInfos(agent);
         // }
-
-        function drawInfos(agent) {
-            strokeWeight(1);
-            let infos = agent.getPreferencesAsObject();
-            let i = 0;
-            // rect(100, 100, 100, 100)
-            noFill();
-            stroke(255);
-            for (let index = 0; index < Object.keys(infos).length; index++) {
-                let diagramX = map(index, 0, Object.keys(infos).length, PADDING, width - PADDING);
-                line(diagramX, height - PADDING, diagramX, height - COL_HEIGHT);
-            }
-            stroke(agent.color);
-            beginShape();
-            Object.keys(infos).forEach(val => {
-
-                let posX = map(i, 0, Object.keys(infos).length, PADDING, width - PADDING);
-                let posY;
-                if (typeof infos[val] === 'boolean') {
-                    // if is a boolean
-                    let value = infos[val] === true ? 1 : 100;
-                    posY = map(value, MINIMUM, MAXIMUM, height - PADDING, height - COL_HEIGHT);
-                }
-                else {
-                    // if the value is a number
-                    posY = map(infos[val], MINIMUM, MAXIMUM, height - PADDING, height - COL_HEIGHT);
-                }
-                // text(val, posX, height - COL_HEIGHT)
-                vertex(posX, posY);
-                i++;
-
-            })
-            endShape();
-            // console.log(infos);
-        }
     }
     infographic(data) {
         const INFO_WIDTH = (width - ((2 * LEFT_GUTTER) + (2 * PADDING))) / 2;
@@ -285,7 +253,7 @@ class IrisModel {
             rect(infoX, infoY, INFO_WIDTH, INFO_HEIGHT);
             fill(255);
             textAlign(CENTER, CENTER)
-            text(key, infoX, infoY - PADDING, INFO_WIDTH, PADDING);
+            text(`${key}: ${this.behaviors[key]} agents`, infoX, infoY - PADDING, INFO_WIDTH, PADDING);
             let lines = 0;
             Object.keys(this.colors).forEach(pref => {
                 textAlign(RIGHT, CENTER);
@@ -336,38 +304,28 @@ class IrisModel {
             let index = 0;
             for (const val of arr) {
                 // if (val) {
-                    const max = INFO_WIDTH / DATA_POINTS;
-                    let r = map(val, 0, 10, 0, max);
-                    let h = map(val, 0, 15, 1, INFO_HEIGHT * 0.2)
-                    // console.log(INFO_WIDTH / DATA_POINTS, INFO_WIDTH, DATA_POINTS, val)
-                    const currX = map(index, 0, arr.length, 0, INFO_WIDTH);
-                    let currY;
-                    let positionY;
-                    if (type === 'traded') {
-                        // ellipse(currX + (r / 2), INFO_HEIGHT * 0.33333, r);
-                        rect(currX + (r / 2), INFO_HEIGHT * 0.33333, 1, -h);
-                        // line(currX, y, currX, INFO_HEIGHT / 2);
-                    } else {
-                        // ellipse(currX + ((r * 10)/ 2), INFO_HEIGHT * 0.66666, r * 10);
-                        rect(currX + ((r * 10)/ 2), INFO_HEIGHT * 0.66666, 1, -h);
-                    }
+                const max = INFO_WIDTH / DATA_POINTS;
+                let r = map(val, 0, 10, 0, max);
+                let h = 3 + map(val, 0, 15, 1, INFO_HEIGHT * 0.2)
+                // console.log(INFO_WIDTH / DATA_POINTS, INFO_WIDTH, DATA_POINTS, val)
+                const currX = map(index, 0, arr.length, 0, INFO_WIDTH);
+                let currY;
+                let positionY;
+                if (type === 'traded') {
+                    // ellipse(currX + (r / 2), INFO_HEIGHT * 0.33333, r);
+                    // rect(currX + (r / 2), INFO_HEIGHT * 0.33333, 1, -h);
+                    line(currX, (INFO_HEIGHT * 0.33333) - (h / 2), currX, (INFO_HEIGHT * 0.33333) + (h / 2));
+                } else {
+                    // ellipse(currX + ((r * 10)/ 2), INFO_HEIGHT * 0.66666, r * 10);
+                    // rect(currX + ((r * 10) / 2), INFO_HEIGHT * 0.66666, 1, -h);
+                    line(currX, (INFO_HEIGHT * 0.66666) - (h / 2), currX, (INFO_HEIGHT * 0.66666) + (h / 2));
+                }
 
-                    // line(currX, positionY, currX, currY); //posY(MINIMUM, ROW_NUMBER), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, ROW_NUMBER)
-                    index++;
+                // line(currX, positionY, currX, currY); //posY(MINIMUM, ROW_NUMBER), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, ROW_NUMBER)
+                index++;
                 // }
             }
             pop();
-        }
-
-        function posX(index, max, col_number, tot_col) {
-            let col = col_number || 0;
-            let colNumber = tot_col || 1;
-            let W = (INFO_WIDTH - PADDING) / colNumber;
-
-            return LEFT_GUTTER + map(index, 0, max, col * W, (col + 1) * W);
-        }
-        function posY(val, row_number) {
-            return 2 * (INFO_HEIGHT + PADDING) + ((INFO_HEIGHT + PADDING) * row_number) - map(val, MINIMUM, MAXIMUM, 0, INFO_HEIGHT);
         }
     }
 
@@ -430,7 +388,7 @@ class IrisModel {
         for (const task of tasks) {
             task.minWage = val;
         }
-        $('#set-min-wage').text(val);
+        
     }
     setAgentsBehavior(behavior) {
         console.log(behavior);
