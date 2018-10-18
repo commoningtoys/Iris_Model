@@ -137,22 +137,13 @@ class IrisModel {
             $('#data-collected').text(this.dataCollected);
         }
     }
-    show() {
-        // console.log('show')
+
+    show() { // show isn't the most correct name for this method
         /**
          * here we sort the agents array that was shuffled 
          * during the choose agent process of task.js
          */
         background(51);
-        /**
-            let fld = this.preferenceArchive.map(result => result.feel_like_doing);
-            let rt = this.preferenceArchive.map(result => result.resting_time);
-            let stress = this.preferenceArchive.map(result => result.stress_level);
-            let aot = this.preferenceArchive.map(result => result.amount_of_time);
-            let traded = this.preferenceArchive.map(result => result.traded);
-            // console.log(traded);
-            let bruteForce = this.preferenceArchive.map(result => result.brute_force);
-         */
         const medianValuesByBehavior = {};
         for (const behavior of AGENT_BEHAVIORS) {
             const median = {};
@@ -235,6 +226,10 @@ class IrisModel {
         //     else drawInfos(agent);
         // }
     }
+    /**
+     * displays the median values of the agents
+     * @param {Array} data array of object containing the median values of the preferences of the agents divided by behavior
+     */
     infographic(data) {
         const INFO_WIDTH = (width - ((2 * LEFT_GUTTER) + (2 * PADDING))) / 2;
         const INFO_HEIGHT = (height - (3 * PADDING)) / 2;
@@ -243,14 +238,19 @@ class IrisModel {
         let i = 0;
         Object.keys(data).forEach(key => {
             // console.log(data[key], key)
+
+
+            // the trick below is useful to spread the 
+            // the visualization in 4 regions of the screen
             infoX = LEFT_GUTTER + ((width / 2) * (i % 2));
             if (i > 1) {
-                // infoX = LEFT_GUTTER;
                 infoY = 2 * PADDING + INFO_HEIGHT;
             }
             fill(0);
-            noStroke();
+            stroke(100);
             rect(infoX, infoY, INFO_WIDTH, INFO_HEIGHT);
+
+            noStroke();
             fill(255);
             textAlign(CENTER, CENTER)
             text(`${key}: ${this.behaviors[key]} agents`, infoX, infoY - PADDING, INFO_WIDTH, PADDING);
@@ -265,20 +265,21 @@ class IrisModel {
             Object.keys(preferences).forEach(pref => {
                 if (pref === 'traded' || pref === 'brute_force') {
                     // console.log(pref);
-                    drawLine(preferences[pref], infoX, infoY, this.colors[pref], pref)
+                    drawLine(preferences[pref], this.behaviors[key], infoX, infoY, this.colors[pref], pref)
                 } else {
                     printGraphic(preferences[pref], infoX, infoY, this.colors[pref]);
                 }
             })
             i++;
         })
-
+        /**
+         * Draws a scatterplot infographic
+         * @param {Array} arr  array of values to be displayed
+         * @param {Number} x position of the infographic on x-axis
+         * @param {Number} y position of the infographic on y-axis
+         * @param {Object} col p5.Color object
+         */
         function printGraphic(arr, x, y, col) {
-            // let colNumber = col_number || 0;
-            // let totCol = tot_col || 1;
-            // noStroke();
-            // fill(col);
-            // text(str, PADDING / 2, posY(MAXIMUM, row_number));
             noFill();
             stroke(col);
             strokeWeight(1);
@@ -295,22 +296,25 @@ class IrisModel {
             endShape();
             pop();
         }
-
-        function drawLine(arr, x, y, col, type, type2) {
+        /**
+         * draws a line representing how often an agent has traded or has been brute-forced
+         * @param {Array} arr array of values to be displayed
+         * @param {Number} num_agents number of agents with same bahavior
+         * @param {Number} x position of the infographic on x-axis
+         * @param {Number} y position of the infographic on y-axis
+         * @param {Object} col p5.Color object
+         * @param {String} type string containing specific values regarding trading and brute force infos
+         */
+        function drawLine(arr, num_agents, x, y, col, type) {
             strokeWeight(1);
             stroke(col);
             push()
             translate(x, y)
             let index = 0;
             for (const val of arr) {
-                // if (val) {
-                const max = INFO_WIDTH / DATA_POINTS;
-                let r = map(val, 0, 10, 0, max);
-                let h = 3 + map(val, 0, 15, 1, INFO_HEIGHT * 0.2)
+                let h = 3 + map(val, 0, num_agents, 1, INFO_HEIGHT * 0.2)
                 // console.log(INFO_WIDTH / DATA_POINTS, INFO_WIDTH, DATA_POINTS, val)
                 const currX = map(index, 0, arr.length, 0, INFO_WIDTH);
-                let currY;
-                let positionY;
                 if (type === 'traded') {
                     // ellipse(currX + (r / 2), INFO_HEIGHT * 0.33333, r);
                     // rect(currX + (r / 2), INFO_HEIGHT * 0.33333, 1, -h);
@@ -320,15 +324,14 @@ class IrisModel {
                     // rect(currX + ((r * 10) / 2), INFO_HEIGHT * 0.66666, 1, -h);
                     line(currX, (INFO_HEIGHT * 0.66666) - (h / 2), currX, (INFO_HEIGHT * 0.66666) + (h / 2));
                 }
-
-                // line(currX, positionY, currX, currY); //posY(MINIMUM, ROW_NUMBER), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, ROW_NUMBER)
                 index++;
-                // }
             }
             pop();
         }
     }
-
+    /**
+     * sets the time passed in the form of hours | days | months | yeara
+     */
     setModelTime() {
         if (this.timeUnit > 0 && this.timeUnit % TS_FRACTION == 0) {
             this.hours++;
@@ -350,7 +353,9 @@ class IrisModel {
         // console.log(currentDate);
         document.getElementById('display-date').innerHTML = currentDate;
     }
-
+    /**
+     * computes the total resting time in the model
+     */
     getTotalRestingTime() {
         let sumAgent = 0;
         for (const agent of this.agents) {
@@ -362,7 +367,10 @@ class IrisModel {
         }
         console.log(`agent resting time: ${sumAgent}, task GRT: ${sumTask} GLOBAL ${this.GLOBAL_RESTING_TIME}`);
     }
-
+    /**
+     * this methods records the data generated by the agents and stores it
+     * in JSON that can be saved by the client
+     */
     recordData() {
         console.log('RECORDING...');
         this.recordAgentsData = !this.recordAgentsData;
@@ -382,7 +390,10 @@ class IrisModel {
             this.recordDataCounter++;
         }
     }
-
+    /**
+     * sets the minimum wage in the model
+     * at the beginning it is 0
+     */
     setMinWage(val) {
         console.log(val);
         for (const task of tasks) {
@@ -390,6 +401,9 @@ class IrisModel {
         }
         
     }
+    /**
+     * sets the behavior of all the agents to a specific behavior
+     */
     setAgentsBehavior(behavior) {
         console.log(behavior);
         for (const agent of this.agents) {
