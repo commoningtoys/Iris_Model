@@ -62,6 +62,20 @@ function drawInfos(agent) {
 /**
  * here we add all the event listeners for the menu
  */
+
+let start_stop = false;
+$('#start-stop').click(()=>{
+  console.log('start-stop')
+  start_stop = !start_stop;
+  if(start_stop){
+    $('#start-stop').text('RESTART');
+    noLoop();
+  }else{
+    $('#start-stop').text('STOP');
+    loop();
+  }
+});
+
 let recordData = document.getElementById('record-data')
 recordData.addEventListener('click', () => {
   irisModel.recordData();

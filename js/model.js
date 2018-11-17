@@ -36,8 +36,8 @@ class IrisModel {
             agentsNum++;
         }
         // here we set the max value of the slider that shows the agents
-        const slider = document.getElementById('view')
-        slider.max = agentsNum;
+        // const slider = document.getElementById('view')
+        // slider.max = agentsNum;
 
         this.GLOBAL_RESTING_TIME = this.calcGlobalRestTime(agentsNum, num_task);
         // make the info for all of the agents
