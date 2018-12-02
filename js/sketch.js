@@ -2,11 +2,11 @@ const PLAYER_ID = 'PLAYER';
 
 let singleView = true;
 // function HEIGHT() { return PADDING + (agentNum * (INFO_HEIGHT + PADDING)) }
-let agents = [];
-let tasks = [];
+// let agents = [];
+// let tasks = [];
 let irisModel;
 let loops = 1;
-
+let players = 0;
 function setup() {
   createCanvas(WIDTH(), HEIGHT());
   let behaviors = {
@@ -18,7 +18,7 @@ function setup() {
 
   let min_wage = 0;
   let tasks_num = 2;
-  let players = 0; // here you set the players for the game
+  players = 0; // here you set the players for the game
   irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
   textSize(TEXT_SIZE);
 }
@@ -165,8 +165,8 @@ function restartModel() {
 
   const min_wage = parseInt(minWage.value);
   const tasks_num = parseInt(tasksNum.value);
-  const players = 0;
   irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
+  $('.menu').toggle('fast');
 }
 
 function updateView() {

@@ -169,17 +169,20 @@ button#close-menu {
     transform: translate(-50%, -50%);
     -moz-transform: translate(-50%, -50%);
     -webkit-transform: translate(-50%, -50%);
-    width: 65%;
-    height: 33vh;
+    width: 40%;
+    height: auto;
+
+    min-height: 150px;
+    padding: 5px;
 }
-#player-stats, #player-task{
+/* #player-stats, #player-task{
     min-height: 150px;
     position: relative;
     width: 50%;
     height: 100%;
     float: left;
     overflow-y: scroll;
-}
+} */
 #player-stats{
     background-color: #00f
 }

@@ -7,14 +7,14 @@
      * @param {Number} global_resting_time amount of time/value that the task can give to the agent 
      */
     constructor(task_object, global_resting_time, min_wage) {
-        this.GRT = global_resting_time;
-        // console.log(this.GRT)
+        this.restingTimeReserve = global_resting_time;
+        // console.log(this.restingTimeReserve)
         /**
          * time needed to carry out the task
          */
         this.aot = task_object.amount_of_time;
         // console.log(this.aot);
-        this.GRT = 4 * this.aot; // quick fix to have the resting time hooked to the task
+        this.restingTimeReserve = 4 * this.aot; // quick fix to have the resting time hooked to the task
         /**
          * Value of a task expresses the relative exchange rate to other task.
          * The value of a task goes up every time an agent decides to 'trade'.
@@ -99,40 +99,40 @@
         let amountOfTime = this.minWage + ((NUMBER_OF_AGENTS - counter) / NUMBER_OF_AGENTS) * this.aot;
         amountOfTime = Math.round(amountOfTime);
         // down here we remove time from the GRT if it reaches 0 it stays 0!
-        if (this.GRT > 0) {
-            this.GRT -= amountOfTime;
-            this.GRT = roundPrecision(this.GRT, 1)
+        if (this.restingTimeReserve > 0) {
+            this.restingTimeReserve -= amountOfTime;
+            this.restingTimeReserve = roundPrecision(this.restingTimeReserve, 1)
         }
-        // console.log(this.GRT, amountOfTime);
-        if (this.GRT - amountOfTime > 0) {
+        // console.log(this.restingTimeReserve, amountOfTime);
+        if (this.restingTimeReserve - amountOfTime > 0) {
             // if there is still vailable GRT give it to the agent as value for the task
             this.value = amountOfTime;
             // console.log(`GRT ${this.type} above 0 value: ${this.value}`);
-        } else if (this.GRT > 0) {
+        } else if (this.restingTimeReserve > 0) {
             // here we give the agent the remaining GRT
-            this.value = parseFloat(this.GRT);
-            // console.log(`GRT almost 0 ${this.GRT}`);
-            this.GRT = 0;
+            this.value = parseFloat(this.restingTimeReserve);
+            // console.log(`GRT almost 0 ${this.restingTimeReserve}`);
+            this.restingTimeReserve = 0;
         } else {
             // here we don't give any resting time
             // we should think also on how the agent react when no resting time ids given for a task
-            // console.log(`GRT is ${this.GRT}`)
+            // console.log(`GRT is ${this.restingTimeReserve}`)
             this.value = 0;
-            this.GRT = 0;
+            this.restingTimeReserve = 0;
         }
         // this.value = (1 - (counter / NUMBER_OF_AGENTS)) * TIME_SCALE;
         // console.log(`value: ${this.type}, ${this.value}, number ${counter}`);
-        // console.log(`task ${this.type} has this value ${this.value}, and this GRT ${this.GRT}`);
+        // console.log(`task ${this.type} has this value ${this.value}, and this.restingTimeReserve ${this.restingTimeReserve}`);
         /**
-         * task shop has this value 0, and this GRT 23
+         * task shop has this value 0, and this.restingTimeReserve 23
          * this is an error that I need to fix
          */
         return;
     }
 
     updateGRT(amount_of_time) {
-        this.GRT += amount_of_time;
-        // console.log(`GRT got updated by ${amount_of_time}, total GRT = ${this.GRT}`)
+        this.restingTimeReserve += amount_of_time;
+        console.log(`GRT got updated by ${amount_of_time}, total GRT = ${this.restingTimeReserve}`)
     }
 
     /**

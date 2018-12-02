@@ -115,7 +115,7 @@ class Agent {
     setInfo() {
         // to update the infos
         document.getElementById(this.ID).innerHTML = this.htmlText();
-        if (this.isPlayer) document.getElementById('player-stats').innerHTML = this.htmlText();
+        // if (this.isPlayer) document.getElementById('player-stats').innerHTML = this.htmlText();
     }
     /**
      * 
@@ -404,7 +404,7 @@ class Agent {
                              * now we pick a random task from the pool
                              */
                             let randomIndex = Math.floor(Math.random() * taskPool.length);
-                            let toDoTask = taskPool[randomIndex];
+                            let toDoTask = taskPool[randomIndex]; // should return this task
 
                             /**
                              * now we assign the task to the agent
@@ -538,100 +538,6 @@ class Agent {
 
 
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // // this.behaviour.trade(task);
-        // // first we check if the agent is the human player
-        // // that has not traded
-        // if (this.isPlayer && !this.hasTraded) {
-        //     // console.log(agent.ID);
-        //     noLoop();
-        //     console.log('noLoop');
-        //     // console.log(`noLoop ${agent.isPlayer}, ${agent.hasTraded}`)
-        //     this.playerInteraction(task);
-        //     return true;
-        // }
-        // /**
-        //  * here we compute the skill of the agent.
-        //  * given its skill level we compute the amount of time he needs to 
-        //  * complete if he needs more time than the original time needed to
-        //  * complete the task than the agent will trade
-        //  */
-        // let skill = this.getPreferences(task.type).skill_level; // here we get the skill
-        // let timeNeeded = task.amountOfTimeBasedOnSkill(skill); // we compute the time he needs
-        // let result = task.aot - timeNeeded; // and we compute the result that is either a positive or negative number
-        // // console.log(skill, timeNeeded, result);
-        // /**
-        //  * preference also influences the trading algorithm
-        //  * if the preference for that task is high enough 
-        //  * the agent will execute it even if it takes a lot of time
-        //  */
-        // let taskPreference = this.getPreferences(task.type).task_preference;
-        // if (this.isPlayer || (this.FLD >= 20 && (result >= 0 || taskPreference > 90))) {// let's test without trading
-        //     // if not trading
-        //     // this.makeInfo(`AGENT: ${this.ID} is doing the task!,  FLD ${this.FLD}, time: ${result}, pref: ${taskPreference}`);
-        //     // this.updateAttributes(task, true);
-        //     // increase resting time
-        //     // console.log(`execute task ${task.type}`);
-        //     this.setInfo();
-        //     return false;
-        // } else if (this.FLD < 2 && this.restingTime > task.aot) {
-        //     // here we return the resting time to the task global resting time
-        //     // this needs to be updated with the lazyness as a factor and available resting time
-        //     /**
-        //      * NOT DOING THE TASK
-        //      * updateAttributes()
-        //      * occupied = true
-        //      * decrease resting time
-        //      */
-        //     // console.log(`too lazy FLD: ${this.FLD}, rest time : ${this.restingTime}`);
-        //     // this.working = true;
-        //     // this.workingTimer = 2 * TIME_SCALE;
-        //     // if (this.restingTime > 0) {
-
-        //     // }
-        //     // this.restingTime -= task.aot;
-        //     // task.updateGRT(task.aot);
-        //     // // this.restingTime /= 2;// here add slider that chenges how much resting time is decreased
-        //     // // this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
-        //     // this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
-        //     // this.resting = true;
-        //     // this.restingTimer = task.aot;
-        //     // // this.updateAttributes(task, true);
-        //     // this.setInfo();
-        //     this.rest(task);
-        //     return true;
-        // } else {
-        //     /**
-        //      * therefore available for another task.
-        //      */
-        //     // console.log(`trade this: ${task.type}`);
-        //     this.hasTraded = true;
-        //     // need to keep track how often the agent traded
-        //     this.tradeTask = this.randomTask(task.type);// traded task should be different than this task
-        //     // this.makeInfo(`AGENT: ${this.ID} has traded task ${task.type} for ${this.tradeTask}`);
-        //     this.setInfo();
-        //     return true;
-        // }
     }
 
     taskValue(agents, task_name) {
