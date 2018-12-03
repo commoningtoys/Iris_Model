@@ -45,9 +45,9 @@ function shuffleArray(array) {
     }
 }
 
-function sumArray(arr1, arr2){
-    for(let i = 0; i < arr2.length; i++){
-        if(arr1[i] === undefined || arr1[i] === null)arr1[i] = 0;
+function sumArray(arr1, arr2) {
+    for (let i = 0; i < arr2.length; i++) {
+        if (arr1[i] === undefined || arr1[i] === null) arr1[i] = 0;
         arr1[i] += arr2[i]
     }
 }
@@ -61,17 +61,19 @@ function WIDTH() {
     const info = document.getElementById('info-window');
     const w = info.getBoundingClientRect().width;
     return innerWidth - w;
-  };
-  
-  function HEIGHT(){
+};
+
+function HEIGHT() {
     const footer = document.getElementById('footer');
     const h = footer.getBoundingClientRect().height;
     return innerHeight - h;
-  }
+}
 
 function roundPrecision(value, precision) {
-    let multiplier = Math.pow(10, precision || 0);
-    return Math.round(value * multiplier) / multiplier;
+    if (typeof value === 'number') {
+        let multiplier = Math.pow(10, precision || 0);
+        return Math.round(value * multiplier) / multiplier;
+    }else return value;
 }
 
 function saveRAWData(agents, id) {

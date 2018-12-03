@@ -1,4 +1,4 @@
-    class Task {
+class Task {
     /**
      * The task Object it takes a a task_object with the specification
      * for the amount of time the task takes how often neeeds to be executed each day
@@ -6,8 +6,8 @@
      * @param {Object} task_object a task object
      * @param {Number} global_resting_time amount of time/value that the task can give to the agent 
      */
-    constructor(task_object, global_resting_time, min_wage) {
-        this.restingTimeReserve = global_resting_time;
+    constructor(task_object, min_wage) {
+        // this.restingTimeReserve = global_resting_time;
         // console.log(this.restingTimeReserve)
         /**
          * time needed to carry out the task
@@ -100,24 +100,26 @@
         amountOfTime = Math.round(amountOfTime);
         // down here we remove time from the GRT if it reaches 0 it stays 0!
         if (this.restingTimeReserve > 0) {
-            this.restingTimeReserve -= amountOfTime;
-            this.restingTimeReserve = roundPrecision(this.restingTimeReserve, 1)
-        }
-        // console.log(this.restingTimeReserve, amountOfTime);
-        if (this.restingTimeReserve - amountOfTime > 0) {
-            // if there is still vailable GRT give it to the agent as value for the task
-            this.value = amountOfTime;
-            // console.log(`GRT ${this.type} above 0 value: ${this.value}`);
-        } else if (this.restingTimeReserve > 0) {
-            // here we give the agent the remaining GRT
-            this.value = parseFloat(this.restingTimeReserve);
-            // console.log(`GRT almost 0 ${this.restingTimeReserve}`);
-            this.restingTimeReserve = 0;
+            if(this.restingTimeReserve - amountOfTime < 0){
+                // if the amount of time computed above is 
+                // bigger than the reserve of resting time
+                // than we set the value to be the leftover of the 
+                // resting time. here we also need to set the
+                // resting time reserve to 0 because ve removed all of it.
+                this.value = this.restingTimeReserve; 
+                this.restingTimeReserve = 0;
+            }else{
+                // else we set the amout of time as the valuse for the task
+                this.value = amountOfTime;
+                this.restingTimeReserve -= amountOfTime;
+                this.restingTimeReserve = roundPrecision(this.restingTimeReserve, 1)
+            }
         } else {
             // here we don't give any resting time
             // we should think also on how the agent react when no resting time ids given for a task
             // console.log(`GRT is ${this.restingTimeReserve}`)
-            this.value = 0;
+            console.log(this.minWage);
+            this.value = this.minWage;
             this.restingTimeReserve = 0;
         }
         // this.value = (1 - (counter / NUMBER_OF_AGENTS)) * TIME_SCALE;
@@ -132,7 +134,7 @@
 
     updateGRT(amount_of_time) {
         this.restingTimeReserve += amount_of_time;
-        console.log(`GRT got updated by ${amount_of_time}, total GRT = ${this.restingTimeReserve}`)
+        // console.log(`GRT got updated by ${amount_of_time}, total GRT = ${this.restingTimeReserve}`)
     }
 
     /**

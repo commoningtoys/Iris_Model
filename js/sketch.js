@@ -5,7 +5,7 @@ let singleView = true;
 // let agents = [];
 // let tasks = [];
 let irisModel;
-let loops = 1;
+let loops = 10;
 let players = 0;
 function setup() {
   createCanvas(WIDTH(), HEIGHT());

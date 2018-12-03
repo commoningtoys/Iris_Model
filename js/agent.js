@@ -141,7 +141,8 @@ class Agent {
             //iterating through all the keys presented in val (current array item)
             keys.forEach(key => {
                 //appending more HTML string with key and value aginst that key;
-                str6 += "<strong>" + key + "</strong>: " + objAttribute[key] + "<br>";
+                // str6 += "<strong>preferences</strong> <br>"
+                str6 += "<strong>" + key + "</strong>: " + roundPrecision(objAttribute[key], 2) + "<br>";
             });
             //final HTML sting is appending to close the DIV element.
             str6 += "</div><br>";
@@ -569,7 +570,7 @@ class Agent {
     }
 
     rest(task) {
-        this.restingTime -= task.aot;
+        this.restingTime -= task.aot; // we could also doubble this amount
         task.updateGRT(task.aot);
         // this.restingTime /= 2;// here add slider that chenges how much resting time is decreased
         // this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
