@@ -165,16 +165,10 @@ class IrisModel {
                 const rtMax100 = agent.preferenceArchive.map(el => {
                     return (el.resting_time / this.GLOBAL_RESTING_TIME)  * 100;
                 });
-                // console.log(rtMax100);
-                // // we need to limit the amount of rwsting time between 0 and MAXIMUM
-                // for (let point of rt) {
-                //     point = (point / this.GLOBAL_RESTING_TIME) * MAXIMUM;
-                // }
                 const stress = agent.preferenceArchive.map(result => result.stress_level);
                 const aot = agent.preferenceArchive.map(result => result.amount_of_time);
                 const traded = agent.preferenceArchive.map(result => result.traded);
                 const bruteForce = agent.preferenceArchive.map(result => result.brute_force);
-                // sumArray(result.fld, fld);
                 agentsData.fld.push(fld);
                 agentsData.rt.push(rtMax100);
                 agentsData.stress.push(stress);

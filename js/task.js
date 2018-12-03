@@ -122,13 +122,6 @@ class Task {
             this.value = this.minWage;
             this.restingTimeReserve = 0;
         }
-        // this.value = (1 - (counter / NUMBER_OF_AGENTS)) * TIME_SCALE;
-        // console.log(`value: ${this.type}, ${this.value}, number ${counter}`);
-        // console.log(`task ${this.type} has this value ${this.value}, and this.restingTimeReserve ${this.restingTimeReserve}`);
-        /**
-         * task shop has this value 0, and this.restingTimeReserve 23
-         * this is an error that I need to fix
-         */
         return;
     }
 
