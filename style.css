@@ -58,7 +58,7 @@ button{
 }
 
 .menu{
-    display: none;
+    /* display: none; */
     background-color: #0000ffaa;
     border: 2px solid #0f0;
     position: fixed;
@@ -76,7 +76,7 @@ button#close-menu {
     top: 0px;
     right: 0px;
 }
-.custom, .custom-behavior{
+.custom-input, .custom-behavior{
     max-width: 50px;
     margin: 5px;
 }

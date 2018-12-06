@@ -1016,7 +1016,7 @@ class Agent {
         // needs to be done in the index.html
         $('.player-interface').toggle();
         // console.log($('.player-interface')[0].attributes[1].value)
-        document.getElementById('task-name').innerHTML = task.type;
+        document.getElementById('task-name').innerText = task.type;
         // $('#yes').val = this.ID;
         document.getElementById('yes').value = this.ID;// we set the ID as value so we can use it later to find the agent in the array
         // let interactionP = document.createElement('p');

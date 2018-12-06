@@ -4,7 +4,7 @@ let singleView = true;
 // function HEIGHT() { return PADDING + (agentNum * (INFO_HEIGHT + PADDING)) }
 // let agents = [];
 // let tasks = [];
-let irisModel;
+let irisModel = null;
 let loops = 10;
 let players = 0;
 function setup() {
@@ -19,18 +19,19 @@ function setup() {
   let min_wage = 0;
   let tasks_num = 2;
   players = 0; // here you set the players for the game
-  irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
+  // irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
   textSize(TEXT_SIZE);
 }
 
 function draw() {
 
-
-  for (let i = 0; i < loops; i++) {
-    irisModel.update();
+  if (irisModel != null) {
+    for (let i = 0; i < loops; i++) {
+      irisModel.update();
+    }
+    if (frameCount % 15 == 0) irisModel.show();
+    document.getElementById('whatFrameRate').innerHTML = 'Frame rate: <br>' + frameRate();
   }
-  if (frameCount % 15 == 0) irisModel.show();
-  document.getElementById('whatFrameRate').innerHTML = 'Frame rate: <br>' + frameRate();
   // noLoop();
 }
 
@@ -64,13 +65,13 @@ function drawInfos(agent) {
  */
 
 let start_stop = false;
-$('#start-stop').click(()=>{
+$('#start-stop').click(() => {
   console.log('start-stop')
   start_stop = !start_stop;
-  if(start_stop){
+  if (start_stop) {
     $('#start-stop').text('RESTART');
     noLoop();
-  }else{
+  } else {
     $('#start-stop').text('STOP');
     loop();
   }
@@ -165,6 +166,7 @@ function restartModel() {
 
   const min_wage = parseInt(minWage.value);
   const tasks_num = parseInt(tasksNum.value);
+  players = parseInt(document.getElementById('num-players').value);
   irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
   $('.menu').toggle('fast');
 }
