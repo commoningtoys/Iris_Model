@@ -328,7 +328,7 @@ class Agent {
             // console.log(`noLoop ${agent.isPlayer}, ${agent.hasTraded}`)
             this.playerTaskToExecute = task;
             this.playerInteraction(task, agents);
-            return false; // this is a bug to be fixed!!!!!! must return false and handle the false statement in choose agent
+            return true; // this is a bug to be fixed!!!!!! must return false and handle the false statement in choose agent
         }
 
 
