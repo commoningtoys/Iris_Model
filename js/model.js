@@ -212,7 +212,7 @@ class IrisModel {
             // console.log(median, behavior);
             medianValuesByBehavior[behavior] = median;
         }
-        console.log(medianValuesByBehavior);
+        // console.log(medianValuesByBehavior);
         this.infographic(medianValuesByBehavior);
         // console.log(medianValuesByBehavior);
         // this.plot.show(median, this.pointIndex);
