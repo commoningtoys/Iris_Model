@@ -103,7 +103,7 @@ class IrisModel {
         for (const task of this.tasks) {
             sum += task.restingTimeReserve;
         }
-        console.log(sum);
+        // console.log(sum);
         return sum;
     }
     update() {
@@ -163,7 +163,8 @@ class IrisModel {
                 const fld = agent.preferenceArchive.map(result => result.feel_like_doing);
                 const rt = agent.preferenceArchive.map(result => result.resting_time);
                 const rtMax100 = agent.preferenceArchive.map(el => {
-                    return (el.resting_time / this.GLOBAL_RESTING_TIME)  * 100;
+                    let val = (el.resting_time / (this.GLOBAL_RESTING_TIME / this.agents.length)) * 100;
+                    return val;
                 });
                 const stress = agent.preferenceArchive.map(result => result.stress_level);
                 const aot = agent.preferenceArchive.map(result => result.amount_of_time);
@@ -211,7 +212,7 @@ class IrisModel {
             // console.log(median, behavior);
             medianValuesByBehavior[behavior] = median;
         }
-        // console.log(medianValuesByBehavior);
+        console.log(medianValuesByBehavior);
         this.infographic(medianValuesByBehavior);
         // console.log(medianValuesByBehavior);
         // this.plot.show(median, this.pointIndex);

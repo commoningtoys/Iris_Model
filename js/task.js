@@ -118,7 +118,7 @@ class Task {
             // here we don't give any resting time
             // we should think also on how the agent react when no resting time ids given for a task
             // console.log(`GRT is ${this.restingTimeReserve}`)
-            console.log(this.minWage);
+            // console.log(this.minWage);
             this.value = this.minWage;
             this.restingTimeReserve = 0;
         }
@@ -223,7 +223,7 @@ class Task {
 
     bruteForceTask(agents) {
         //assigns the task to someone as next task to do.
-        console.log('BRUTE FORCE!!!')
+        // console.log('BRUTE FORCE!!!')
         let i = 0;
         let controlState = true;
         while (controlState) {

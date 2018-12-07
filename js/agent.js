@@ -6,7 +6,7 @@ class Agent {
         this.playerTimer = 0;
         this.playerWorking = false;
         this.playerName = 'PLAYER_';
-        this.ID = is_player ? this.playerName + nf(id, 4) : nf(id, 4);
+        this.ID = nf(id, 4);//is_player ? this.playerName + nf(id, 4) : nf(id, 4);
 
         this.behavior = _behavior;
         this.restingTime = 0;
