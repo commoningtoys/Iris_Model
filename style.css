@@ -2,20 +2,20 @@
 
 
 @font-face{
-    font-family: mono;
-    src: url(font/SourceCodePro-Medium.otf);
+    font-family: 'mono';
+    src: url('font/SourceCodePro-Medium.otf') format('opentype');
 }
 
 body{
     padding: 0;
     margin: 0;
-    font-family: mono;
-    font-size: 75%;
+    font-family: monospace;
+    font-size: 100%;
     hyphens: auto;
 }
 
 button{
-    font-family: mono;
+    font-family: monospace;
 }
 
 #p5Sketch{
@@ -81,16 +81,20 @@ button#close-menu {
     margin: 5px;
 }
 .menu-content{
-    color: #0f0;
-    display: block;
-    width: 85%;
-    height: 85%;
+    color: #ff0;
+    /* color: #0f0; */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     /* background-color: #f00; */
-    margin: 20px auto;
+    /* margin: 20px auto; */
     padding: 10px;
 }
+
+
 .menu-content button{
     text-align: center;
+    padding: 2rem;
     font-size: 1.5em;
     color: #fff;
     background-color: #f00;
@@ -104,6 +108,15 @@ button#close-menu {
     border: solid 2px #ff0;
     cursor: pointer;
 
+}
+.menu-set-agents, .model-settings{
+    padding: 2rem;
+}
+.menu-set-agents i{
+    color: #0f0;
+    /* font-size: 2rem; */
+}
+.model-settings{
 }
 /* .menu-content p{
     line-height: 1.8em;

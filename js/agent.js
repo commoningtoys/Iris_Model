@@ -45,6 +45,8 @@ class Agent {
         this.FLD = this.behavior === 'capitalist' ? 100 : randomMinMAx();// feel like doing
         this.solidarity = randomMinMAx();
         this.stress = 0;// we will need this to see how stressed the agents are, the stress will increase when the agents can't rest while FLD is 0
+        this.stress_decrease_val = 1.5;
+        this.stress_increase_val = 1;
         this.ability = true;
         this.wasBruteForced = false;
         // working attributes
@@ -124,9 +126,9 @@ class Agent {
         const BR = '<br>';
         let str1 = '<b>AGENT: ' + this.ID + '</b>' + BR;
         let str11 = '<b>behavior: ' + this.behavior + '</b>' + BR;
-        let str2 = (this.working == true ? 'doing this task : ' + this.currentTask : 'is not working') + BR;
+        let str2 = (this.working == true ? 'doing this task: '+ BR + this.currentTask : 'is not working' + BR) + BR;
         let str21 = 'working timer: ' + BR + this.workingTimer + BR;
-        let str3 = (this.has_swapped === true ? 'has traded to do : ' + this.swap_task : 'has not traded') + BR;
+        let str3 = (this.has_swapped === true ? 'has swapped for: '+ BR + this.swap_task : 'has not traded' + BR) + BR;
         let str31 = (this.resting === true ? `is resting for: ${this.restingTimer}` : 'not resting') + BR;
         let str4 = 'feel like doing: ' + this.FLD + BR;
         let str5 = 'time coins: ' + this.time_coins + BR;
@@ -286,7 +288,7 @@ class Agent {
             if (this.restingTimer <= 0) {
                 this.resting = false;
                 // when the agent has rested he also is less stressed
-                this.stress /= 1.5;
+                this.stress /= this.stress_decrease_val;
                 this.setInfo();
             }
         }
@@ -360,7 +362,7 @@ class Agent {
                         }
                         else {
                             // the agent trades the task
-                            this.stress++;
+                            this.stress += this.stress_increase_val;
                             this.stress = clamp(this.stress, MINIMUM, MAXIMUM);
                             if (task.type === lastTask) assignTask(this);// if the task is the same as the last one than assign a new task 
                             else return false;// let the agent execute the task
@@ -451,7 +453,7 @@ class Agent {
                         // if the agent has no resting time than he 
                         // gets a random task assigned or he just executes
                         // the task
-                        this.stress++;
+                        this.stress += this.stress_increase_val;
                         this.stress = clamp(this.stress, MINIMUM, MAXIMUM);
                         if (task.type !== this.masterTask) {
                             // the agent decides to the task he wants to master
@@ -488,7 +490,7 @@ class Agent {
                     this.rest(task);
                     return true;
                 } else {
-                    this.stress++;
+                    this.stress += this.stress_increase_val;
                     this.stress = clamp(this.stress, MINIMUM, MAXIMUM);
                     return false;// else he executes the task
                 }
@@ -999,6 +1001,8 @@ class Agent {
         if (result > MAXIMUM) result = MAXIMUM
         return result;
     }
+
+    
 
 
 

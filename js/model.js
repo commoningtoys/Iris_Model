@@ -421,6 +421,20 @@ class IrisModel {
         if (this.showFrom < 0) this.showFrom = 0;
         if (this.showTo > this.agents.length) this.showTo = this.agents.length;
     }
+
+    set_stress_increment(val){
+        console.log(val)
+        for (const agent of this.agents) {
+            agent.stress_increase_val = parseFloat(val);
+        }
+    }
+
+    set_stress_decrement(val){
+        console.log(val)
+        for (const agent of this.agents) {
+            agent.stress_decrease_val = parseFloat(val);
+        }
+    }
     /**
      * player interactions below
      */

@@ -113,19 +113,19 @@ $('#select-behavior').click(el => {
   for (const el of inputCustom) {
     el.value = 0;
   }
-  // hee we update them to all *behavior*
+  // here we update them to all *behavior*
   switch (behavior) {
     case 'curious':
-      inputCustom.curious.value = agentsNumber.value;
+      inputCustom.curious.value = agentsNumber.innerText;
       break;
     case 'perfectionist':
-      inputCustom.perfectionist.value = agentsNumber.value;
+      inputCustom.perfectionist.value = agentsNumber.innerText;
       break;
     case 'geniesser':
-      inputCustom.geniesser.value = agentsNumber.value;
+      inputCustom.geniesser.value = agentsNumber.innerText;
       break;
     case 'capitalist':
-      inputCustom.capitalist.value = agentsNumber.value;
+      inputCustom.capitalist.value = agentsNumber.innerText;
       break;
   }
 })
@@ -149,9 +149,21 @@ $('.custom-behavior').change(() => {
     sum += parseInt(el.value);
   }
   console.log(sum);
-  agentsNumber.value = sum;
+  agentsNumber.innerText = sum;
   taskNumber.value = Math.floor(sum / 5);
 });
+
+$('#stress-increment').change(el => {
+  console.log($('#stress-increment').val())
+  irisModel.set_stress_increment($('#stress-increment').val());
+  $('#set-stress-increment').text($('#stress-increment').val())
+})
+
+$('#stress-decrement').change(el => {
+  console.log($('#stress-decrement').val())
+  irisModel.set_stress_increment($('#stress-decrement').val());
+  $('#set-stress-decrement').text($('#stress-decrement').val())
+})
 
 function restartModel() {
   const customBehavior = document.getElementsByClassName('custom-behavior');

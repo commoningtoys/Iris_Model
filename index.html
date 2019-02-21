@@ -73,36 +73,34 @@
     <div class="menu-content">
       <!-- <input id="restart-model" type="checkbox"> restart model? <span id="yes/no">no</span> -->
       <br>
-      <u>set the model to:</u> <br>
-      <select multiple id="select-behavior">
-        <option value="curious">ALL CURIOUS</option>
-        <option value="perfectionist">ALL PERFECTIONISTS</option>
-        <option value="geniesser">ALL GENIESSER</option>
-        <option value="capitalist">ALL CAPITALISTS</option>
-      </select>
-      <br>
-      <br>
-      <u>set custom number of behaviors</u> <br>
-      <input type="text" value="3" class="custom-behavior" name="curious"> curious<br>
-      <input type="text" value="3" class="custom-behavior" name="perfectionist"> perfectionists<br>
-      <input type="text" value="2" class="custom-behavior" name="geniesser"> geniesser<br>
-      <input type="text" value="2" class="custom-behavior" name="capitalist"> capitalists<br> <br>
-      <u>set minimum wage to: <span id="set-min-wage">0</span> </u><br>
-      <input type="range" min="0" max="10" value="0" id="min-wage"> <br> <br>
-      <u>Total number of agents:</u> <br>
-      <input type="text" value="10" class="custom-input" id="how-many-agents"> <br>
-      <u>Total number of players</u>
-      <input type="text" value="1" class="custom-input" id="num-players"> <br>
-      <u>How many task-sets:</u> <input type="text" value="1" id="how-many-task" class="custom-input">
-      <br>
-      <i>(each set is composed by 4 tasks)</i>
-      <br>
-      <br> 
-      <u>set model speed:</u> <br>
-      <input type="range" value="1" min="1" max="10" id="model-speed">
-      <br>
-      <br>
-      <br>
+      <div class="menu-set-agents">
+        <p>set custom number of behaviors</p>
+        <input type="text" value="3" class="custom-behavior" name="curious"> curious<br>
+        <input type="text" value="3" class="custom-behavior" name="perfectionist"> perfectionists<br>
+        <input type="text" value="2" class="custom-behavior" name="geniesser"> geniesser<br>
+        <input type="text" value="2" class="custom-behavior" name="capitalist"> capitalists<br>
+        <p>Total number of agents: <span id="how-many-agents">10</span></p>
+        How many task-sets:<input type="text" value="1" id="how-many-task" class="custom-input">
+        <br>
+        <i>(each set is composed by 4 tasks)</i> <br> <br>
+        set number of players
+        <input type="text" value="0" class="custom-input" id="num-players"> <br>
+      </div>
+
+      <div class="model-settings">
+        set minimum wage to: <span id="set-min-wage">0</span> <br>
+        <input type="range" min="0" max="10" value="0" id="min-wage">
+        <br>
+        <br>
+        set model speed:<br>
+        <input type="range" value="1" min="1" max="10" id="model-speed">
+        <br>
+        set stress increment level: <span id="set-stress-increment">1</span> <br>
+        <input type="range" value="1" min="0.2" max="5" step="0.2" id="stress-increment">
+        <br>
+        set stress decrement level: <span id="set-stress-decrement">1.5</span> <br>
+        <input type="range" value="1.5" min="0.2" max="5" step="0.2" id="stress-decrement">
+      </div>
 
       <button onclick="restartModel()">RESTART</button>
 

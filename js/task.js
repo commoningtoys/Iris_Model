@@ -244,7 +244,7 @@ class Task {
                 // check resting timer!!!
                 agent.hasTraded = false;
                 agent.tradeTask = '';
-                agent.stress++;
+                agent.stress += agent.stress_increase_val;
                 agent.stress = clamp(agent.stress, MINIMUM, MAXIMUM);
                 let skill = agent.getPreferences(this.type).skill_level;
                 let time = this.amountOfTimeBasedOnSkill(skill);
