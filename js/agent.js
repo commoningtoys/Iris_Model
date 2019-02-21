@@ -36,8 +36,8 @@ class Agent {
         // }
 
         // the next attributes are used for the trading system,
-        this.tradeTask = '';// this defines the task the agent wants to do
-        this.hasTraded = false;// if has traded than it will be selecteds for the trade task
+        this.swap_task = '';// this defines the task the agent wants to do
+        this.has_swapped = false;// if has traded than it will be selecteds for the trade task
         this.totalTaskCompleted = 0;
         this.totalTaskCompletedByAgents = 0;
 
@@ -126,7 +126,7 @@ class Agent {
         let str11 = '<b>behavior: ' + this.behavior + '</b>' + BR;
         let str2 = (this.working == true ? 'doing this task : ' + this.currentTask : 'is not working') + BR;
         let str21 = 'working timer: ' + BR + this.workingTimer + BR;
-        let str3 = (this.hasTraded === true ? 'has traded to do : ' + this.tradeTask : 'has not traded') + BR;
+        let str3 = (this.has_swapped === true ? 'has traded to do : ' + this.swap_task : 'has not traded') + BR;
         let str31 = (this.resting === true ? `is resting for: ${this.restingTimer}` : 'not resting') + BR;
         let str4 = 'feel like doing: ' + this.FLD + BR;
         let str5 = 'time coins: ' + this.time_coins + BR;
@@ -297,8 +297,8 @@ class Agent {
             this.workingTimer -= timeUpdate();
             this.setInfo();
             if (this.workingTimer <= 0) {
-                this.hasTraded = false;// reset to false, very IMPORTANT otherwise the agent will always be called to do a traded task
-                this.tradeTask = '';
+                this.has_swapped = false;// reset to false, very IMPORTANT otherwise the agent will always be called to do a traded task
+                this.swap_task = '';
                 this.working = false;
                 this.currentTask = '';
                 this.setInfo();
@@ -319,13 +319,13 @@ class Agent {
      * 
      * @param {*} task 
      */
-    trade(task, agents) {
+    swap(task, agents) {
 
         if (this.isPlayer) {
             // console.log(agent.ID);
             noLoop();
             console.log('noLoop');
-            // console.log(`noLoop ${agent.isPlayer}, ${agent.hasTraded}`)
+            // console.log(`noLoop ${agent.isPlayer}, ${agent.has_swapped}`)
             this.playerTaskToExecute = task;
             this.playerInteraction(task, agents);
             return true; // this is a bug to be fixed!!!!!! must return false and handle the false statement in choose agent
@@ -411,9 +411,9 @@ class Agent {
                              * now we assign the task to the agent
                              */
 
-                            agent.hasTraded = true;
+                            agent.has_swapped = true;
                             // need to keep track how often the agent traded
-                            agent.tradeTask = toDoTask;// traded task should be different than this task
+                            agent.swap_task = toDoTask;// traded task should be different than this task
                             agent.setInfo();
                         }
                     }
@@ -583,8 +583,8 @@ class Agent {
     }
 
     assignTradedTask(task_name) {
-        this.hasTraded = true;
-        this.tradeTask = task_name;
+        this.has_swapped = true;
+        this.swap_task = task_name;
         this.setInfo();
     }
 
@@ -644,7 +644,7 @@ class Agent {
             feel_like_doing: this.FLD,
             stress_level: this.stress,
             amount_of_time: this.mappedAmountOfTime,
-            traded: this.hasTraded,// === true ? this.tradeTask : '',
+            traded: this.has_swapped,// === true ? this.swap_task : '',
             brute_force: this.wasBruteForced
         });
 
@@ -656,7 +656,7 @@ class Agent {
                 feel_like_doing: this.FLD,
                 stress_level: this.stress,
                 amount_of_time: this.mappedAmountOfTime,
-                traded: this.hasTraded,
+                traded: this.has_swapped,
                 brute_force: this.wasBruteForced
             });
         }
@@ -714,7 +714,7 @@ class Agent {
         // }
         // console.log(this.preferenceArchive, counter, task_name);
         // console.log(agents);
-        const tasks = ['admin', 'clean', 'cook', 'shop'];
+        // const tasks = ['admin', 'clean', 'cook', 'shop'];
         const forgetRate = 0.35;
         let lastPreferences = this.preferenceArchive[this.preferenceArchive.length - 1].preferences;
         let tasksCompleted = {};
@@ -729,7 +729,7 @@ class Agent {
          * therefore the agent who has executed the task the most is the more 
          * skilled, and so on.
          */
-        for (const task of tasks) {
+        for (const task of TASK_LIST) {
             /**
              * here we compute the which agent has executed a task 
              * the most
@@ -738,15 +738,15 @@ class Agent {
             for (const a of agents) {
                 if (a.preferenceArchive.length > 0) {
                     lastPreferences = a.preferenceArchive[a.preferenceArchive.length - 1].preferences;
-                    if (lastPreferences[task].completed > max) max = lastPreferences[task].completed;
+                    if (lastPreferences[task.type].completed > max) max = lastPreferences[task.type].completed;
                 }
             }
             /**
-             * here we check how often an agent has completed this task
+             * here we check how often an agent has completed this task.type
              */
             let completed = this.preferenceArchive[this.preferenceArchive.length - 1].preferences;
-            let sum = (completed[task].completed / max) * MAXIMUM;
-            this.preferences[task].skill_level = sum;
+            let sum = (completed[task.type].completed / max) * MAXIMUM;
+            this.preferences[task.type].skill_level = sum;
         }
         /**
          * here we compute the preference for a task.
@@ -771,12 +771,12 @@ class Agent {
         if (this.behavior === 'curious') {
             let completedTasks = [];
             let tot = 0;
-            for (const task of tasks) {
+            for (const task of TASK_LIST) {
                 let obj = {
-                    task_name: task,
-                    completed: lastPreferences[task].completed
+                    task_name: task.type,
+                    completed: lastPreferences[task.type].completed
                 }
-                tot += lastPreferences[task].completed;
+                tot += lastPreferences[task.type].completed;
                 completedTasks.push(obj);
             }
             for (const task of completedTasks) {
@@ -796,14 +796,14 @@ class Agent {
             let x_s = [];// x_s they represent the time units that
             for (let i = 0; i < this.preferenceArchive.length; i++)x_s.push(i);// here we fill it 
 
-            for (const task of tasks) {
+            for (const task of TASK_LIST) {
                 // here we fill the y_s with all the values of the skill
-                let y_s = this.preferenceArchive.map(result => result.preferences[task].skill_level);
-                let pref = this.preferences[task].skill_level;
+                let y_s = this.preferenceArchive.map(result => result.preferences[task.type].skill_level);
+                let pref = this.preferences[task.type].skill_level;
                 let offset = 5 + (fldOffset * 3);
                 pref += linearRegression(y_s, x_s).slope > 0 ? offset : -offset; // here we compute the slope and we look if it is positive or negative
-                this.preferences[task].task_preference = pref;
-                this.preferences[task].task_preference = clamp(this.preferences[task].task_preference, MINIMUM, MAXIMUM);
+                this.preferences[task.type].task_preference = pref;
+                this.preferences[task.type].task_preference = clamp(this.preferences[task.type].task_preference, MINIMUM, MAXIMUM);
             }
         }
 
@@ -949,7 +949,7 @@ class Agent {
             stress: this.stress,
             time_coins: this.time_coins,
             amount_of_time_task: this.mappedAmountOfTime,
-            traded: this.hasTraded,
+            traded: this.has_swapped,
             brute_force: this.wasBruteForced
         };
         // arr.push(this.FLD);
@@ -1074,10 +1074,10 @@ class Agent {
     playerTrades(task_name) {
         const task_to_trade = task_name.replace(/[\d\W]/g, '');
         console.log(task_to_trade);
-        this.hasTraded = true;
-        console.log(this.hasTraded);
-        this.tradeTask = task_to_trade;
-        console.log(this.tradeTask);
+        this.has_swapped = true;
+        console.log(this.has_swapped);
+        this.swap_task = task_to_trade;
+        console.log(this.swap_task);
         this.setInfo();
         // console.log(this);
     }

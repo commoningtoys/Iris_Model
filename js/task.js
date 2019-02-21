@@ -172,7 +172,7 @@ class Task {
                     agent.work(time, this, agents);//the agent works
                     agent.hasTraded = false; // reset here the traded boolean | needs to be done after the the agent.work otherwise the it is not possible to visualize the trade happening
                     // this.executed++;
-                    // console.log('trading agent doing the task!');
+                    // console.log('swapping agent doing the task!');
                     return;// IF THE AGENT HAS TRADED FOR THIS TASK THAN HE GETS PICKED THEREFORE WE RETURN
                 }
             } else if (!agent.working && agent.ability && !agent.hasTraded) {// maybe the trade happens once we have the pool
@@ -180,17 +180,17 @@ class Task {
             }
         }
         /**
-         * here is where the trading happens we have a pool 
+         * here is where the swapping happens we have a pool 
          * of agents that are not working and able
          * the task should pick a random agent from the pool
          * if he trades than it looks for another agent
          * and updates the value of the task by increment
          */
         // console.log('agent pool: ', this.agentsPool.length);
-        let trading = true;
+        let swapping = true;
         let maximumTradings = 10000;
         let counter = 0;
-        while (trading) {
+        while (swapping) {
             let randIndex = Math.floor(Math.random() * this.agentsPool.length);
             const agent = this.agentsPool[randIndex];// here we pick a random agent from the pool
 
@@ -201,20 +201,20 @@ class Task {
                 // noLoop();
                 break;
             } else {
-                if (!agent.trade(this, agents)) {
+                if (!agent.swap(this, agents)) {
                     // if the agent has not traded 
                     // then he executes the task
                     skill = agent.getPreferences(this.type).skill_level;
                     let time = this.amountOfTimeBasedOnSkill(skill);
                     agent.work(time, this, agents);// we set the agent at work
                     // this.executed++;
-                    trading = false;// here we exit the while loop
+                    swapping = false;// here we exit the while loop
                     break;//DEPRECATED
                 } else {
                     // if the agent has traded we remove him from the pool
                     // so he can't be picked the next time 
                     this.agentsPool.splice(randIndex, 1);
-                    // console.log('agent pool after trading: ', this.agentsPool.length);
+                    // console.log('agent pool after swapping: ', this.agentsPool.length);
                 }
             }
             counter++;

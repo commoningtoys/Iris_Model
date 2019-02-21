@@ -23,11 +23,12 @@ const COL_HEIGHT = innerHeight - 100;
 // make our tasks
 /**
  * VERY IMPORTANT THE TASK CAN'T BE LESS THAN 1 HOUR FOR NOW
+ * the names can be changed again
  */
-const COOK = makeTask(12 * TIME_SCALE, 3, 'cook');
-const CLEAN = makeTask(15 * TIME_SCALE, 4, 'clean');
-const ADMIN = makeTask(18 * TIME_SCALE, 1, 'admin');
-const SHOP = makeTask(12 * TIME_SCALE, 2, 'shop');
+const COOK = makeTask(12 * TIME_SCALE, 3, 'food_dept_mngmt');
+const CLEAN = makeTask(15 * TIME_SCALE, 4, 'kitchen_maintenance');
+const ADMIN = makeTask(18 * TIME_SCALE, 1, 'social_work');
+const SHOP = makeTask(12 * TIME_SCALE, 2, 'facility_duties');
 // and a list out of them
 const TASK_LIST = [
     ADMIN,
