@@ -7,14 +7,14 @@ class Task {
      * @param {Number} global_resting_time amount of time/value that the task can give to the agent 
      */
     constructor(task_object, min_wage) {
-        // this.restingTimeReserve = global_resting_time;
-        // console.log(this.restingTimeReserve)
+        // this.time_coins_reserve = global_resting_time;
+        // console.log(this.time_coins_reserve)
         /**
          * time needed to carry out the task
          */
         this.aot = task_object.amount_of_time;
         // console.log(this.aot);
-        this.restingTimeReserve = 4 * this.aot; // quick fix to have the resting time hooked to the task
+        this.time_coins_reserve = 4 * this.aot; // quick fix to have the resting time hooked to the task
         /**
          * Value of a task expresses the relative exchange rate to other task.
          * The value of a task goes up every time an agent decides to 'trade'.
@@ -99,35 +99,35 @@ class Task {
         let amountOfTime = this.minWage + ((NUMBER_OF_AGENTS - counter) / NUMBER_OF_AGENTS) * this.aot;
         amountOfTime = Math.round(amountOfTime);
         // down here we remove time from the GRT if it reaches 0 it stays 0!
-        if (this.restingTimeReserve > 0) {
-            if(this.restingTimeReserve - amountOfTime < 0){
+        if (this.time_coins_reserve > 0) {
+            if(this.time_coins_reserve - amountOfTime < 0){
                 // if the amount of time computed above is 
                 // bigger than the reserve of resting time
                 // than we set the value to be the leftover of the 
                 // resting time. here we also need to set the
                 // resting time reserve to 0 because ve removed all of it.
-                this.value = this.restingTimeReserve; 
-                this.restingTimeReserve = 0;
+                this.value = this.time_coins_reserve; 
+                this.time_coins_reserve = 0;
             }else{
                 // else we set the amout of time as the valuse for the task
                 this.value = amountOfTime;
-                this.restingTimeReserve -= amountOfTime;
-                this.restingTimeReserve = roundPrecision(this.restingTimeReserve, 1)
+                this.time_coins_reserve -= amountOfTime;
+                this.time_coins_reserve = roundPrecision(this.time_coins_reserve, 1)
             }
         } else {
             // here we don't give any resting time
             // we should think also on how the agent react when no resting time ids given for a task
-            // console.log(`GRT is ${this.restingTimeReserve}`)
+            // console.log(`GRT is ${this.time_coins_reserve}`)
             // console.log(this.minWage);
             this.value = this.minWage;
-            this.restingTimeReserve = 0;
+            this.time_coins_reserve = 0;
         }
         return;
     }
 
     updateGRT(amount_of_time) {
-        this.restingTimeReserve += amount_of_time;
-        // console.log(`GRT got updated by ${amount_of_time}, total GRT = ${this.restingTimeReserve}`)
+        this.time_coins_reserve += amount_of_time;
+        // console.log(`GRT got updated by ${amount_of_time}, total GRT = ${this.time_coins_reserve}`)
     }
 
     /**
@@ -237,7 +237,7 @@ class Task {
                  * AND ACCORDING TO THAT THE FLD
                  * NEEDS TO BE UPDATED ACCORDIGLY
                  * 
-                 * For now it sdoesn't let player to be brute forced
+                 * For now it doesn't let player to be brute forced
                  */
                 agent.resting = false;
                 agent.restingTimer = 0;

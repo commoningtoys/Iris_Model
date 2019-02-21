@@ -9,7 +9,7 @@ class Agent {
         this.ID = nf(id, 4);//is_player ? this.playerName + nf(id, 4) : nf(id, 4);
 
         this.behavior = _behavior;
-        this.restingTime = 0;
+        this.time_coins = 0;
         this.resting = false;
         this.restingTimer = 0;
         this.preferences = this.makePreferences(task_list);//preferences for each single task
@@ -80,7 +80,7 @@ class Agent {
             skill: color(0, 255, 0),
             preference: color(255, 0, 255),
             FLD: color(0, 255, 255),
-            restingTime: color(255, 0, 0),
+            time_coins: color(255, 0, 0),
             stress: color(255, 255, 0),
             time: color(45, 105, 245),
             traded: color(0, 255, 100, 100),
@@ -129,7 +129,7 @@ class Agent {
         let str3 = (this.hasTraded === true ? 'has traded to do : ' + this.tradeTask : 'has not traded') + BR;
         let str31 = (this.resting === true ? `is resting for: ${this.restingTimer}` : 'not resting') + BR;
         let str4 = 'feel like doing: ' + this.FLD + BR;
-        let str5 = 'resting time: ' + this.restingTime + BR;
+        let str5 = 'time coins: ' + this.time_coins + BR;
         let str6 = '<div class="toggle">preferences:';
         //iterating through all the item one by one.
         Object.keys(this.preferences).forEach(val => {
@@ -182,7 +182,7 @@ class Agent {
         // console.log(this.currentTask);
         // here we extract the values of FLD, resting time && stress && more
         let fld = this.preferenceArchive.map(result => result.feel_like_doing);
-        let rt = this.preferenceArchive.map(result => result.resting_time);
+        let rt = this.preferenceArchive.map(result => result.time_coins);
         let stress = this.preferenceArchive.map(result => result.stress_level);
         let aot = this.preferenceArchive.map(result => result.amount_of_time);
         let traded = this.preferenceArchive.map(result => result.traded);
@@ -208,7 +208,7 @@ class Agent {
         drawLine(bruteForce, this.preferenceColors.brute_force, ROW_NUMBER);
         // here below we draw the information about the preferences of the agent
         printGraphic(`AGENT_ID${this.ID}\n${this.behavior}\nFLD`, fld, this.preferenceColors.FLD, ROW_NUMBER);
-        printGraphic('\n\n\nRESTING TIME', rt, this.preferenceColors.restingTime, ROW_NUMBER);
+        printGraphic('\n\n\nRESTING TIME', rt, this.preferenceColors.time_coins, ROW_NUMBER);
         printGraphic('\n\n\n\nSTRESS', stress, this.preferenceColors.stress, ROW_NUMBER);
         printGraphic('', aot, this.preferenceColors.time, ROW_NUMBER);
         // here we extract preferences and we NEEDS REFACTORING!!
@@ -354,7 +354,7 @@ class Agent {
                      */
                     if (this.FLD < 2) {
                         // if the agent has enought resting time he rests
-                        if (this.restingTime >= task.aot) {
+                        if (this.time_coins >= task.aot) {
                             this.rest(task);
                             return true;
                         }
@@ -443,7 +443,7 @@ class Agent {
                 if (this.FLD < 2) {
                     // here we handle the case in which the agent wants to rest
                     // if the agent has enought resting time he rests
-                    if (this.restingTime >= task.aot) {
+                    if (this.time_coins >= task.aot) {
                         this.rest(task);
                         return true;
                     }
@@ -482,8 +482,8 @@ class Agent {
          */
 
         if (this.behavior === 'geniesser') {
-            if (this.restingTime >= task.aot || this.FLD < 2) {
-                if (this.restingTime >= task.aot) {
+            if (this.time_coins >= task.aot || this.FLD < 2) {
+                if (this.time_coins >= task.aot) {
                     // if the agent has enough resting time than he always rests
                     this.rest(task);
                     return true;
@@ -521,7 +521,7 @@ class Agent {
             // console.log(taskValues);
             taskValues.sort((a, b) => a.task_value - b.task_value);
             // console.log(taskValues, 'sorted');
-            if (this.FLD < 2 && this.taskValue(agents, task.type) < 0.2 && this.restingTime >= task.aot) {
+            if (this.FLD < 2 && this.taskValue(agents, task.type) < 0.2 && this.time_coins >= task.aot) {
                 this.rest(task);
                 return true;
             } else {
@@ -570,11 +570,11 @@ class Agent {
     }
 
     rest(task) {
-        this.restingTime -= task.aot; // we could also doubble this amount
+        this.time_coins -= task.aot; // we could also doubble this amount
         task.updateGRT(task.aot);
-        // this.restingTime /= 2;// here add slider that chenges how much resting time is decreased
-        // this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
-        // console.log(`AGENT: ${this.ID} is resting. Behavior ${this.behavior} Resting time ${this.restingTime}`);
+        // this.time_coins /= 2;// here add slider that chenges how much resting time is decreased
+        // this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.time_coins}`);
+        // console.log(`AGENT: ${this.ID} is resting. Behavior ${this.behavior} Resting time ${this.time_coins}`);
         this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
         this.resting = true;
         this.restingTimer = task.aot;
@@ -628,8 +628,8 @@ class Agent {
          */
         this.updateCompletedTasks(task.type);
         this.updateFLD(agents, task, brute_forced);
-        this.restingTime += task.value;// * task_executed == true ? 1 : -1;
-        // console.log(`executed task: ${this.restingTime}, value: ${task.value}`);
+        this.time_coins += task.value;// * task_executed == true ? 1 : -1;
+        // console.log(`executed task: ${this.time_coins}, value: ${task.value}`);
         this.mappedAmountOfTime = map(_amount_of_time, 0, ADMIN.amount_of_time + (ADMIN.amount_of_time / 2), MINIMUM, MAXIMUM);
         this.wasBruteForced = brute_forced || false;
         /**
@@ -640,7 +640,7 @@ class Agent {
         this.preferenceArchive.push({
             preferences: insert,
             executed_task: task.type,
-            resting_time: this.restingTime / TIME_SCALE, // this maps the value to a better scale
+            time_coins: this.time_coins / TIME_SCALE, // this maps the value to a better scale
             feel_like_doing: this.FLD,
             stress_level: this.stress,
             amount_of_time: this.mappedAmountOfTime,
@@ -652,7 +652,7 @@ class Agent {
             this.data.push({
                 preferences: insert,
                 executed_task: task.type,
-                resting_time: this.restingTime,
+                time_coins: this.time_coins,
                 feel_like_doing: this.FLD,
                 stress_level: this.stress,
                 amount_of_time: this.mappedAmountOfTime,
@@ -727,7 +727,7 @@ class Agent {
          * it looks how often the skill has been executed and compares it
          * with how ofte the other have executed the same task.
          * therefore the agent who has executed the task the most is the more 
-         * skilled, and so on. 
+         * skilled, and so on.
          */
         for (const task of tasks) {
             /**
@@ -836,7 +836,7 @@ class Agent {
         });
     }
 
-    updateFLD(agents, task, brute_forced) {
+    updateFLD(agents, task, brute_forced) {// rename me: motivation
         /**
           * this algorithm looks how much the other agents have been 
           * working. If the others are working more than this agent than
@@ -868,8 +868,8 @@ class Agent {
                 // console.log(agentsCopy.length)
                 // const lastIndex = agentsCopy.length - 1;
                 const lastIndex = agents.length - 1;
-                agents.sort((a, b) => a.restingTime - b.restingTime);
-                // console.log(agentsCopy[lastIndex].ID, agentsCopy[lastIndex].restingTime, this.ID);
+                agents.sort((a, b) => a.time_coins - b.time_coins);
+                // console.log(agentsCopy[lastIndex].ID, agentsCopy[lastIndex].time_coins, this.ID);
                 if (agents[lastIndex].ID === this.ID) {
                     this.FLD -= 2;
                 } else {
@@ -883,7 +883,7 @@ class Agent {
 
                 const max = Math.max(...otherTasksCompleted);// magic trick
                 // let result = (this.totalTaskCompleted / (this.totalTaskCompletedByAgents / this.numberOfAgents));
-                let result = Math.floor((this.totalTaskCompleted / max) * 5);
+                let result = Math.floor((this.totalTaskCompleted / max) * 5); // <= hard-coded value
                 this.FLD -= result;
             }
         }
@@ -947,13 +947,13 @@ class Agent {
         let obj = {
             FLD: this.FLD,
             stress: this.stress,
-            resting_time: this.restingTime,
+            time_coins: this.time_coins,
             amount_of_time_task: this.mappedAmountOfTime,
             traded: this.hasTraded,
             brute_force: this.wasBruteForced
         };
         // arr.push(this.FLD);
-        // arr.push(this.restingTime);
+        // arr.push(this.time_coins);
         // arr.push(this.stress);
         // arr.push(this.mappedAmountOfTime);
         Object.keys(this.preferences).forEach(val => {
@@ -1038,9 +1038,9 @@ class Agent {
         }
         this.taskValue(agents, task.type)
         document.getElementById('task-value').textContent = task.value;
-        document.getElementById('resting-time').textContent = this.restingTime;
+        document.getElementById('resting-time').textContent = this.time_coins;
         document.getElementById('spending-resting-time').textContent = task.aot;
-        if (this.restingTime <= task.aot) {
+        if (this.time_coins <= task.aot) {
             document.getElementById('rest-interaction').style.display = 'none';
         }
         else {
@@ -1085,11 +1085,11 @@ class Agent {
     playerRests() {
         console.log(this.playerTaskToExecute);
         const task = this.playerTaskToExecute;
-        this.restingTime -= task.aot;
+        this.time_coins -= task.aot;
         task.updateGRT(task.aot);
-        // this.restingTime /= 2;// here add slider that chenges how much resting time is decreased
-        // this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.restingTime}`);
-        // console.log(`AGENT: ${this.ID} is resting. Behavior ${this.behavior} Resting time ${this.restingTime}`);
+        // this.time_coins /= 2;// here add slider that chenges how much resting time is decreased
+        // this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.time_coins}`);
+        // console.log(`AGENT: ${this.ID} is resting. Behavior ${this.behavior} Resting time ${this.time_coins}`);
         this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
         this.resting = true;
         this.restingTimer = task.aot;
