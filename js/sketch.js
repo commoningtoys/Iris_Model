@@ -5,7 +5,7 @@ let singleView = true;
 // let agents = [];
 // let tasks = [];
 let irisModel = null;
-let loops = 10;
+let loops = 1;
 let players = 0;
 function setup() {
   createCanvas(WIDTH(), HEIGHT());
@@ -19,8 +19,9 @@ function setup() {
   let min_wage = 0;
   let tasks_num = 2;
   players = 0; // here you set the players for the game
-  // irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
+  irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
   textSize(TEXT_SIZE);
+  noLoop();
 }
 
 function draw() {
@@ -32,7 +33,6 @@ function draw() {
     if (frameCount % 15 == 0) irisModel.show();
     document.getElementById('whatFrameRate').innerHTML = 'Frame rate: <br>' + frameRate();
   }
-  // noLoop();
 }
 
 function windowResized() {
@@ -64,7 +64,7 @@ function drawInfos(agent) {
  * here we add all the event listeners for the menu
  */
 
-let start_stop = false;
+let start_stop = true;
 $('#start-stop').click(() => {
   console.log('start-stop')
   start_stop = !start_stop;

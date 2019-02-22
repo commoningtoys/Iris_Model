@@ -14,6 +14,10 @@ function makeTask(time_needed, how_often, name) {
     }
 }
 
+function random_arr_element(arr){
+    const random_idx = Math.floor(Math.random() * arr.length);
+    return arr[random_idx];
+}
 
 
 /**

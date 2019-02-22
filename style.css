@@ -58,7 +58,7 @@ button{
 }
 
 .menu{
-    /* display: none; */
+    display: none;
     background-color: #0000ffaa;
     border: 2px solid #0f0;
     position: fixed;

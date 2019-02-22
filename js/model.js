@@ -27,7 +27,8 @@ class IrisModel {
         shuffleArray(behaviorList);
         let index = 0;
         for (const behavior of behaviorList) {
-            this.agents.push(new Agent(TASK_LIST, index, false, behavior));
+            const traits = random_arr_element(AGENT_TRAITS);
+            this.agents.push(new Agent(TASK_LIST, index, false, behavior, traits));
             index++;
         }
         // add players

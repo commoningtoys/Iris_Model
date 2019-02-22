@@ -201,7 +201,8 @@ class Task {
                 // noLoop();
                 break;
             } else {
-                if (!agent.swap(this, agents)) {
+                if (!agent.swap_2(this, agents)) {
+                    // console.log('swapped')
                     // if the agent has not traded 
                     // then he executes the task
                     skill = agent.getPreferences(this.type).skill_level;
