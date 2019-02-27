@@ -24,15 +24,16 @@ class Behavior {
    * returns whether the agent should take the task or choose another task
    * @param {Object} task 
    * @param {Object} agents 
-   * @param {Object} self 
+   * @param {Object} agent 
    * @returns a boolean stating if he swapped or accepted the task
    */
-  decide(task, agents, self) {
+  decide(task, agents, agent) {
     const task_name = task.type;
-    const agent_archive = self.preferenceArchive;
-    compute_curiosity(agent_archive, task_name);
-    compute_perfectionism(self, task_name)
-    compute_resilience(self, task.aot)
+    const agent_archive = agent.preferenceArchive;
+    // compute_curiosity(agent_archive, task_name);
+    // compute_perfectionism(agent, task_name);
+    // compute_resilience(agent, task);
+    compute_accumulation(agent, agents, task);
     // comp_cur + comp_perf + comp_res + comp_acc = [0, 4]
     return true
 
@@ -54,12 +55,27 @@ class Behavior {
       else return 0;
     }
 
-    function compute_resilience(agent, task_aot) {
-      const diff_coins = task_aot - agent.time_coins;
-      console.log(diff_coins, agent.time_coins / Math.abs(diff_coins));
-      if(diff_coins < 0){
-        return Math.abs(diff_coins);
-      }else return 1;
+    /**
+     * this method computes the resilience of angent.
+     * it is computed by looking at his wealth aka time coins
+     * and compares it to the amount of time needed to complete the task
+     * as this difference grows bigger the agent become less resilient
+     * @param {Object} agent 
+     * @param {String} task_aot 
+     */
+    function compute_resilience(agent, task) {
+      const divider = agent.time_coins == 0 ? 1 : agent.time_coins;
+      const result = task.aot / divider;
+      if(result >= 1) return 1;
+      else return result
+    }
+
+    function compute_accumulation(agent, agents, task){
+      const task_values = {}
+      for (const task of TASK_LIST) {
+        task_values[task.type] = agent.taskValue(agents, task.type) * task.amount_of_time;
+      }
+      // console.log(task_values);
     }
   }
 

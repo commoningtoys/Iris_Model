@@ -82,8 +82,8 @@ class Task {
         for (const agent of agents) {
             // we go through all the agents if their preferred task matches 
             // this task we add one to the counter
-            let prefererence = agent.preferredTask();
-            if (prefererence === this.type) {//string comparison
+            let preference = agent.preferredTask();
+            if (preference === this.type) {//string comparison
                 counter--;
             }
         }
@@ -100,15 +100,15 @@ class Task {
         amountOfTime = Math.round(amountOfTime);
         // down here we remove time from the GRT if it reaches 0 it stays 0!
         if (this.time_coins_reserve > 0) {
-            if(this.time_coins_reserve - amountOfTime < 0){
+            if (this.time_coins_reserve - amountOfTime < 0) {
                 // if the amount of time computed above is 
                 // bigger than the reserve of resting time
                 // than we set the value to be the leftover of the 
                 // resting time. here we also need to set the
                 // resting time reserve to 0 because ve removed all of it.
-                this.value = this.time_coins_reserve; 
+                this.value = this.time_coins_reserve;
                 this.time_coins_reserve = 0;
-            }else{
+            } else {
                 // else we set the amout of time as the valuse for the task
                 this.value = amountOfTime;
                 this.time_coins_reserve -= amountOfTime;
@@ -123,6 +123,55 @@ class Task {
             this.time_coins_reserve = 0;
         }
         return;
+    }
+
+    get_value(agents) {
+        // INVERSE TO THE NUMBER OF AGENTS WITH PREFERENCE FOR SUCH TASK
+        // here we remove some time from the amout of resting tim the task can give away
+        let counter = agents.length;// we start from 1 to avoid 0 as result, this will result in a minimum value
+        const NUMBER_OF_AGENTS = agents.length;
+        for (const agent of agents) {
+            // we go through all the agents if their preferred task matches 
+            // this task we add one to the counter
+            let preference = agent.preferredTask();
+            if (preference === this.type) {//string comparison
+                counter--;
+            }
+        }
+
+        let result = 0;
+        /**
+         * else we return a value that is inverse proportional
+         * as many agents prefer that task as lower it is its value
+         * but it can't be 0
+         * 
+         * If the model gives a minimum resting time than the capitalist
+         * are more stressed. if we let the model give 0 resting time 
+         * than the capitalist are the less stressed.
+         */
+        let amountOfTime = this.minWage + ((NUMBER_OF_AGENTS - counter) / NUMBER_OF_AGENTS) * this.aot;
+        amountOfTime = Math.round(amountOfTime);
+        // down here we remove time from the GRT if it reaches 0 it stays 0!
+        if (this.time_coins_reserve > 0) {
+            if (this.time_coins_reserve - amountOfTime < 0) {
+                // if the amount of time computed above is 
+                // bigger than the reserve of resting time
+                // than we set the value to be the leftover of the 
+                // resting time. here we also need to set the
+                // resting time reserve to 0 because ve removed all of it.
+                result = this.time_coins_reserve;
+            } else {
+                // else we set the amout of time as the valuse for the task
+                result = amountOfTime;
+            }
+        } else {
+            // here we don't give any resting time
+            // we should think also on how the agent react when no resting time ids given for a task
+            // console.log(`GRT is ${this.time_coins_reserve}`)
+            // console.log(this.minWage);
+            result = this.minWage;
+        }
+        return result;
     }
 
     updateGRT(amount_of_time) {

@@ -554,8 +554,8 @@ class Agent {
     for (const agent of agents) {
       // we go through all the agents if their preferred task matches 
       // this task we add one to the counter
-      let prefererence = agent.preferredTask();
-      if (prefererence === task_name) {
+      const preference = agent.preferredTask();
+      if (preference === task_name) {
         counter--;
       }
     }
