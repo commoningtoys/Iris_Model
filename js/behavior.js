@@ -30,7 +30,7 @@ class Behavior {
   decide(task, agents, agent) {
     const task_name = task.type;
     const agent_archive = agent.preferenceArchive;
-    compute_curiosity(agent_archive, task_name);
+    console.log(compute_curiosity(agent_archive, task_name));
     // compute_perfectionism(agent, task_name);
     // compute_resilience(agent, task);
     // compute_accumulation(agent, agents, task);
@@ -44,40 +44,43 @@ class Behavior {
      * @param {String} task_name the task the agent s requested to execute
      */
     function compute_curiosity(agent_archive, task_name) {
-      /**
-       * first we extract all the task and how often have been executed
-       */
-      const task_execution = [];
-      for (const task of TASK_LIST) {
-        const executed_tasks = agent_archive.filter(result => result.executed_task === task.type).length;
-        let result = {
-          name: task.type,
-          executions: executed_tasks
-        }
-        task_execution.push(result);
-      }
-      // than we get how often this task the agent has executed
-      const this_task_execution = task_execution.filter(result => result.name === task_name)[0];
-      // we compute the curiosity by getting the inversve percentage
-      // between the execution of this task and the total of task executions
-      // this returns a value between [0, 1] that tends to 1 when the task has been
-      // executed less often
-      const result = 1 - this_task_execution.executions / agent_archive.length;
-      // this method also returns a suggestion for a task to be execute in the case
-      // the agent decides to swap for another task
-      console.log(task_execution)
-      task_execution.sort((a, b) => a.executions - b.executions);
-      console.log(task_execution);
-      console.log(task_execution, this_task_execution, result);
       if (agent_archive.length > 1) {
-        const last_idx = agent_archive.length - 1;
-        const last_task = agent_archive[last_idx].executed_task;
-        console.log(last_task);
-        if (task_name === last_task) return 0;
-        else return 1;
+        /**
+         * first we extract all the task and how often have been executed
+         */
+        const task_execution = [];
+        for (const task of TASK_LIST) {
+          const executed_tasks = agent_archive.filter(result => result.executed_task === task.type).length;
+          let result = {
+            name: task.type,
+            executions: executed_tasks
+          }
+          task_execution.push(result);
+        }
+        // than we get how often this task the agent has executed
+        const this_task_execution = task_execution.filter(result => result.name === task_name)[0];
+        // we compute the curiosity by getting the inversve percentage
+        // between the execution of this task and the total of task executions
+        // this returns a value between [0, 1] that tends to 1 when the task has been
+        // executed less often
+        const result = 1 - this_task_execution.executions / agent_archive.length;
+        // this method also returns a suggestion for a task to be executed in the case
+        // the agent decides to swap for another task
+        // first we look for the task with minimum value
+        const minimum = Math.min(...task_execution.map(result => result.executions));
+        const less_executed_tasks = task_execution.filter(result => result.executions === minimum);
+        console.log(minimum, less_executed_tasks);
+        console.log(task_execution, this_task_execution, result);
+        return {
+          value: result,
+          swap_task: random_arr_element(less_executed_tasks).name
+        };
       } else {
         // if we don't have enough data we just return 1
-        return 1;
+        return {
+          value: 1,
+          swap_task: task_name
+        };
       }
     }
 
@@ -95,7 +98,8 @@ class Behavior {
      * resilient the agent will be.
      * maybe it should grow on top of FLD
      * @param {Object} agent 
-     * @param {String} task_aot 
+     * @param {String} task_aot
+     * @returns the resilience as avalue between [0, 1]
      */
     function compute_resilience(agent, task) {
       const divider = agent.time_coins == 0 ? 1 : agent.time_coins;
@@ -113,7 +117,8 @@ class Behavior {
       /**
        * we compute resilince on top of FLD therefore
        * first we compute the difference between FLD
-       * and its max value (100) 
+       * and its max value (100), we multiply
+       * it by the tot_perc and we add the agent.FLD
        */
       const top_fld = (MAXIMUM - agent.FLD) / MAXIMUM;
       const result = (top_fld * tot_perc) + (agent.FLD / MAXIMUM);
@@ -124,6 +129,7 @@ class Behavior {
                    topfld: ${top_fld}\n
                    result: ${result}`
       console.log(log)
+      return result;
     }
     /**
      * this methods computes the likeliness to choose a more renumerative
