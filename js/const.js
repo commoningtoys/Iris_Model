@@ -25,10 +25,10 @@ const COL_HEIGHT = innerHeight - 100;
  * VERY IMPORTANT THE TASK CAN'T BE LESS THAN 1 HOUR FOR NOW
  * the names can be changed again
  */
-const COOK  = makeTask(12 * TIME_SCALE, 3, 'food_dept_mngmt');
+const COOK = makeTask(12 * TIME_SCALE, 3, 'food_dept_mngmt');
 const CLEAN = makeTask(15 * TIME_SCALE, 4, 'kitchen_maintenance');
 const ADMIN = makeTask(18 * TIME_SCALE, 1, 'social_work');
-const SHOP  = makeTask(12 * TIME_SCALE, 2, 'facility_duties');
+const SHOP = makeTask(12 * TIME_SCALE, 2, 'facility_duties');
 // and a list out of them
 const TASK_LIST = [
     ADMIN,
@@ -44,9 +44,21 @@ const AGENT_BEHAVIORS = [
     'capitalist'
 ]
 const AGENT_TRAITS = [
-    {trait: 'curious', curiosity:   1, perfectionism: 0, resilience: 1, accumulate: 0},
-    {trait: 'perfectionist', curiosity:   0, perfectionism: 1, resilience: 1, accumulate: 0},
-    {trait: 'geniesser', curiosity:   1, perfectionism: 0, resilience: 0, accumulate: 0},
-    {trait: 'capitalist', curiosity: 0.5, perfectionism: 0, resilience: 1, accumulate: 1},
+    {
+        trait: 'curious',
+        curiosity: 1, perfectionism: 0, resilience: 1, accumulate: 0
+    },
+    {
+        trait: 'perfectionist',
+        curiosity: 0, perfectionism: 1, resilience: 1, accumulate: 0
+    },
+    {
+        trait: 'geniesser',
+        curiosity: 1, perfectionism: 0, resilience: 0, accumulate: 0
+    },
+    {
+        trait: 'capitalist',
+        curiosity: 0.5, perfectionism: 0, resilience: 1, accumulate: 1
+    },
 ]
 

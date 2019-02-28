@@ -10,14 +10,14 @@ let players = 0;
 function setup() {
   createCanvas(WIDTH(), HEIGHT());
   let behaviors = {
-    curious: 3,
-    perfectionist: 3,
-    geniesser: 2,
+    curious: 0,
+    perfectionist: 0,
+    geniesser: 0,
     capitalist: 2
   };
 
   let min_wage = 0;
-  let tasks_num = 2;
+  let tasks_num = 1;
   players = 0; // here you set the players for the game
   irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
   textSize(TEXT_SIZE);

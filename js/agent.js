@@ -319,7 +319,7 @@ class Agent {
     this.pos.y = y;
   }
   swap_2(task, agents) {
-    console.log('deciding...')
+    // console.log('deciding...')
     return this.behavior_exp.decide(task, agents, this)
   }
   /**
@@ -974,9 +974,9 @@ class Agent {
   }
   /**
    * @param {Array} arr Array of task objects
-   * @returns an Array of objects with the preference for each task
+   * @returns an Object with the preference for each task
    */
-  makePreferences(arr) { // MAYBE NEEDS REFACTORING MAKING IT AN OBJECT RATHER THAN A ARRAY OF OBJECTS
+  makePreferences(arr) {
     const PREFERENCE_OFFSET = 30;
 
     let result = {};
@@ -984,7 +984,7 @@ class Agent {
       let skill = randomMinMAx();
       result[el.type] = {
         task_name: el.type,
-        completed: 0, // how many the task has been completed
+        completed: 0, // how many times the task has been completed
         skill_level: skill,
         task_preference: this.calculatePreference(skill, PREFERENCE_OFFSET)
       }
