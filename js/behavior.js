@@ -18,6 +18,13 @@ class Behavior {
   constructor(_traits, _agent) {
     this.traits = _traits;
     this.agent = _agent;
+    this.computed_traits = {};
+    Object.keys(this.traits).forEach(key => {
+      if(key !== 'trait'){
+        this.computed_traits[key] = null;
+      }
+    });
+    console.log(this.traits);
   }
   /**
    * this method computes the three traits of the behavior and
@@ -30,11 +37,12 @@ class Behavior {
   decide(task, agents, agent) {
     const task_name = task.type;
     const agent_archive = agent.preferenceArchive;
-    console.log(compute_curiosity(agent_archive, task_name));
-    // compute_perfectionism(agent, task_name);
-    // compute_resilience(agent, task);
-    // compute_accumulation(agent, agents, task);
-    // comp_cur + comp_perf + comp_res + comp_acc = [0, 4]
+    this.computed_traits.curiosity = compute_curiosity(agent_archive, task_name);
+    this.computed_traits.perfectionism = compute_perfectionism(agent, task_name);
+    this.computed_traits.resilience = compute_resilience(agent, task);
+    this.computed_traits.accumulate = compute_accumulation(agent, agents, task);
+    // console.log(this.computed_traits);
+        // comp_cur + comp_perf + comp_res + comp_acc = [0, 4]
     return true
     /**
      * this methods computes the curiosity of the agent
@@ -69,8 +77,8 @@ class Behavior {
         // first we look for the task with minimum value
         const minimum = Math.min(...task_execution.map(result => result.executions));
         const less_executed_tasks = task_execution.filter(result => result.executions === minimum);
-        console.log(minimum, less_executed_tasks);
-        console.log(task_execution, this_task_execution, result);
+        // console.log(minimum, less_executed_tasks);
+        // console.log(task_execution, this_task_execution, result);
         return {
           value: result,
           swap_task: random_arr_element(less_executed_tasks).name
@@ -85,8 +93,23 @@ class Behavior {
     }
 
     function compute_perfectionism(agent, task_name) {
-      if (agent.masterTask === task_name) return 1;
-      else return 0;
+      const result = {
+        value: 0,
+        swap_task: ''
+      }
+      if (agent.masterTask === task_name) {
+        // if it is a match we return the max value 1
+        result.value = 1;
+        result.swap_task = task_name;
+        return result;
+      } else {
+        // else we return the skill level in the range of [0, 1]
+        // and we suggest the master task as swap task
+        const val = agent.preferences[task_name]['skill_level'] / MAXIMUM;
+        result.value = val;
+        result.swap_task = agent.masterTask;
+        return result;
+      };
     }
 
     /**
@@ -107,12 +130,21 @@ class Behavior {
       if (perc_wealth >= 1) perc_wealth = 1;
       // here we compute the preference for the task as value between [0,1]
       const perc_preference = agent.preferences[task.type].task_preference / MAXIMUM;
-      // instead of a precise median we do a nudged median that tends toward the max value between the two perc
+      /**
+       * here we do a nudged median that gives preference 
+       * advantage over wealth
+       */
       const nudge = () => { // this should be available for other methods too...!
-        const result = Math.max(perc_preference, perc_wealth) - Math.min(perc_preference, perc_wealth) / 4;
-        return isNaN(result) ? 0 : result;
+        if(perc_preference > perc_wealth){
+          return (perc_preference - perc_wealth) / 4
+        }else return 0;
+        // const mx = Math.max(perc_preference, perc_wealth);
+        // const mn = Math.min(perc_preference, perc_wealth);
+        // const result = (mx - mn) / 4;
+        // return isNaN(result) ? 0 : result;
       };
       // than we sum them up and divide by 2 to get a median value
+      console.log(nudge())
       const tot_perc = ((perc_preference + perc_wealth) / 2) + nudge();
       /**
        * we compute resilince on top of FLD therefore
@@ -139,7 +171,7 @@ class Behavior {
      * @param {Object} agent the agent from the parent class
      * @param {Array} agents the pool of all agents
      * @param {Object} _task a task object
-     * @returns the computed value between [0, 1]
+     * @returns an object with the computed value between [0, 1] and a suggested task to swap
      */
     function compute_accumulation(agent, agents, _task) {
       const task_values = {}
@@ -164,7 +196,7 @@ class Behavior {
         value: isNaN(_task.value / max.value) ? 0 : _task.value / max.value, // we avoid 0/0 giving NaN
         swap_task: max.name
       }
-      console.log(result)
+      // console.log(result)
       return result;
     }
   }

@@ -32,6 +32,7 @@ class Agent {
         result = name;
       }
     });
+    // the master tast is the one with higher skill level
     this.masterTask = result;
     // console.log(this.masterTask);
     // }
