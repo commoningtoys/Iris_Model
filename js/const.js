@@ -19,7 +19,7 @@ const PADDING = 30;
 const COL = 10;
 const ROWS = 5;
 const COL_HEIGHT = innerHeight - 100;
-// const INFO_HEIGHT = 55;
+const INFO_HEIGHT = 55;
 // make our tasks
 /**
  * VERY IMPORTANT THE TASK CAN'T BE LESS THAN 1 HOUR FOR NOW
@@ -46,19 +46,31 @@ const AGENT_BEHAVIORS = [
 const AGENT_TRAITS = [
     {
         trait: 'curious',
-        curiosity: 1, perfectionism: 0, resilience: 1, accumulate: 0
+        curiosity: 1,
+        perfectionism: 0,
+        resilience: 1,
+        accumulate: 0
     },
     {
         trait: 'perfectionist',
-        curiosity: 0, perfectionism: 1, resilience: 1, accumulate: 0
+        curiosity: 0,
+        perfectionism: 1,
+        resilience: 1,
+        accumulate: 0
     },
     {
         trait: 'geniesser',
-        curiosity: 1, perfectionism: 0, resilience: 0, accumulate: 0
+        curiosity: 1,
+        perfectionism: 0,
+        resilience: 0,
+        accumulate: 0
     },
     {
         trait: 'capitalist',
-        curiosity: 0.5, perfectionism: 0, resilience: 1, accumulate: 1
+        curiosity: 0.5,
+        perfectionism: 0,
+        resilience: 1,
+        accumulate: 1
     },
 ]
 

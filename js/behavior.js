@@ -18,13 +18,38 @@ class Behavior {
   constructor(_traits, _agent) {
     this.traits = _traits;
     this.agent = _agent;
-    this.computed_traits = {};
+    this.computed_traits = {
+      curiosity: null,
+      perfectionism: null,
+      resilience: null,
+      accumulate: null
+    };
+    this.result_traits = {
+      curiosity: null,
+      perfectionism: null,
+      resilience: null,
+      accumulate: null
+    }
+    // Object.keys(this.traits).forEach(key => {
+    //   if(key !== 'trait'){
+    //     this.computed_traits[key] = null;
+    //   }
+    // });
+    console.log(this.traits);
+    let mx = 0;
     Object.keys(this.traits).forEach(key => {
-      if(key !== 'trait'){
-        this.computed_traits[key] = null;
+      if (key !== 'trait' || key !== 'resilience') {
+        if (this.traits[key] >= mx) mx = this.traits[key];
       }
     });
-    console.log(this.traits);
+    this.max_traits = [];
+    Object.keys(this.traits).forEach(key => {
+      if (key !== 'trait' && key !== 'resilience') {
+        if (this.traits[key] === mx) this.max_traits.push(key);
+      }
+    });
+    console.log(this.max_traits);
+
   }
   /**
    * this method computes the three traits of the behavior and
@@ -41,15 +66,47 @@ class Behavior {
     this.computed_traits.perfectionism = compute_perfectionism(agent, task_name);
     this.computed_traits.resilience = compute_resilience(agent, task);
     this.computed_traits.accumulate = compute_accumulation(agent, agents, task);
+    this.result_traits = {
+      curiosity: (this.computed_traits.curiosity.value + this.traits.curiosity) / 2,
+      perfectionism: (this.computed_traits.perfectionism.value + this.traits.perfectionism) / 2,
+      resilience: (this.computed_traits.resilience + this.traits.resilience) / 2,
+      accumulate: (this.computed_traits.accumulate.value + this.traits.accumulate) / 2
+    }
+    let swap_value = 0;
+    Object.keys(this.result_traits).forEach(key => swap_value += this.result_traits[key]);
+    swap_value /= 4;
+    // console.log(task.type, agent.behavior)
+    // console.log(this.traits);
     // console.log(this.computed_traits);
-        // comp_cur + comp_perf + comp_res + comp_acc = [0, 4]
-    return true
+    // console.log(this.result_traits);
+    // console.log(swap_value);
+    // first we handle the case of resting therefore if resilience is lower than 0.3
+    if (this.computed_traits.resilience < 0.3 && agent.time_coins >= task.aot) {
+      // in here we handle the coins aspect
+      // does the agent have enough money?
+      // console.log('agent resting...');
+      agent.rest(task);
+      return true;
+    } else if (swap_value > 0.5) {
+      // console.log('agent takes the task')
+      return false
+    } else {
+      // console.log('agent swaps task');
+      const swap_trait = random_arr_element(this.max_traits);
+      const swap_task = this.computed_traits[swap_trait].swap_task
+      // console.log(`agent swaps for: ${swap_task}`);
+      agent.assign_swapped_task(swap_task);
+      return true;
+    }
+    // comp_cur + comp_perf + comp_res + comp_acc = [0, 4]
+    // return true
     /**
      * this methods computes the curiosity of the agent
      * it checks how often the task has been done and
      * returns a value between 
      * @param {Array} agent_archive the archive of the agent's preferences
      * @param {String} task_name the task the agent s requested to execute
+     * @returns an object with the computed value between [0, 1] and a suggested task to swap
      */
     function compute_curiosity(agent_archive, task_name) {
       if (agent_archive.length > 1) {
@@ -91,7 +148,11 @@ class Behavior {
         };
       }
     }
-
+    /**
+     * @param {Object} agent
+     * @param {String} task_name
+     * @returns an object with the computed value between [0, 1] and a suggested task to swap
+     */
     function compute_perfectionism(agent, task_name) {
       const result = {
         value: 0,
@@ -111,7 +172,6 @@ class Behavior {
         return result;
       };
     }
-
     /**
      * this method computes the resilience of angent.
      * it is computed by looking at his wealth aka time coins
@@ -134,17 +194,18 @@ class Behavior {
        * here we do a nudged median that gives preference 
        * advantage over wealth
        */
+
       const nudge = () => { // this should be available for other methods too...!
-        if(perc_preference > perc_wealth){
+        if (perc_preference > perc_wealth) {
           return (perc_preference - perc_wealth) / 4
-        }else return 0;
+        } else return 0;
         // const mx = Math.max(perc_preference, perc_wealth);
         // const mn = Math.min(perc_preference, perc_wealth);
         // const result = (mx - mn) / 4;
         // return isNaN(result) ? 0 : result;
       };
       // than we sum them up and divide by 2 to get a median value
-      console.log(nudge())
+      // console.log(nudge())
       const tot_perc = ((perc_preference + perc_wealth) / 2) + nudge();
       /**
        * we compute resilince on top of FLD therefore
@@ -160,7 +221,7 @@ class Behavior {
                    FLD: ${agent.FLD}\n
                    topfld: ${top_fld}\n
                    result: ${result}`
-      console.log(log)
+      // console.log(log)
       return result;
     }
     /**
@@ -190,7 +251,7 @@ class Behavior {
           max.name = key
         }
       })
-      // console.log(task_values, max);
+      // console.log(_task.type, task_values, max, _task.value / max.value);
       // here we see how our task does compared to the max one
       const result = {
         value: isNaN(_task.value / max.value) ? 0 : _task.value / max.value, // we avoid 0/0 giving NaN
@@ -200,7 +261,18 @@ class Behavior {
       return result;
     }
   }
-
+  update_task_preference(agent, agents, task) {
+    const curiosity = this.result_traits.curiosity;// - 0.5;
+    const perfectionism = this.result_traits.perfectionism;// - 0.5;
+    const accumulate = this.result_traits.accumulate;// - 0.5;
+    const resilience = this.result_traits.resilience;
+    console.log(this.traits.trait)
+    console.log(curiosity, perfectionism, accumulate, resilience);
+    const results = [curiosity, perfectionism, accumulate].sort();
+    console.log(results);
+    const sum = results[2] - (results[0] + results[1])
+    console.log(sum)
+  }
   setType(_traits) {
     this.traits = _traits;
   }

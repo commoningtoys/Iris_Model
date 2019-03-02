@@ -10,10 +10,10 @@ let players = 0;
 function setup() {
   createCanvas(WIDTH(), HEIGHT());
   let behaviors = {
-    curious: 0,
-    perfectionist: 0,
-    geniesser: 0,
-    capitalist: 2
+    curious: 1,
+    perfectionist: 1,
+    geniesser: 1,
+    capitalist: 1
   };
 
   let min_wage = 0;

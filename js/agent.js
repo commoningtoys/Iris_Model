@@ -44,7 +44,7 @@ class Agent {
     this.totalTaskCompletedByAgents = 0;
 
     this.currentTask = '';
-    this.FLD = this.behavior === 'capitalist' ? 100 : randomMinMAx();// feel like doing
+    this.FLD = MAXIMUM; //this.behavior === 'capitalist' ? 100 : randomMinMAx();// feel like doing
     this.solidarity = randomMinMAx();
     this.stress = 0;// we will need this to see how stressed the agents are, the stress will increase when the agents can't rest while FLD is 0
     this.stress_decrease_val = 1.5;
@@ -463,14 +463,14 @@ class Agent {
             this.stress = clamp(this.stress, MINIMUM, MAXIMUM);
             if (task.type !== this.masterTask) {
               // the agent decides to the task he wants to master
-              this.assignTradedTask(this.masterTask);
+              this.assign_swapped_task(this.masterTask);
               return true;
             }
             else return false;// let the agent execute the task
           }
           // return true;
         } else if (task.type !== this.masterTask) {
-          this.assignTradedTask(this.masterTask);
+          this.assign_swapped_task(this.masterTask);
           return true;
         }
       } else {
@@ -540,7 +540,7 @@ class Agent {
          */
         const lastElement = taskValues.length - 1
         if (taskValues[lastElement].task_value >= 0.5) {
-          this.assignTradedTask(taskValues[lastElement].task_name);
+          this.assign_swapped_task(taskValues[lastElement].task_name);
           return true;
         } else return false;
       }
@@ -590,7 +590,7 @@ class Agent {
     this.setInfo();
   }
 
-  assignTradedTask(task_name) {
+  assign_swapped_task(task_name) {
     this.has_swapped = true;
     this.swap_task = task_name;
     this.setInfo();
@@ -670,11 +670,12 @@ class Agent {
     }
 
     if (this.preferenceArchive.length > DATA_POINTS) this.preferenceArchive.splice(0, 1);
-    this.updatePreferences(task.type, agents);
+    this.updatePreferences(task, agents);
     this.setInfo();
   }
 
-  updatePreferences(task_name, agents) {
+  updatePreferences(_task, agents) {
+    this.behavior_exp.update_task_preference(this, agents, _task);
     /**
      * the preferences (skill & preference for a task) get updated
      * according on how often the same task has been done in a row
@@ -733,7 +734,7 @@ class Agent {
      * here we compoute the skill of each single agent.
      * The skill in our model is a quantitative measure,
      * it looks how often the skill has been executed and compares it
-     * with how ofte the other have executed the same task.
+     * with how often the other have executed the same task.
      * therefore the agent who has executed the task the most is the more 
      * skilled, and so on.
      */
@@ -854,47 +855,65 @@ class Agent {
       * the agents looks only how the group performs
       */
 
+    // if (brute_forced) {
+    //   // here we manage the decrease in FLD when the agents are forced to do a task
+    //   if (this.behavior === 'capitalist') {
+    //     if (this.taskValue(agents, task.type) < 0.2) this.FLD -= 2;
+    //   } else if (this.behavior === 'perfectionist') {
+    //     if (task.type !== this.masterTask) this.FLD /= 2;
+    //   } else {
+    //     this.FLD /= 2;
+    //   }
+    // } else {
+    //   // here their normal behavior when executing a task
+    //   if (this.behavior === 'capitalist') {
+    //     /**
+    //      * we check who has the highest amout of resting time if it is 
+    //      * me the capitalist than the FLD drops 2 points or less
+    //      * otherwise it drops by 0.5 points
+    //      */
+    //     // console.log(agents.length);
+    //     // let agentsCopy = JSON.parse(JSON.stringify(agents));
+    //     // console.log(agentsCopy.length)
+    //     // const lastIndex = agentsCopy.length - 1;
+    //     const lastIndex = agents.length - 1;
+    //     agents.sort((a, b) => a.time_coins - b.time_coins);
+    //     // console.log(agentsCopy[lastIndex].ID, agentsCopy[lastIndex].time_coins, this.ID);
+    //     if (agents[lastIndex].ID === this.ID) {
+    //       this.FLD -= 2;
+    //     } else {
+    //       this.FLD -= 0.5;
+    //     }
+    //   } else {
+    //     let otherTasksCompleted = [];
+    //     for (const agent of agents) {
+    //       if (agent !== this) otherTasksCompleted.push(agent.totalTaskCompleted);
+    //     }
+
+    //     const max = Math.max(...otherTasksCompleted);// magic trick
+    //     // let result = (this.totalTaskCompleted / (this.totalTaskCompletedByAgents / this.numberOfAgents));
+    //     let result = Math.floor((this.totalTaskCompleted / max) * 5); // <= hard-coded value
+    //     this.FLD -= result;
+    //   }
+    // }
     if (brute_forced) {
       // here we manage the decrease in FLD when the agents are forced to do a task
-      if (this.behavior === 'capitalist') {
-        if (this.taskValue(agents, task.type) < 0.2) this.FLD -= 2;
-      } else if (this.behavior === 'perfectionist') {
-        if (task.type !== this.masterTask) this.FLD /= 2;
-      } else {
-        this.FLD /= 2;
-      }
+      this.FLD /= 2;
+
     } else {
       // here their normal behavior when executing a task
-      if (this.behavior === 'capitalist') {
-        /**
-         * we check who has the highest amout of resting time if it is 
-         * me the capitalist than the FLD drops 2 points or less
-         * otherwise it drops by 0.5 points
-         */
-        // console.log(agents.length);
-        // let agentsCopy = JSON.parse(JSON.stringify(agents));
-        // console.log(agentsCopy.length)
-        // const lastIndex = agentsCopy.length - 1;
-        const lastIndex = agents.length - 1;
-        agents.sort((a, b) => a.time_coins - b.time_coins);
-        // console.log(agentsCopy[lastIndex].ID, agentsCopy[lastIndex].time_coins, this.ID);
-        if (agents[lastIndex].ID === this.ID) {
-          this.FLD -= 2;
-        } else {
-          this.FLD -= 0.5;
-        }
-      } else {
-        let otherTasksCompleted = [];
-        for (const agent of agents) {
-          if (agent !== this) otherTasksCompleted.push(agent.totalTaskCompleted);
-        }
-
-        const max = Math.max(...otherTasksCompleted);// magic trick
-        // let result = (this.totalTaskCompleted / (this.totalTaskCompletedByAgents / this.numberOfAgents));
-        let result = Math.floor((this.totalTaskCompleted / max) * 5); // <= hard-coded value
-        this.FLD -= result;
+      let otherTasksCompleted = [];
+      for (const agent of agents) {
+        if (agent !== this) otherTasksCompleted.push(agent.totalTaskCompleted);
       }
+
+      const max = Math.max(...otherTasksCompleted);// magic trick
+      // let result = (this.totalTaskCompleted / (this.totalTaskCompletedByAgents / this.numberOfAgents));
+      let result = Math.floor((this.totalTaskCompleted / max) * 5); // <= hard-coded value
+      this.FLD -= result;
+
     }
+
     this.FLD = clamp(this.FLD, MINIMUM, MAXIMUM);
   }
   // /**
