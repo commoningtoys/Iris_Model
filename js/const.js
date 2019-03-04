@@ -67,7 +67,7 @@ const AGENT_TRAITS = [
     },
     {
         trait: 'capitalist',
-        curiosity: 0.5,
+        curiosity: 0,
         perfectionism: 0,
         resilience: 1,
         accumulate: 1

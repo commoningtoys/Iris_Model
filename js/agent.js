@@ -14,6 +14,9 @@ class Agent {
     this.resting = false;
     this.restingTimer = 0;
     this.preferences = this.makePreferences(task_list);//preferences for each single task
+    const val = (10 + Math.floor(Math.random() * 40)) / 100;
+    this.forget_rate = val;
+    console.log(this.forget_rate)
     this.preferenceArchive = [];
     this.data = [];
     /**
@@ -644,7 +647,7 @@ class Agent {
      * the magic trick below let us to push the preferences
      * without copying the reference to the original array 
      */
-    let insert = JSON.parse(JSON.stringify(this.preferences));// the trick
+    const insert = JSON.parse(JSON.stringify(this.preferences));// the trick
     this.preferenceArchive.push({
       preferences: insert,
       executed_task: task.type,
@@ -669,13 +672,12 @@ class Agent {
       });
     }
 
-    if (this.preferenceArchive.length > DATA_POINTS) this.preferenceArchive.splice(0, 1);
+    if (this.preferenceArchive.length > DATA_POINTS)this.preferenceArchive.splice(0, 1);
     this.updatePreferences(task, agents);
     this.setInfo();
   }
 
   updatePreferences(_task, agents) {
-    this.behavior_exp.update_task_preference(this, agents, _task);
     /**
      * the preferences (skill & preference for a task) get updated
      * according on how often the same task has been done in a row
@@ -724,7 +726,7 @@ class Agent {
     // console.log(this.preferenceArchive, counter, task_name);
     // console.log(agents);
     // const tasks = ['admin', 'clean', 'cook', 'shop'];
-    const forgetRate = 0.35;
+    // const forgetRate = 0.35;
     let lastPreferences = this.preferenceArchive[this.preferenceArchive.length - 1].preferences;
     let tasksCompleted = {};
     let result = {};
@@ -754,9 +756,13 @@ class Agent {
        * here we check how often an agent has completed this task.type
        */
       let completed = this.preferenceArchive[this.preferenceArchive.length - 1].preferences;
-      let sum = (completed[task.type].completed / max) * MAXIMUM;
-      this.preferences[task.type].skill_level = sum;
+      let sum = (completed[task.type].completed / max) ;
+      console.log(sum, this.forget_rate, sum - this.forget_rate)
+      this.preferences[task.type].skill_level += (sum - this.forget_rate) * 10;
+      this.preferences[task.type].skill_level = clamp(this.preferences[task.type].skill_level, MINIMUM, MAXIMUM)
     }
+
+    this.behavior_exp.update_task_preference(this, _task);
     /**
      * here we compute the preference for a task.
      * each behavior defines how the preference of each agentt develops.
@@ -775,61 +781,61 @@ class Agent {
      * capitalist have higher preference for tasks they get the more resting time from
      */
 
-    let fldOffset = this.FLD / MAXIMUM > 0.5 ? 1 : -1;
+    // let fldOffset = this.FLD / MAXIMUM > 0.5 ? 1 : -1;
 
-    if (this.behavior === 'curious') {
-      let completedTasks = [];
-      let tot = 0;
-      for (const task of TASK_LIST) {
-        let obj = {
-          task_name: task.type,
-          completed: lastPreferences[task.type].completed
-        }
-        tot += lastPreferences[task.type].completed;
-        completedTasks.push(obj);
-      }
-      for (const task of completedTasks) {
-        this.preferences[task.task_name].task_preference = ((task.completed / tot) * MAXIMUM) + fldOffset * 5;
-        this.preferences[task.task_name].task_preference = clamp(this.preferences[task.task_name].task_preference, MINIMUM, MAXIMUM);
-      }
-    }
-    if (this.behavior === 'perfectionist') {
+    // if (this.behavior === 'curious') {
+    //   let completedTasks = [];
+    //   let tot = 0;
+    //   for (const task of TASK_LIST) {
+    //     let obj = {
+    //       task_name: task.type,
+    //       completed: lastPreferences[task.type].completed
+    //     }
+    //     tot += lastPreferences[task.type].completed;
+    //     completedTasks.push(obj);
+    //   }
+    //   for (const task of completedTasks) {
+    //     this.preferences[task.task_name].task_preference = ((task.completed / tot) * MAXIMUM) + fldOffset * 5;
+    //     this.preferences[task.task_name].task_preference = clamp(this.preferences[task.task_name].task_preference, MINIMUM, MAXIMUM);
+    //   }
+    // }
+    // if (this.behavior === 'perfectionist') {
 
-    }
-    if (this.behavior === 'geniesser' || this.behavior === 'perfectionist') {
-      /**
-       * both geniesser and perfectionist have their preference for the
-       * skill with higher value. but the preference offsets from the
-       * skill value depending on how slope of the skill over time.
-       */
-      let x_s = [];// x_s they represent the time units that
-      for (let i = 0; i < this.preferenceArchive.length; i++)x_s.push(i);// here we fill it 
+    // }
+    // if (this.behavior === 'geniesser' || this.behavior === 'perfectionist') {
+    //   /**
+    //    * both geniesser and perfectionist have their preference for the
+    //    * skill with higher value. but the preference offsets from the
+    //    * skill value depending on how slope of the skill over time.
+    //    */
+    //   let x_s = [];// x_s they represent the time units that
+    //   for (let i = 0; i < this.preferenceArchive.length; i++)x_s.push(i);// here we fill it 
 
-      for (const task of TASK_LIST) {
-        // here we fill the y_s with all the values of the skill
-        let y_s = this.preferenceArchive.map(result => result.preferences[task.type].skill_level);
-        let pref = this.preferences[task.type].skill_level;
-        let offset = 5 + (fldOffset * 3);
-        pref += linearRegression(y_s, x_s).slope > 0 ? offset : -offset; // here we compute the slope and we look if it is positive or negative
-        this.preferences[task.type].task_preference = pref;
-        this.preferences[task.type].task_preference = clamp(this.preferences[task.type].task_preference, MINIMUM, MAXIMUM);
-      }
-    }
+    //   for (const task of TASK_LIST) {
+    //     // here we fill the y_s with all the values of the skill
+    //     let y_s = this.preferenceArchive.map(result => result.preferences[task.type].skill_level);
+    //     let pref = this.preferences[task.type].skill_level;
+    //     let offset = 5 + (fldOffset * 3);
+    //     pref += linearRegression(y_s, x_s).slope > 0 ? offset : -offset; // here we compute the slope and we look if it is positive or negative
+    //     this.preferences[task.type].task_preference = pref;
+    //     this.preferences[task.type].task_preference = clamp(this.preferences[task.type].task_preference, MINIMUM, MAXIMUM);
+    //   }
+    // }
 
-    if (this.behavior === 'capitalist') {
-      let taskValues = [];
-      for (const task of TASK_LIST) {
-        let obj = {
-          task_name: task.type,
-          task_value: this.taskValue(agents, task.type)
-        }
-        taskValues.push(obj);
-      }
-      for (const task of taskValues) {
-        this.preferences[task.task_name].task_preference = (task.task_value * MAXIMUM) + fldOffset * 5;
-        this.preferences[task.task_name].task_preference = clamp(this.preferences[task.task_name].task_preference, MINIMUM, MAXIMUM);
-      }
-    }
+    // if (this.behavior === 'capitalist') {
+    //   let taskValues = [];
+    //   for (const task of TASK_LIST) {
+    //     let obj = {
+    //       task_name: task.type,
+    //       task_value: this.taskValue(agents, task.type)
+    //     }
+    //     taskValues.push(obj);
+    //   }
+    //   for (const task of taskValues) {
+    //     this.preferences[task.task_name].task_preference = (task.task_value * MAXIMUM) + fldOffset * 5;
+    //     this.preferences[task.task_name].task_preference = clamp(this.preferences[task.task_name].task_preference, MINIMUM, MAXIMUM);
+    //   }
+    // }
   }
   /**
    * updates the completed task preference by adding +1
@@ -1001,12 +1007,18 @@ class Agent {
 
     let result = {};
     for (const el of arr) {
-      let skill = randomMinMAx();
+      let skill = Math.floor(randomMinMAx() / 2);
+      // result[el.type] = {
+      //   task_name: el.type,
+      //   completed: 0, // how many times the task has been completed
+      //   skill_level: skill,
+      //   task_preference: this.calculatePreference(skill, PREFERENCE_OFFSET)
+      // }
       result[el.type] = {
         task_name: el.type,
         completed: 0, // how many times the task has been completed
-        skill_level: skill,
-        task_preference: this.calculatePreference(skill, PREFERENCE_OFFSET)
+        skill_level: 0,
+        task_preference: 0//this.calculatePreference(skill, PREFERENCE_OFFSET)
       }
     }
     // console.log(result);

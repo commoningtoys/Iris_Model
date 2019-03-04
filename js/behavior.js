@@ -42,13 +42,13 @@ class Behavior {
         if (this.traits[key] >= mx) mx = this.traits[key];
       }
     });
-    this.max_traits = [];
+    this.dominant_traits = [];
     Object.keys(this.traits).forEach(key => {
       if (key !== 'trait' && key !== 'resilience') {
-        if (this.traits[key] === mx) this.max_traits.push(key);
+        if (this.traits[key] === mx) this.dominant_traits.push(key);
       }
     });
-    console.log(this.max_traits);
+    console.log(this.dominant_traits);
 
   }
   /**
@@ -92,7 +92,7 @@ class Behavior {
       return false
     } else {
       // console.log('agent swaps task');
-      const swap_trait = random_arr_element(this.max_traits);
+      const swap_trait = random_arr_element(this.dominant_traits);
       const swap_task = this.computed_traits[swap_trait].swap_task
       // console.log(`agent swaps for: ${swap_task}`);
       agent.assign_swapped_task(swap_task);
@@ -261,17 +261,35 @@ class Behavior {
       return result;
     }
   }
-  update_task_preference(agent, agents, task) {
-    const curiosity = this.result_traits.curiosity;// - 0.5;
-    const perfectionism = this.result_traits.perfectionism;// - 0.5;
-    const accumulate = this.result_traits.accumulate;// - 0.5;
+  /**
+   * to compute the preference for a task we look n how the task scored the
+   * in the different traits areas. Than we take the one where it socred the higher
+   * and we subtract the two who scored the worst  ad and we compute the sign [+, 0, -]
+   * than we use the sign to add or remove value to the preference for that task.
+   * this system has the advantage of being a mre genral way to update preference for a task,
+   * as it take in consideration the fact that agents may prefer a task that doesn't
+   * score good with the dominant trait, bu that nevertheless has scored good with
+   * the other traits, this could also be used to alter the traits, making the traits more dynamic
+   * @param {Object} agent 
+   * @param {Array} agents 
+   * @param {Object} task 
+   */
+  update_task_preference(agent, task) {
+    const curiosity = this.result_traits.curiosity;
+    const perfectionism = this.result_traits.perfectionism;
+    const accumulate = this.result_traits.accumulate;
     const resilience = this.result_traits.resilience;
     console.log(this.traits.trait)
-    console.log(curiosity, perfectionism, accumulate, resilience);
+    // console.log(curiosity, perfectionism, accumulate, resilience);
     const results = [curiosity, perfectionism, accumulate].sort();
-    console.log(results);
-    const sum = results[2] - (results[0] + results[1])
-    console.log(sum)
+    // console.log(results);
+    const sum = Math.sign(results[2] - (results[0] + results[1])) / 2;
+    const agent_pref = agent.preferences[task.type]
+    const agent_fld = (agent.FLD / MAXIMUM) - 0.5;
+    // console.log(sum, agent_fld, (sum + agent_fld) * resilience * 25)
+    // console.log(agent_pref)
+    agent_pref.task_preference += (sum + agent_fld) * resilience * 25;// this 25 is here to make the gain and drop in preference more marked
+    agent_pref.task_preference = clamp(agent_pref.task_preference, MINIMUM, MAXIMUM);
   }
   setType(_traits) {
     this.traits = _traits;
