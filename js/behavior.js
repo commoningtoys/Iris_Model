@@ -62,10 +62,10 @@ class Behavior {
   decide(task, agents, agent) {
     const task_name = task.type;
     const agent_archive = agent.preferenceArchive;
-    this.computed_traits.curiosity = compute_curiosity(agent_archive, task_name);
+    this.computed_traits.curiosity     = compute_curiosity(agent_archive, task_name);
     this.computed_traits.perfectionism = compute_perfectionism(agent, task_name);
-    this.computed_traits.resilience = compute_resilience(agent, task);
-    this.computed_traits.accumulate = compute_accumulation(agent, agents, task);
+    this.computed_traits.resilience    = compute_resilience(agent, task);
+    this.computed_traits.accumulate    = compute_accumulation(agent, agents, task);
     this.result_traits = {
       curiosity: (this.computed_traits.curiosity.value + this.traits.curiosity) / 2,
       perfectionism: (this.computed_traits.perfectionism.value + this.traits.perfectionism) / 2,
