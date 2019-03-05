@@ -17,7 +17,7 @@ class Agent {
     const val = (10 + Math.floor(Math.random() * 40)) / 100;
     this.forget_rate = val;
     this.step = 10;
-    console.log(this.forget_rate)
+    // console.log(this.forget_rate)
     this.preferenceArchive = [];
     this.data = [];
     /**
@@ -132,6 +132,12 @@ class Agent {
     const BR = '<br>';
     let str1 = '<b>AGENT: ' + this.ID + '</b>' + BR;
     let str11 = '<b>behavior: ' + this.behavior_exp.traits.trait + '</b>' + BR;
+    let str12 = '<b>behavior traits:</b>' + BR;
+    str12 += "<div class = 'preference'>";
+    Object.keys(this.behavior_exp.result_traits).forEach(key => {
+      str12 += "<strong>" + key + "</strong>: " + roundPrecision(this.behavior_exp.result_traits[key], 3) + "<br>";
+    })
+    str12 += "</div><br>";
     let str2 = (this.working == true ? 'doing this task: ' + BR + this.currentTask : 'is not working' + BR) + BR;
     let str21 = 'working timer: ' + BR + this.workingTimer + BR;
     let str3 = (this.has_swapped === true ? 'has swapped for: ' + BR + this.swap_task : 'has not traded' + BR) + BR;
@@ -150,13 +156,13 @@ class Agent {
       keys.forEach(key => {
         //appending more HTML string with key and value aginst that key;
         // str6 += "<strong>preferences</strong> <br>"
-        str6 += "<strong>" + key + "</strong>: " + roundPrecision(objAttribute[key], 2) + "<br>";
+        if(!key.startsWith('forget'))str6 += "<strong>" + key + "</strong>: " + roundPrecision(objAttribute[key], 2) + "<br>";
       });
       //final HTML sting is appending to close the DIV element.
       str6 += "</div><br>";
     });
     str6 += '</div>';
-    return str1 + str11 + str2 + str21 + str3 + str31 + str4 + str5 + str6;
+    return str1 + str11 + str12 + str2 + str21 + str3 + str31 + str4 + str5 + str6;
   }
   /**
    * 
