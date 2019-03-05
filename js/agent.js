@@ -16,6 +16,7 @@ class Agent {
     this.preferences = this.makePreferences(task_list);//preferences for each single task
     const val = (10 + Math.floor(Math.random() * 40)) / 100;
     this.forget_rate = val;
+    this.step = 10;
     console.log(this.forget_rate)
     this.preferenceArchive = [];
     this.data = [];
@@ -130,7 +131,7 @@ class Agent {
   htmlText() {
     const BR = '<br>';
     let str1 = '<b>AGENT: ' + this.ID + '</b>' + BR;
-    let str11 = '<b>behavior: ' + this.behavior + '</b>' + BR;
+    let str11 = '<b>behavior: ' + this.behavior_exp.traits.trait + '</b>' + BR;
     let str2 = (this.working == true ? 'doing this task: ' + BR + this.currentTask : 'is not working' + BR) + BR;
     let str21 = 'working timer: ' + BR + this.workingTimer + BR;
     let str3 = (this.has_swapped === true ? 'has swapped for: ' + BR + this.swap_task : 'has not traded' + BR) + BR;
@@ -214,7 +215,7 @@ class Agent {
     drawLine(traded, this.preferenceColors.traded, ROW_NUMBER);
     drawLine(bruteForce, this.preferenceColors.brute_force, ROW_NUMBER);
     // here below we draw the information about the preferences of the agent
-    printGraphic(`AGENT_ID${this.ID}\n${this.behavior}\nFLD`, fld, this.preferenceColors.FLD, ROW_NUMBER);
+    printGraphic(`AGENT_ID${this.ID}\n${this.behavior_exp.traits.trait}\nFLD`, fld, this.preferenceColors.FLD, ROW_NUMBER);
     printGraphic('\n\n\nRESTING TIME', rt, this.preferenceColors.time_coins, ROW_NUMBER);
     printGraphic('\n\n\n\nSTRESS', stress, this.preferenceColors.stress, ROW_NUMBER);
     printGraphic('', aot, this.preferenceColors.time, ROW_NUMBER);
@@ -672,7 +673,7 @@ class Agent {
       });
     }
 
-    if (this.preferenceArchive.length > DATA_POINTS)this.preferenceArchive.splice(0, 1);
+    if (this.preferenceArchive.length > DATA_POINTS) this.preferenceArchive.splice(0, 1);
     this.updatePreferences(task, agents);
     this.setInfo();
   }
@@ -756,10 +757,14 @@ class Agent {
        * here we check how often an agent has completed this task.type
        */
       let completed = this.preferenceArchive[this.preferenceArchive.length - 1].preferences;
-      let sum = (completed[task.type].completed / max) ;
-      console.log(sum, this.forget_rate, sum - this.forget_rate)
-      this.preferences[task.type].skill_level += (sum - this.forget_rate) * 10;
-      this.preferences[task.type].skill_level = clamp(this.preferences[task.type].skill_level, MINIMUM, MAXIMUM)
+      let sum = (completed[task.type].completed / max);
+      console.log(sum, this.forget_rate, sum - this.forget_rate);
+      // we can include something else here on how to update the skill
+      // this.preferences[task.type].skill_level += (sum - this.forget_rate) * this.step;
+      this.preferences[task.type].skill_level += sum * this.step;
+
+      this.preferences[task.type].skill_level = clamp(this.preferences[task.type].skill_level, MINIMUM, MAXIMUM);
+      this.preferences[task.type].forget_skill();
     }
 
     this.behavior_exp.update_task_preference(this, _task);
@@ -1018,7 +1023,13 @@ class Agent {
         task_name: el.type,
         completed: 0, // how many times the task has been completed
         skill_level: 0,
-        task_preference: 0//this.calculatePreference(skill, PREFERENCE_OFFSET)
+        task_preference: 0,
+        forget_rate: (10 + Math.floor(Math.random() * 40)) / 100,
+        forget_skill: () => {
+          console.log(result[el.type].skill_level);
+          result[el.type].skill_level -= (result[el.type].forget_rate * this.step)
+          result[el.type].skill_level = clamp(result[el.type].skill_level, MINIMUM, MAXIMUM);
+        }
       }
     }
     // console.log(result);

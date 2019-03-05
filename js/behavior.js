@@ -8,9 +8,9 @@ class Behavior {
    * the traits JSON Object 
    *   {
    *       curiosity:     [0, 1],
-   *       perfectionism: [0, 1],
-   *       resilience:    [0, 1],
-   *       accumulate:    [0, 1]                 
+   *       perfectionism: [0, 1], // 
+   *       resilience:    [0, 1], // endurance
+   *       accumulate:    [0, 1]  // goodwill                 
    *   }
    * @param {JSON} _traits is an object containing two values: tendency to rest over work and tendency to repeat same task over curiosity
    * @param {*} _agent 
@@ -173,7 +173,7 @@ class Behavior {
       };
     }
     /**
-     * this method computes the resilience of angent.
+     * this method computes the resilience of agent.
      * it is computed by looking at his wealth aka time coins
      * and compares it to the amount of time needed to complete the task
      * as this difference grows bigger the agent become less resilient. It also
