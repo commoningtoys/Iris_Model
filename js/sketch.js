@@ -7,7 +7,7 @@
 let irisModel = null;
 let loops = 1;
 let players = 0;
-
+let check_values = true;
 
 
 init_menu();
@@ -171,6 +171,21 @@ $('#stress-decrement').change(el => {
 })
 
 function init_model() {
+  console.log('start')
+  if (check_values) {// if the input given in the menu are correct than start the model
+    // here we need to extract the values of the menu
+
+  const traits_input = document.getElementsByClassName('traits-input');
+  for (const elt of traits_input[0].children) {
+    console.log(elt)
+  }
+  const min_wage = parseInt(document.getElementById('min-wage').value);
+  const tasks_num = parseInt(document.getElementById('how-many-task').value);
+  console.log(min_wage, tasks_num);
+
+    // irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
+    $('.menu').toggle('fast');
+  }
   // const customBehavior = document.getElementsByClassName('custom-behavior');
   // const minWage = document.getElementById('min-wage');
   // const tasksNum = document.getElementById('how-many-task');
@@ -191,33 +206,50 @@ function init_model() {
 function init_menu() {
   const traits_input = document.getElementsByClassName('traits-input');
   // console.log(traits_input)
+  // here we get all the amount inputs
+  const amounts_inputs = []
+  for (const child of traits_input[0].children) amounts_inputs.push(child.children['amount']);
+  // console.log(amounts_inputs);
   for (const elt of traits_input[0].children) {
-    console.log('parent', elt.children);
+    // console.log('parent', elt.children);
     const input_terms = ['curiosity', 'endurance', 'goodwill', 'perfectionism'];
     const inputs = [];
     for (const term of input_terms) {
       inputs.push(elt.children[term])
     }
-    console.log(inputs);
+    // here we squish all the values between 0 and 1
     for (const term of input_terms) {
       elt.children[term].addEventListener('change', () => {
         const input = elt.children[term];
         input.value = get_decimal_value(input.value);
-        // const inputs_elts = inputs;
-        // clamp_values(inputs_elts);
-        // console.log(inputs_elts)
       })
     }
+
+    // here we assign the eventListener to the amount inputs
+    elt.children['amount'].addEventListener('change', () => {
+      let sum = 0;
+      const amt_inpt = amounts_inputs;
+      for (const el of amt_inpt) {
+        sum += parseInt(el.value);
+      }
+      const start_stop = document.getElementById('model-start')
+      const agent_num = document.getElementById('how-many-agents');
+      agent_num.innerText = sum;
+      if (sum > 100) {
+        check_values = false;
+        agent_num.style.color = '#f00'
+        agent_num.style.fontWeight = 'bolder'
+        start_stop.innerText = '✋🏻SET THE AGENT NUMBER TO A VALUE BETWEEN 1 – 100✋🏻';
+      } else {
+        check_values = true;
+        agent_num.style.color = '#0f0'
+        agent_num.style.fontWeight = '100'
+        start_stop.innerText = 'START!'
+      }
+    })
   }
 }
 
-function clamp_values(arr) {
-  let max = 0;
-  for (const el of arr) {
-    const val = parseFloat(el.value) || 0;
-    if (val >= max) max = val;
-  }
-}
 function get_decimal_value(val) {
   if (val == 1) return 1
   else {
@@ -227,9 +259,4 @@ function get_decimal_value(val) {
     // console.log(result);
     return result
   }
-}
-function updateView() {
-  // console.log('hello');
-  const view = document.getElementById('view');
-  irisModel.setView(parseInt(view.value));
 }

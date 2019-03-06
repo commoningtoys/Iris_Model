@@ -5,6 +5,17 @@
     font-family: 'mono';
     src: url('font/SourceCodePro-Medium.otf') format('opentype');
 }
+/* this helps removing the spin box from the input field */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+    -moz-appearance:textfield; /* Firefox */
+}
 
 body{
     padding: 0;
@@ -135,13 +146,20 @@ button#close-menu {
 
 }
 .menu-set-agents, .model-settings{
-    padding: 2rem;
+    padding: 0.5rem;
+    text-align: center;
 }
 .menu-set-agents i{
     color: #0f0;
     /* font-size: 2rem; */
 }
 .model-settings{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+.model-settings-item{
+    padding: 0.5rem;
 }
 /* .menu-content p{
     line-height: 1.8em;
