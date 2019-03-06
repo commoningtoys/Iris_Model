@@ -1,0 +1,78 @@
+# timestamp | duration | file | instruction | dir | modtime | etag | size | fileId | status | errorString | http result code | other size | other modtime | X-Request-ID
+#=#=#=# Syncrun started 2019-03-06T09:52:36Z
+#=#=#=#=# Propagation starts 2019-03-06T09:52:51Z (last step: 15154 msec, total: 15154 msec)
+09:52:51||js/libraries/grafica.min.js|INST_NEW|Down|1538139018|17f031508d0d16bffc41d8031556e5c7|100629|1463791659oc641cdd42e0|3|File has changed since discovery|200|0|0|8e2f1ba2-9393-46ea-9708-a031a2c49663|
+09:52:51||js/libraries/p5.dom.js|INST_NEW|Down|1524750122|5a7277900ac37fefdc22680b84a2f4b8|91892|1463791662oc641cdd42e0|3|File has changed since discovery|200|0|0|e63f5d98-636c-493e-aa23-7060168e3521|
+09:52:51||js/libraries/jquery-3.3.1.min.js|INST_NEW|Down|1530886089|7f7a7531d0fd31c289278c1b29309fb7|86927|1463791668oc641cdd42e0|3|File has changed since discovery|200|0|0|160bb187-d937-4db8-8aaa-b2c5aa4b38de|
+09:52:52||js/libraries/p5.dom.min.js|INST_NEW|Down|1524869900|3b66b2004b57fcfbb28dabd54132be13|19589|1463791656oc641cdd42e0|3|File has changed since discovery|200|0|0|0365d843-de56-4b74-b410-6c3d117fa0f3|
+09:52:51||font/SourceCodePro-Medium.otf|INST_NEW|Down|1516250538|8e77d552155d9508bfe8a71a0745ca07|140444|1463791617oc641cdd42e0|3|File has changed since discovery|200|0|0|cf50b705-9d7f-4a5d-b8a0-eac4c5e4cc59|
+09:52:52||js/libraries/p5.global-mode.d.ts|INST_NEW|Down|1524869890|7574f8b9f393dd77988f827820697871|237791|1463791677oc641cdd42e0|3|File has changed since discovery|200|0|0|86f3f9f8-e74b-4764-ac39-5c75d7339d10|
+09:52:51||js/libraries/p5.d.ts|INST_NEW|Down|1524869890|2b6e0bf35bb399cf61803a6870720a64|419355|1463791674oc641cdd42e0|3|File has changed since discovery|200|0|0|4daf286a-7bd6-4eba-8b62-f3de18fe55c0|
+09:52:52||js/libraries/p5.js|INST_NEW|Down|1524869896|3026a26a21a7ccbcd40d677af44ae95e|2751378|1463791752oc641cdd42e0|3|File has changed since discovery|200|0|0|6b3d32fa-b408-464f-bb7e-ffde4236444d|
+09:52:54||js/libraries/p5.sound.js|INST_NEW|Down|1523055856|932520186f5f5acc5958a211a4ff6f48|423916|1463791776oc641cdd42e0|3|File has changed since discovery|200|0|0|b8c3e200-767d-486c-a5b7-507d4055aa70|
+09:52:56||js/libraries/p5.pre-min.js|INST_NEW|Down|1524869896|77b18ad2afe20623cd128e233316f988|1418589|1463791875oc641cdd42e0|3|File has changed since discovery|200|0|0|c8ea69e9-fb93-407d-8629-16e365b404e9|
+09:52:53||js/libraries/p5.min.js|INST_NEW|Down|1524869900|abd2737419ae13729eca27e18890c40f|398959|1463791728oc641cdd42e0|3|File has changed since discovery|200|0|0|a6df12ad-c1d2-4a01-bd6d-9637549d002f|
+09:52:57||js/libraries/p5.sound.min.js|INST_NEW|Down|1516401540|aaac45a8c02fa20526bd2ad6db5aa2c5|145728|1463791791oc641cdd42e0|3|File has changed since discovery|200|0|0|f28a4b2f-7104-4d4d-9586-975944f66190|
+09:52:59||js/const.js|INST_NEW|Up|1551865954|5fd78441158c8fabbcb4b132589c4dbf|1741|1465589616oc641cdd42e0|4||201|0|0|17c8f277-29c7-464f-b967-078e132d7fc2|
+#=#=#=# Syncrun finished 2019-03-06T09:53:06Z (last step: 14239 msec, total: 29393 msec)
+#=#=#=# Syncrun started 2019-03-06T09:53:14Z
+#=#=#=#=# Propagation starts 2019-03-06T09:53:28Z (last step: 13685 msec, total: 13685 msec)
+09:53:28||js/behavior.js|INST_NEW|Up|1551865419|f52eea01616982431b24e9f6907594b6|12619|1465590393oc641cdd42e0|4||201|0|0|9eacee7c-475f-4d2d-8f81-cdcaf6f0c531|
+#=#=#=# Syncrun finished 2019-03-06T09:53:28Z (last step: 584 msec, total: 14269 msec)
+#=#=#=# Syncrun started 2019-03-06T09:53:34Z
+#=#=#=#=# Propagation starts 2019-03-06T09:53:40Z (last step: 6214 msec, total: 6214 msec)
+09:53:40||js/agent.js|INST_NEW|Up|1551865419|1844a172ed99a2e727efef5daf5579fc|41750|1465590819oc641cdd42e0|4||201|0|0|94a64f2b-f90b-4c47-b924-63e32c543867|
+#=#=#=# Syncrun finished 2019-03-06T09:53:42Z (last step: 1458 msec, total: 7673 msec)
+#=#=#=# Syncrun started 2019-03-06T09:54:24Z
+#=#=#=#=# Propagation starts 2019-03-06T09:54:34Z (last step: 10501 msec, total: 10501 msec)
+#=#=#=# Syncrun finished 2019-03-06T09:54:34Z (last step: 19 msec, total: 10521 msec)
+#=#=#=# Syncrun started 2019-03-06T10:23:04Z
+#=#=#=# Syncrun finished 2019-03-06T10:23:05Z (last step: 667 msec, total: 667 msec)
+#=#=#=# Syncrun started 2019-03-06T10:40:41Z
+#=#=#=# Syncrun finished 2019-03-06T10:40:45Z (last step: 3606 msec, total: 3606 msec)
+#=#=#=# Syncrun started 2019-03-06T10:40:49Z
+#=#=#=# Syncrun finished 2019-03-06T10:40:52Z (last step: 3562 msec, total: 3562 msec)
+#=#=#=# Syncrun started 2019-03-06T10:41:20Z
+#=#=#=# Syncrun finished 2019-03-06T10:41:21Z (last step: 946 msec, total: 946 msec)
+#=#=#=# Syncrun started 2019-03-06T10:45:42Z
+#=#=#=# Syncrun finished 2019-03-06T10:45:42Z (last step: 404 msec, total: 404 msec)
+#=#=#=# Syncrun started 2019-03-06T10:46:12Z
+#=#=#=# Syncrun finished 2019-03-06T10:46:19Z (last step: 7369 msec, total: 7369 msec)
+#=#=#=# Syncrun started 2019-03-06T10:49:11Z
+#=#=#=# Syncrun finished 2019-03-06T10:49:12Z (last step: 464 msec, total: 464 msec)
+#=#=#=# Syncrun started 2019-03-06T10:49:50Z
+#=#=#=# Syncrun finished 2019-03-06T10:49:52Z (last step: 1250 msec, total: 1250 msec)
+#=#=#=# Syncrun started 2019-03-06T10:50:11Z
+#=#=#=# Syncrun finished 2019-03-06T10:50:14Z (last step: 2943 msec, total: 2943 msec)
+#=#=#=# Syncrun started 2019-03-06T10:52:23Z
+#=#=#=# Syncrun finished 2019-03-06T10:52:23Z (last step: 586 msec, total: 586 msec)
+#=#=#=# Syncrun started 2019-03-06T10:58:42Z
+#=#=#=# Syncrun finished 2019-03-06T10:58:43Z (last step: 1239 msec, total: 1239 msec)
+#=#=#=# Syncrun started 2019-03-06T10:58:47Z
+#=#=#=# Syncrun finished 2019-03-06T10:58:47Z (last step: 289 msec, total: 289 msec)
+#=#=#=# Syncrun started 2019-03-06T10:59:31Z
+#=#=#=# Syncrun finished 2019-03-06T10:59:32Z (last step: 442 msec, total: 442 msec)
+#=#=#=# Syncrun started 2019-03-06T10:59:54Z
+#=#=#=# Syncrun finished 2019-03-06T10:59:55Z (last step: 312 msec, total: 312 msec)
+#=#=#=# Syncrun started 2019-03-06T11:01:40Z
+#=#=#=# Syncrun finished 2019-03-06T11:01:41Z (last step: 1401 msec, total: 1401 msec)
+#=#=#=# Syncrun started 2019-03-06T11:02:58Z
+#=#=#=# Syncrun finished 2019-03-06T11:02:58Z (last step: 395 msec, total: 395 msec)
+#=#=#=# Syncrun started 2019-03-06T11:03:20Z
+#=#=#=# Syncrun finished 2019-03-06T11:03:20Z (last step: 441 msec, total: 441 msec)
+#=#=#=# Syncrun started 2019-03-06T11:04:05Z
+#=#=#=# Syncrun finished 2019-03-06T11:04:05Z (last step: 323 msec, total: 323 msec)
+#=#=#=# Syncrun started 2019-03-06T11:08:38Z
+#=#=#=# Syncrun finished 2019-03-06T11:08:38Z (last step: 389 msec, total: 389 msec)
+#=#=#=# Syncrun started 2019-03-06T11:08:45Z
+#=#=#=# Syncrun finished 2019-03-06T11:08:45Z (last step: 302 msec, total: 302 msec)
+#=#=#=# Syncrun started 2019-03-06T11:11:03Z
+#=#=#=# Syncrun finished 2019-03-06T11:11:03Z (last step: 343 msec, total: 343 msec)
+#=#=#=# Syncrun started 2019-03-06T11:11:19Z
+#=#=#=# Syncrun finished 2019-03-06T11:11:19Z (last step: 436 msec, total: 436 msec)
+#=#=#=# Syncrun started 2019-03-06T11:21:52Z
+#=#=#=# Syncrun finished 2019-03-06T11:21:52Z (last step: 314 msec, total: 314 msec)
+#=#=#=# Syncrun started 2019-03-06T11:22:15Z
+#=#=#=# Syncrun finished 2019-03-06T11:22:15Z (last step: 479 msec, total: 479 msec)
+#=#=#=# Syncrun started 2019-03-06T11:24:19Z
+#=#=#=# Syncrun finished 2019-03-06T11:24:19Z (last step: 769 msec, total: 769 msec)

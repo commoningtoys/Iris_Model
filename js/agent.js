@@ -647,6 +647,7 @@ class Agent {
     this.updateCompletedTasks(task.type);
     this.updateFLD(agents, task, brute_forced);
     this.time_coins += task.value;// * task_executed == true ? 1 : -1;
+    // console.log(this.time_coins, task.value)
     // console.log(`executed task: ${this.time_coins}, value: ${task.value}`);
     this.mappedAmountOfTime = map(_amount_of_time, 0, ADMIN.amount_of_time + (ADMIN.amount_of_time / 2), MINIMUM, MAXIMUM);
     this.wasBruteForced = brute_forced || false;
@@ -764,9 +765,11 @@ class Agent {
        */
       let completed = this.preferenceArchive[this.preferenceArchive.length - 1].preferences;
       let sum = (completed[task.type].completed / max);
-      console.log(sum, this.forget_rate, sum - this.forget_rate);
+      // console.log(sum, this.forget_rate, sum - this.forget_rate);
       // we can include something else here on how to update the skill
       // this.preferences[task.type].skill_level += (sum - this.forget_rate) * this.step;
+      
+      // console.log(sum)
       this.preferences[task.type].skill_level += sum * this.step;
 
       this.preferences[task.type].skill_level = clamp(this.preferences[task.type].skill_level, MINIMUM, MAXIMUM);
@@ -1030,11 +1033,13 @@ class Agent {
         completed: 0, // how many times the task has been completed
         skill_level: 0,
         task_preference: 0,
-        forget_rate: (10 + Math.floor(Math.random() * 40)) / 100,
+        forget_rate: (20 + Math.floor(Math.random() * 60)) / 100,
         forget_skill: () => {
-          console.log(result[el.type].skill_level);
+          // console.log(el.type)
+          // console.log(result[el.type].skill_level);
           result[el.type].skill_level -= (result[el.type].forget_rate * this.step)
           result[el.type].skill_level = clamp(result[el.type].skill_level, MINIMUM, MAXIMUM);
+          // console.log(result[el.type].skill_level)
         }
       }
     }

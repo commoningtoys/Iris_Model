@@ -83,6 +83,8 @@ class Behavior {
     // console.log(this.result_traits);
     // console.log(swap_value);
     // first we handle the case of resting therefore if resilience is lower than 0.3
+    // console.log(this.traits.trait)
+    // console.log(`behavior: ${agent.time_coins} && ${task.aot}`)
     if (this.computed_traits.resilience < 0.3 && agent.time_coins >= task.aot) {
       // in here we handle the coins aspect
       // does the agent have enough money?
@@ -95,7 +97,7 @@ class Behavior {
     } else {
       // console.log('agent swaps task');
       const swap_trait = random_arr_element(this.dominant_traits);
-      console.log(this, this.computed_traits[swap_trait])
+      // console.log(this, this.computed_traits[swap_trait])
       const swap_task = this.computed_traits[swap_trait].swap_task
       // console.log(`agent swaps for: ${swap_task}`);
       agent.assign_swapped_task(swap_task);
@@ -135,9 +137,15 @@ class Behavior {
         // this method also returns a suggestion for a task to be executed in the case
         // the agent decides to swap for another task
         // first we look for the task with minimum value
-        const minimum = Math.min(...task_execution.map(result => result.executions));
-        const less_executed_tasks = task_execution.filter(result => result.executions === minimum);
-        // console.log(minimum, less_executed_tasks);
+        // const minimum = Math.min(...task_execution.map(result => result.executions));
+        // const less_executed_tasks = task_execution.filter(result => result.executions === minimum);
+        // we sort the array by execution
+        task_execution.sort((a, b) => a.executions - b.executions);
+        // console.log(task_execution)
+        const len = Math.floor(task_execution.length / 2);
+        const less_executed_tasks = [];
+        for(let i = 0; i < len; i++)less_executed_tasks.push(task_execution[i].name)
+        // console.log(less_executed_tasks);
         // console.log(task_execution, this_task_execution, result);
         return {
           value: result,
@@ -217,13 +225,19 @@ class Behavior {
        * it by the tot_perc and we add the agent.FLD
        */
       const top_fld = (MAXIMUM - agent.FLD) / MAXIMUM;
-      const result = (top_fld * tot_perc) + (agent.FLD / MAXIMUM);
-      const log = `pref: ${perc_preference}\n
-                   wealth: ${perc_wealth}\n
-                   tot: ${tot_perc}\n
-                   FLD: ${agent.FLD}\n
-                   topfld: ${top_fld}\n
-                   result: ${result}`
+      const curr_fld = agent.FLD / MAXIMUM;
+      // const result = (top_fld * tot_perc) + (agent.FLD / MAXIMUM);
+      const result = (curr_fld * tot_perc) + curr_fld;
+      const log = `
+      pref: ${perc_preference}\n
+      wealth: ${perc_wealth}\n
+      tot: ${tot_perc}\n
+      topfld: ${top_fld}\n
+      curr fld: ${curr_fld}\n
+      result curr: ${curr_fld * tot_perc}\n
+      result nofld: ${top_fld * tot_perc}\n
+      result curr: ${(curr_fld * tot_perc) + curr_fld}\n
+      result top: ${result}`
       // console.log(log)
       return result;
     }
@@ -282,7 +296,6 @@ class Behavior {
     const perfectionism = this.result_traits.perfectionism;
     const accumulate = this.result_traits.accumulate;
     const resilience = this.result_traits.resilience;
-    console.log(this.traits.trait)
     // console.log(curiosity, perfectionism, accumulate, resilience);
     const results = [curiosity, perfectionism, accumulate].sort();
     // console.log(results);
