@@ -38,14 +38,16 @@ class Behavior {
     console.log(this.traits);
     let mx = 0;
     Object.keys(this.traits).forEach(key => {
-      if (key !== 'trait' || key !== 'resilience') {
+      if (key !== 'trait' && key !== 'resilience') {
         if (this.traits[key] >= mx) mx = this.traits[key];
       }
     });
+    console.log(mx)
     this.dominant_traits = [];
     Object.keys(this.traits).forEach(key => {
       if (key !== 'trait' && key !== 'resilience') {
-        if (this.traits[key] === mx) this.dominant_traits.push(key);
+        console.log(key, this.traits[key], this.traits[key] >= mx)
+        if (this.traits[key] >= mx) this.dominant_traits.push(key);
       }
     });
     console.log(this.dominant_traits);
@@ -93,6 +95,7 @@ class Behavior {
     } else {
       // console.log('agent swaps task');
       const swap_trait = random_arr_element(this.dominant_traits);
+      console.log(this, this.computed_traits[swap_trait])
       const swap_task = this.computed_traits[swap_trait].swap_task
       // console.log(`agent swaps for: ${swap_task}`);
       agent.assign_swapped_task(swap_task);
