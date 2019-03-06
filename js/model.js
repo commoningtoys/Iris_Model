@@ -1,45 +1,56 @@
 class IrisModel {
-  constructor(behaviors, min_wage, num_task, traits, num_players) {
+  constructor(traits, min_wage, num_task, num_players) {
     // console.log(behaviors);
     this.agents = [];
     this.tasks = [];
-    this.behaviors = behaviors;
-    this.traits = traits || AGENT_TRAITS;
-    /**
-     * here below we fill our Agents array
-     * 
-     * first we extract all the behaviors that
-     * have been passed from the object into an array
-     */
-    let behaviorList = [];
-    let agentsNum = 0;
-    Object.keys(behaviors).forEach(key => {
-      console.log(key, behaviors[key]);
-      for (let i = 0; i < behaviors[key]; i++) {
-        behaviorList.push(key);
-        agentsNum++;
-      }
-    });
-    /**
-     * in order to have them more omogenous distributed we 
-     * shuffle the array containing the bahaviors
-     * and than we fill the agents array and we assign their behaviors
-     */
-    shuffleArray(behaviorList);
-    let index = 0;
-    for (const behavior of behaviorList) {
-      const traits = this.traits[index];
-      this.agents.push(new Agent(TASK_LIST, index, false, behavior, this.traits[index]));
-      index++;
-    }
-    // add players
-    for (let i = 0; i < num_players || 0; i++) {
-      this.agents.push(new Agent(TASK_LIST, agentsNum + i, true, 'curious'))
-      agentsNum++;
-    }
+    // this.behaviors = behaviors;
+
+    this.traits = traits;
+    console.log(this.traits)
+    shuffleArray(this.traits)
+    this.traits_list = extract_unique_keys(this.traits, 'trait');
+    console.log(this.traits_list);
+    console.log(this.traits)
+    // /**
+    //  * here below we fill our Agents array
+    //  * 
+    //  * first we extract all the behaviors that
+    //  * have been passed from the object into an array
+    //  */
+    // let behaviorList = [];
+    // let agentsNum = 0;
+    // Object.keys(behaviors).forEach(key => {
+    //   console.log(key, behaviors[key]);
+    //   for (let i = 0; i < behaviors[key]; i++) {
+    //     behaviorList.push(key);
+    //     agentsNum++;
+    //   }
+    // });
+    // /**
+    //  * in order to have them more omogenous distributed we 
+    //  * shuffle the array containing the bahaviors
+    //  * and than we fill the agents array and we assign their behaviors
+    //  */
+    // shuffleArray(behaviorList);
+    // let index = 0;
+    // for (const behavior of behaviorList) {
+    //   const traits = this.traits[index];
+    //   this.agents.push(new Agent(TASK_LIST, index, false, behavior, this.traits[index]));
+    //   index++;
+    // }
+    // // add players
+    // for (let i = 0; i < num_players || 0; i++) {
+    //   this.agents.push(new Agent(TASK_LIST, agentsNum + i, true, 'curious'))
+    //   agentsNum++;
+    // }
     // here we set the max value of the slider that shows the agents
     // const slider = document.getElementById('view')
     // slider.max = agentsNum;
+    let idx = 0;
+    for (const trait of this.traits) {
+      this.agents.push(new Agent(idx, false, trait))
+      idx++;
+    }
     // make the info for all of the agents
     for (const agent of this.agents) {
       agent.makeInfo(this.agents);
@@ -145,10 +156,15 @@ class IrisModel {
      */
     background(51);
     const medianValuesByBehavior = {};
-    for (const behavior of AGENT_BEHAVIORS) {
+    for (const behavior of this.traits_list) {
       const median = {};
       // here we extract the preferences of the agents by behavior
-      const extractedAgents = this.agents.filter(result => result.behavior === behavior);// need to change this to the behavior_exp!!!!
+      // console.log(behavior)
+      const extractedAgents = this.agents.filter(result => {
+        // console.log(result)
+        if (result.behavior_exp.traits.trait === behavior) return result
+      });// need to change this to the behavior_exp!!!!
+      // console.log(extractedAgents);
       if (extractedAgents.length == 0) continue;// if there is no extracted agent, than we skip to the next behavior
       // here we get the lenght of our data set
       const len = extractedAgents.length;
@@ -215,20 +231,20 @@ class IrisModel {
       medianValuesByBehavior[behavior] = median;
     }
     // console.log(medianValuesByBehavior);
-    // this.infographic(medianValuesByBehavior);
+    this.infographic(medianValuesByBehavior);
     // console.log(medianValuesByBehavior);
     // this.plot.show(median, this.pointIndex);
     this.pointIndex++;
     this.agents.sort((a, b) => a.ID - b.ID);
 
-    // here we have to build the filter to visualize the agents
-    // for (let i = this.showFrom; i < this.showTo; i++) {
-        for (const agent of this.agents) {
-        // let agent = this.agents[i];
-        agent.infographic();
-        // if (singleView) agent.infographic();
-        // else drawInfos(agent);
-    }
+    // // here we have to build the filter to visualize the agents
+    // // for (let i = this.showFrom; i < this.showTo; i++) {
+    // for (const agent of this.agents) {
+    //   // let agent = this.agents[i];
+    //   agent.infographic();
+    //   // if (singleView) agent.infographic();
+    //   // else drawInfos(agent);
+    // }
   }
   /**
    * displays the median values of the agents
@@ -257,7 +273,7 @@ class IrisModel {
       noStroke();
       fill(255);
       textAlign(CENTER, CENTER)
-      text(`${key}: ${this.behaviors[key]} agents`, infoX, infoY - PADDING, INFO_WIDTH, PADDING);
+      text(key, infoX, infoY - PADDING, INFO_WIDTH, PADDING);
       let lines = 0;
       Object.keys(this.colors).forEach(pref => {
         textAlign(RIGHT, CENTER);
@@ -267,9 +283,12 @@ class IrisModel {
       })
       const preferences = data[key];
       Object.keys(preferences).forEach(pref => {
+        // console.log(pref)
         if (pref === 'swapped' || pref === 'brute_force') {
-          // console.log(pref);
-          drawLine(preferences[pref], this.behaviors[key], infoX, infoY, this.colors[pref], pref)
+          // console.log(preferences[pref]);
+
+          const agent_num = this.traits.filter(result => result.trait === key).length;
+          drawLine(preferences[pref], agent_num, infoX, infoY, this.colors[pref], pref)
         } else {
           printGraphic(preferences[pref], infoX, infoY, this.colors[pref]);
         }
@@ -320,12 +339,15 @@ class IrisModel {
         // console.log(INFO_WIDTH / DATA_POINTS, INFO_WIDTH, DATA_POINTS, val)
         const currX = map(index, 0, arr.length, 0, INFO_WIDTH);
         if (type === 'swapped') {
+          // console.log(h)
           // ellipse(currX + (r / 2), INFO_HEIGHT * 0.33333, r);
           // rect(currX + (r / 2), INFO_HEIGHT * 0.33333, 1, -h);
+          stroke(0, 255, 0);
           line(currX, (INFO_HEIGHT * 0.33333) - (h / 2), currX, (INFO_HEIGHT * 0.33333) + (h / 2));
         } else {
           // ellipse(currX + ((r * 10)/ 2), INFO_HEIGHT * 0.66666, r * 10);
           // rect(currX + ((r * 10) / 2), INFO_HEIGHT * 0.66666, 1, -h);
+          stroke(255, 0, 255);
           line(currX, (INFO_HEIGHT * 0.66666) - (h / 2), currX, (INFO_HEIGHT * 0.66666) + (h / 2));
         }
         index++;

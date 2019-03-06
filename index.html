@@ -9,6 +9,8 @@
   <script src="js/libraries/p5.min.js"></script>
   <script src="js/libraries/p5.dom.min.js"></script>
   <script src="js/libraries/grafica.min.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/const.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -79,7 +81,7 @@
             name="perfectionism">
           <div class="traits-elt">endurance:</div> <input type="number" value="0.5" autocomplete="off" name="endurance">
           <div class="traits-elt">goodwill:</div> <input type="number" value="0" autocomplete="off" name="goodwill">
-          <div class="traits-elt">how many?</div> <input type="number" value="10" autocomplete="off" name="amount">
+          <div class="traits-elt">how many?</div> <input type="number" value="1" autocomplete="off" name="amount">
         </div>
         <div class="traits-item">
           <div class="traits-elt">trait:</div> <input type="text" name="trait" value="perfectionist">
@@ -88,7 +90,7 @@
             name="perfectionism">
           <div class="traits-elt">endurance:</div> <input type="number" value="1" autocomplete="off" name="endurance">
           <div class="traits-elt">goodwill:</div> <input type="number" value="0" autocomplete="off" name="goodwill">
-          <div class="traits-elt">how many?</div> <input type="number" value="10" autocomplete="off" name="amount">
+          <div class="traits-elt">how many?</div> <input type="number" value="1" autocomplete="off" name="amount">
         </div>
         <div class="traits-item">
           <div class="traits-elt">trait:</div> <input type="text" name="trait" value="lazy">
@@ -97,7 +99,7 @@
             name="perfectionism">
           <div class="traits-elt">endurance:</div> <input type="number" value="0" autocomplete="off" name="endurance">
           <div class="traits-elt">goodwill:</div> <input type="number" value="0" autocomplete="off" name="goodwill">
-          <div class="traits-elt">how many?</div> <input type="number" value="10" autocomplete="off" name="amount">
+          <div class="traits-elt">how many?</div> <input type="number" value="1" autocomplete="off" name="amount">
         </div>
         <div class="traits-item">
           <div class="traits-elt">trait:</div> <input type="text" name="trait" value="goodwiller">
@@ -106,7 +108,7 @@
             name="perfectionism">
           <div class="traits-elt">endurance:</div> <input type="number" value="1" autocomplete="off" name="endurance">
           <div class="traits-elt">goodwill:</div> <input type="number" value="1" autocomplete="off" name="goodwill">
-          <div class="traits-elt">how many?</div> <input type="number" value="10" autocomplete="off" name="amount">
+          <div class="traits-elt">how many?</div> <input type="number" value="1" autocomplete="off" name="amount">
         </div>
       </div>
       <!-- <input id="restart-model" type="checkbox"> restart model? <span id="yes/no">no</span> -->
@@ -154,8 +156,6 @@
     <button id="show-menu">SHOW MENU</button>
     <button id="show-sidebar">HIDE SIDEBAR</button>
   </div>
-  <script src="js/utils.js"></script>
-  <script src="js/const.js"></script>
   <script src="js/behavior.js"></script>
   <script src="js/agent.js"></script>
   <script src="js/task.js"></script>

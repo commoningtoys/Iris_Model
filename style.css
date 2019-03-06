@@ -28,6 +28,14 @@ body{
 button{
     font-family: monospace;
 }
+input{
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #00f;
+    color: #0f0;
+    /* padding: 0.3rem; */
+    font-weight: bolder;
+    font-size: 1rem;
+}
 
 #p5Sketch{
     position: fixed;
@@ -86,7 +94,7 @@ button{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    grid-gap: 1.5rem;
+    grid-gap: 0.5rem;
 }
 .traits-item{
     /* background: #fff; */
@@ -98,10 +106,10 @@ button{
     padding: 0.5rem;
 }
 .traits-item input{
-    max-width: 40px;
+    /* max-width: 40px; */
 }
 .traits-item input[type=text]{
-    max-width: 70px;
+    /* max-width: 70px; */
 }
 .traits-elt{
 

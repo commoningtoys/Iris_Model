@@ -13,8 +13,34 @@ function makeTask(time_needed, how_often, name) {
         type: name
     }
 }
+/**
+ * 
+ * @param {String} name 
+ * @param {Number} cur_val 
+ * @param {Number} perf_val 
+ * @param {Number} endu_val 
+ * @param {Number} good_val 
+ * @return an object with the traits
+ */
+function make_trait(name, cur_val, perf_val, endu_val, good_val) {
+    return {
+        trait: name,
+        curiosity: cur_val,
+        perfectionism: perf_val,
+        endurance: endu_val,
+        goodwill: good_val
+    }
+}
+function extract_unique_keys(arr, key) {
 
-function random_arr_element(arr){
+    const result = []
+    arr.reduce((accumulator, curr_value, currentIndex, array) => {
+        let parent = curr_value[key]
+        result.push(parent)
+    }, {})
+    return result;
+}
+function random_arr_element(arr) {
     const random_idx = Math.floor(Math.random() * arr.length);
     return arr[random_idx];
 }
@@ -77,7 +103,7 @@ function roundPrecision(value, precision) {
     if (typeof value === 'number') {
         let multiplier = Math.pow(10, precision || 0);
         return Math.round(value * multiplier) / multiplier;
-    }else return value;
+    } else return value;
 }
 
 function saveRAWData(agents, id) {

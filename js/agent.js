@@ -1,6 +1,6 @@
 let autoScrolling = true; // thius is our variable for the autoscrolling
 class Agent {
-  constructor(task_list, id, is_player, _behavior, _traits) {
+  constructor(id, is_player, _traits) {
     this.isPlayer = is_player;
     this.playerTaskToExecute;
     this.playerTimer = 0;
@@ -8,12 +8,12 @@ class Agent {
     this.playerName = 'PLAYER_';
     this.ID = nf(id, 4);//is_player ? this.playerName + nf(id, 4) : nf(id, 4);
 
-    this.behavior = _behavior;
+    this.behavior = '';//_behavior;
     this.behavior_exp = new Behavior(_traits, this);
     this.time_coins = 0;
     this.resting = false;
     this.restingTimer = 0;
-    this.preferences = this.makePreferences(task_list);//preferences for each single task
+    this.preferences = this.makePreferences(TASK_LIST);//preferences for each single task
     const val = (10 + Math.floor(Math.random() * 40)) / 100;
     this.forget_rate = val;
     this.step = 10;
@@ -60,23 +60,23 @@ class Agent {
     this.workingTimer = 0;// how long is the agent at work
     this.mappedAmountOfTime = 0;
     // ANIMATION && colors
-    this.color = color(255);
-    switch (_behavior) {
-      case 'curious':
-        this.color = color(45, 245, 100); // greenish
-        break;
-      case 'perfectionist':
-        this.color = color(45, 100, 245); // blueish
-        break;
-      case 'geniesser':
-        this.color = color(245, 45, 100); // reddish
-        break;
-      case 'capitalist':
-        this.color = color(245, 45, 245); // magentaish
-        break;
-      default:
-        this.color = color(255);
-    }
+    // this.color = color(255);
+    // switch (_behavior) {
+    //   case 'curious':
+    //     this.color = color(45, 245, 100); // greenish
+    //     break;
+    //   case 'perfectionist':
+    //     this.color = color(45, 100, 245); // blueish
+    //     break;
+    //   case 'geniesser':
+    //     this.color = color(245, 45, 100); // reddish
+    //     break;
+    //   case 'capitalist':
+    //     this.color = color(245, 45, 245); // magentaish
+    //     break;
+    //   default:
+    //     this.color = color(255);
+    // }
     this.colors = {
       working: color(255, 0, 0),
       available: color(0, 255, 0),
@@ -649,7 +649,9 @@ class Agent {
     this.time_coins += task.value;// * task_executed == true ? 1 : -1;
     // console.log(this.time_coins, task.value)
     // console.log(`executed task: ${this.time_coins}, value: ${task.value}`);
-    this.mappedAmountOfTime = map(_amount_of_time, 0, ADMIN.amount_of_time + (ADMIN.amount_of_time / 2), MINIMUM, MAXIMUM);
+    const arr = TASK_LIST.map(result => result.amount_of_time);
+    const max = Math.max(...arr);
+    this.mappedAmountOfTime = map(_amount_of_time, 0, max + (max / 2), MINIMUM, MAXIMUM);
     this.wasBruteForced = brute_forced || false;
     /**
      * the magic trick below let us to push the preferences

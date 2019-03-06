@@ -25,16 +25,13 @@ const INFO_HEIGHT = 55;
  * VERY IMPORTANT THE TASK CAN'T BE LESS THAN 1 HOUR FOR NOW
  * the names can be changed again
  */
-const COOK = makeTask(12 * TIME_SCALE, 3, 'food_dept_mngmt');
-const CLEAN = makeTask(15 * TIME_SCALE, 4, 'kitchen_maintenance');
-const ADMIN = makeTask(18 * TIME_SCALE, 1, 'social_work');
-const SHOP = makeTask(12 * TIME_SCALE, 2, 'facility_duties');
+
 // and a list out of them
-const TASK_LIST = [
-    ADMIN,
-    CLEAN,
-    COOK,
-    SHOP
+let TASK_LIST = [
+    makeTask(12 * TIME_SCALE, 3, 'food_dept_mngmt'),
+    makeTask(15 * TIME_SCALE, 4, 'kitchen_maintenance'),
+    makeTask(18 * TIME_SCALE, 1, 'social_work'),
+    makeTask(12 * TIME_SCALE, 2, 'facility_duties'),
 ];
 // agent states 
 const AGENT_BEHAVIORS = [

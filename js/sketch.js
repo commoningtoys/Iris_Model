@@ -14,19 +14,19 @@ init_menu();
 
 function setup() {
   createCanvas(WIDTH(), HEIGHT());
-  let behaviors = {
-    curious: 1,
-    perfectionist: 1,
-    geniesser: 1,
-    capitalist: 1
-  };
+  // let behaviors = {
+  //   curious: 1,
+  //   perfectionist: 1,
+  //   geniesser: 1,
+  //   capitalist: 1
+  // };
 
-  let min_wage = 1;
-  let tasks_num = 1;
-  players = 0; // here you set the players for the game
+  // let min_wage = 1;
+  // let tasks_num = 1;
+  // players = 0; // here you set the players for the game
   // irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
   // textSize(TEXT_SIZE);
-  noLoop();
+  // noLoop();
 }
 
 function draw() {
@@ -173,17 +173,40 @@ $('#stress-decrement').change(el => {
 function init_model() {
   console.log('start')
   if (check_values) {// if the input given in the menu are correct than start the model
+
+
     // here we need to extract the values of the menu
+    const traits_input = document.getElementsByClassName('traits-input');
+    const traits_list = [];
+    for (const elt of traits_input[0].children) {
+      // console.log(elt);
+      // here we extract the values we neeed
+      const amount = parseInt(elt.children['amount'].value);
+      const trait_name = elt.children['trait'].value; // this must stay a string
+      const cur_val = parseInt(elt.children['curiosity'].value);
+      const perf_val = parseInt(elt.children['perfectionism'].value);
+      const endu_val = parseInt(elt.children['endurance'].value);
+      const good_val = parseInt(elt.children['goodwill'].value);
+      // and we push them inside the array
+      for (let i = 0; i < amount; i++)traits_list.push(make_trait(trait_name, cur_val, perf_val, endu_val, good_val));
 
-  const traits_input = document.getElementsByClassName('traits-input');
-  for (const elt of traits_input[0].children) {
-    console.log(elt)
-  }
-  const min_wage = parseInt(document.getElementById('min-wage').value);
-  const tasks_num = parseInt(document.getElementById('how-many-task').value);
-  console.log(min_wage, tasks_num);
+    }
+    // next we shuffle the array to distribute all the traits randomly
+    shuffleArray(traits_list);
+    console.log(traits_list);
+    // const agents = [];
+    // let idx = 0;
+    // for (const trait of traits_list) {
+    //   agents.push(new Agent(idx, false, trait))
+    //   idx++;
+    // }
 
-    // irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
+    const min_wage = parseInt(document.getElementById('min-wage').value);
+    const tasks_num = parseInt(document.getElementById('how-many-task').value);
+    const players = 0; // for now
+    console.log(min_wage, tasks_num);
+
+    irisModel = new IrisModel(traits_list, min_wage, tasks_num, players);
     $('.menu').toggle('fast');
   }
   // const customBehavior = document.getElementsByClassName('custom-behavior');
@@ -212,13 +235,13 @@ function init_menu() {
   // console.log(amounts_inputs);
   for (const elt of traits_input[0].children) {
     // console.log('parent', elt.children);
-    const input_terms = ['curiosity', 'endurance', 'goodwill', 'perfectionism'];
+    const input_labels = ['curiosity', 'endurance', 'goodwill', 'perfectionism'];
     const inputs = [];
-    for (const term of input_terms) {
+    for (const term of input_labels) {
       inputs.push(elt.children[term])
     }
     // here we squish all the values between 0 and 1
-    for (const term of input_terms) {
+    for (const term of input_labels) {
       elt.children[term].addEventListener('change', () => {
         const input = elt.children[term];
         input.value = get_decimal_value(input.value);
