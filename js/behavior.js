@@ -46,7 +46,6 @@ class Behavior {
     this.dominant_traits = [];
     Object.keys(this.traits).forEach(key => {
       if (key !== 'trait' && key !== 'resilience') {
-        console.log(key, this.traits[key], this.traits[key] >= mx)
         if (this.traits[key] >= mx) this.dominant_traits.push(key);
       }
     });
