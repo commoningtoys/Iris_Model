@@ -1,9 +1,10 @@
 class IrisModel {
-  constructor(behaviors, min_wage, num_task, num_players) {
+  constructor(behaviors, min_wage, num_task, traits, num_players) {
     // console.log(behaviors);
     this.agents = [];
     this.tasks = [];
     this.behaviors = behaviors;
+    this.traits = traits || AGENT_TRAITS;
     /**
      * here below we fill our Agents array
      * 
@@ -27,8 +28,8 @@ class IrisModel {
     shuffleArray(behaviorList);
     let index = 0;
     for (const behavior of behaviorList) {
-      const traits = AGENT_TRAITS[index];
-      this.agents.push(new Agent(TASK_LIST, index, false, behavior, traits));
+      const traits = this.traits[index];
+      this.agents.push(new Agent(TASK_LIST, index, false, behavior, this.traits[index]));
       index++;
     }
     // add players

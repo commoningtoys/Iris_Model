@@ -48,29 +48,29 @@ const AGENT_TRAITS = [
         trait: 'curious',
         curiosity: 0.5,
         perfectionism: 0,
-        resilience: 0.5,
-        accumulate: 0
+        endurance: 0.5,
+        goodwill: 0
     },
     {
         trait: 'perfectionist',
         curiosity: 0,
         perfectionism: 0.1,
-        resilience: 0.3,
-        accumulate: 0
+        endurance: 0.3,
+        goodwill: 0
     },
     {
         trait: 'geniesser',
         curiosity: 0.7,
         perfectionism: 0,
-        resilience: 0,
-        accumulate: 0
+        endurance: 0,
+        goodwill: 0
     },
     {
         trait: 'capitalist',
         curiosity: 0,
         perfectionism: 0,
-        resilience: 0.8,
-        accumulate: 0.4
+        endurance: 0.8,
+        goodwill: 0.4
     },
 ]
 

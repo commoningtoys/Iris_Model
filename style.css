@@ -58,7 +58,7 @@ button{
 }
 
 .menu{
-    display: none;
+    /* display: none; */
     background-color: #0000ffaa;
     border: 2px solid #0f0;
     position: fixed;
@@ -70,6 +70,31 @@ button{
     width: 80%;
     height: 80vh;
     overflow-y: scroll;
+}
+.traits-input{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-gap: 1.5rem;
+}
+.traits-item{
+    /* background: #fff; */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    grid-gap: 0.5rem;
+    border: solid 2px #00f;
+    padding: 0.5rem;
+}
+.traits-item input{
+    max-width: 40px;
+}
+.traits-item input[type=text]{
+    max-width: 70px;
+}
+.traits-elt{
+
+    border-bottom: solid 2px #ff0;
 }
 button#close-menu {
     position: fixed;

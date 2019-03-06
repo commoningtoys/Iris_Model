@@ -1,12 +1,17 @@
-const PLAYER_ID = 'PLAYER';
+// const PLAYER_ID = 'PLAYER';
 
-let singleView = true;
+// let singleView = true;
 // function HEIGHT() { return PADDING + (agentNum * (INFO_HEIGHT + PADDING)) }
 // let agents = [];
 // let tasks = [];
 let irisModel = null;
 let loops = 1;
 let players = 0;
+
+
+
+init_menu();
+
 function setup() {
   createCanvas(WIDTH(), HEIGHT());
   let behaviors = {
@@ -19,8 +24,8 @@ function setup() {
   let min_wage = 1;
   let tasks_num = 1;
   players = 0; // here you set the players for the game
-  irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
-  textSize(TEXT_SIZE);
+  // irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
+  // textSize(TEXT_SIZE);
   noLoop();
 }
 
@@ -165,24 +170,64 @@ $('#stress-decrement').change(el => {
   $('#set-stress-decrement').text($('#stress-decrement').val())
 })
 
-function restartModel() {
-  const customBehavior = document.getElementsByClassName('custom-behavior');
-  const minWage = document.getElementById('min-wage');
-  const tasksNum = document.getElementById('how-many-task');
-  const behaviors = {
-    curious: parseInt(customBehavior.curious.value),
-    perfectionist: parseInt(customBehavior.perfectionist.value),
-    geniesser: parseInt(customBehavior.geniesser.value),
-    capitalist: parseInt(customBehavior.capitalist.value)
-  }
+function init_model() {
+  // const customBehavior = document.getElementsByClassName('custom-behavior');
+  // const minWage = document.getElementById('min-wage');
+  // const tasksNum = document.getElementById('how-many-task');
+  // const behaviors = {
+  //   curious: parseInt(customBehavior.curious.value),
+  //   perfectionist: parseInt(customBehavior.perfectionist.value),
+  //   geniesser: parseInt(customBehavior.geniesser.value),
+  //   capitalist: parseInt(customBehavior.capitalist.value)
+  // }
 
-  const min_wage = parseInt(minWage.value);
-  const tasks_num = parseInt(tasksNum.value);
-  players = parseInt(document.getElementById('num-players').value);
-  irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
-  $('.menu').toggle('fast');
+  // const min_wage = parseInt(minWage.value);
+  // const tasks_num = parseInt(tasksNum.value);
+  // players = parseInt(document.getElementById('num-players').value);
+  // irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
+  // $('.menu').toggle('fast');
 }
 
+function init_menu() {
+  const traits_input = document.getElementsByClassName('traits-input');
+  // console.log(traits_input)
+  for (const elt of traits_input[0].children) {
+    console.log('parent', elt.children);
+    const input_terms = ['curiosity', 'endurance', 'goodwill', 'perfectionism'];
+    const inputs = [];
+    for (const term of input_terms) {
+      inputs.push(elt.children[term])
+    }
+    console.log(inputs);
+    for (const term of input_terms) {
+      elt.children[term].addEventListener('change', () => {
+        const input = elt.children[term];
+        input.value = get_decimal_value(input.value);
+        // const inputs_elts = inputs;
+        // clamp_values(inputs_elts);
+        // console.log(inputs_elts)
+      })
+    }
+  }
+}
+
+function clamp_values(arr) {
+  let max = 0;
+  for (const el of arr) {
+    const val = parseFloat(el.value) || 0;
+    if (val >= max) max = val;
+  }
+}
+function get_decimal_value(val) {
+  if (val == 1) return 1
+  else {
+    const dec = val.toString();
+    // console.log(dec.length)
+    const result = val / Math.pow(10, dec.length);
+    // console.log(result);
+    return result
+  }
+}
 function updateView() {
   // console.log('hello');
   const view = document.getElementById('view');

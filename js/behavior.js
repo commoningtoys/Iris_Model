@@ -9,8 +9,8 @@ class Behavior {
    *   {
    *       curiosity:     [0, 1],
    *       perfectionism: [0, 1], // 
-   *       resilience:    [0, 1], // endurance
-   *       accumulate:    [0, 1]  // goodwill                 
+   *       endurance:    [0, 1], // endurance
+   *       goodwill:    [0, 1]  // accumulate                 
    *   }
    * @param {JSON} _traits is an object containing two values: tendency to rest over work and tendency to repeat same task over curiosity
    * @param {*} _agent 
@@ -21,14 +21,14 @@ class Behavior {
     this.computed_traits = {
       curiosity: null,
       perfectionism: null,
-      resilience: null,
-      accumulate: null
+      endurance: null,
+      goodwill: null
     };
     this.result_traits = {
       curiosity: null,
       perfectionism: null,
-      resilience: null,
-      accumulate: null
+      endurance: null,
+      goodwill: null
     }
     // Object.keys(this.traits).forEach(key => {
     //   if(key !== 'trait'){
@@ -38,14 +38,14 @@ class Behavior {
     console.log(this.traits);
     let mx = 0;
     Object.keys(this.traits).forEach(key => {
-      if (key !== 'trait' && key !== 'resilience') {
+      if (key !== 'trait' && key !== 'endurance') {
         if (this.traits[key] >= mx) mx = this.traits[key];
       }
     });
     console.log(mx)
     this.dominant_traits = [];
     Object.keys(this.traits).forEach(key => {
-      if (key !== 'trait' && key !== 'resilience') {
+      if (key !== 'trait' && key !== 'endurance') {
         if (this.traits[key] >= mx) this.dominant_traits.push(key);
       }
     });
@@ -65,13 +65,13 @@ class Behavior {
     const agent_archive = agent.preferenceArchive;
     this.computed_traits.curiosity     = compute_curiosity(agent_archive, task_name);
     this.computed_traits.perfectionism = compute_perfectionism(agent, task_name);
-    this.computed_traits.resilience    = compute_resilience(agent, task);
-    this.computed_traits.accumulate    = compute_accumulation(agent, agents, task);
+    this.computed_traits.endurance    = compute_endurance(agent, task);
+    this.computed_traits.goodwill    = compute_goodwill(agent, agents, task);
     this.result_traits = {
       curiosity: (this.computed_traits.curiosity.value + this.traits.curiosity) / 2,
       perfectionism: (this.computed_traits.perfectionism.value + this.traits.perfectionism) / 2,
-      resilience: (this.computed_traits.resilience + this.traits.resilience) / 2,
-      accumulate: (this.computed_traits.accumulate.value + this.traits.accumulate) / 2
+      endurance: (this.computed_traits.endurance + this.traits.endurance) / 2,
+      goodwill: (this.computed_traits.goodwill.value + this.traits.goodwill) / 2
     }
     let swap_value = 0;
     Object.keys(this.result_traits).forEach(key => swap_value += this.result_traits[key]);
@@ -81,10 +81,10 @@ class Behavior {
     // console.log(this.computed_traits);
     // console.log(this.result_traits);
     // console.log(swap_value);
-    // first we handle the case of resting therefore if resilience is lower than 0.3
+    // first we handle the case of resting therefore if endurance is lower than 0.3
     // console.log(this.traits.trait)
     // console.log(`behavior: ${agent.time_coins} && ${task.aot}`)
-    if (this.computed_traits.resilience < 0.3 && agent.time_coins >= task.aot) {
+    if (this.computed_traits.endurance < 0.3 && agent.time_coins >= task.aot) {
       // in here we handle the coins aspect
       // does the agent have enough money?
       // console.log('agent resting...');
@@ -183,7 +183,7 @@ class Behavior {
       };
     }
     /**
-     * this method computes the resilience of agent.
+     * this method computes the endurance of agent.
      * it is computed by looking at his wealth aka time coins
      * and compares it to the amount of time needed to complete the task
      * as this difference grows bigger the agent become less resilient. It also
@@ -192,9 +192,9 @@ class Behavior {
      * maybe it should grow on top of FLD
      * @param {Object} agent 
      * @param {String} task_aot
-     * @returns the resilience as avalue between [0, 1]
+     * @returns the endurance as avalue between [0, 1]
      */
-    function compute_resilience(agent, task) {
+    function compute_endurance(agent, task) {
       const divider = agent.time_coins == 0 ? 1 : agent.time_coins;
       let perc_wealth = task.aot / divider;
       if (perc_wealth >= 1) perc_wealth = 1;
@@ -250,7 +250,7 @@ class Behavior {
      * @param {Object} _task a task object
      * @returns an object with the computed value between [0, 1] and a suggested task to swap
      */
-    function compute_accumulation(agent, agents, _task) {
+    function compute_goodwill(agent, agents, _task) {
       const task_values = {}
       for (const task of TASK_LIST) {
         if (task.type !== _task.type) task_values[task.type] = agent.taskValue(agents, task.type) * task.amount_of_time;
@@ -293,17 +293,17 @@ class Behavior {
   update_task_preference(agent, task) {
     const curiosity = this.result_traits.curiosity;
     const perfectionism = this.result_traits.perfectionism;
-    const accumulate = this.result_traits.accumulate;
-    const resilience = this.result_traits.resilience;
-    // console.log(curiosity, perfectionism, accumulate, resilience);
-    const results = [curiosity, perfectionism, accumulate].sort();
+    const goodwill = this.result_traits.goodwill;
+    const endurance = this.result_traits.endurance;
+    // console.log(curiosity, perfectionism, goodwill, endurance);
+    const results = [curiosity, perfectionism, goodwill].sort();
     // console.log(results);
     const sum = Math.sign(results[2] - (results[0] + results[1])) / 2;
     const agent_pref = agent.preferences[task.type]
     const agent_fld = (agent.FLD / MAXIMUM) - 0.5;
-    // console.log(sum, agent_fld, (sum + agent_fld) * resilience * 25)
+    // console.log(sum, agent_fld, (sum + agent_fld) * endurance * 25)
     // console.log(agent_pref)
-    agent_pref.task_preference += (sum + agent_fld) * resilience * 25;// this 25 is here to make the gain and drop in preference more marked
+    agent_pref.task_preference += (sum + agent_fld) * endurance * 25;// this 25 is here to make the gain and drop in preference more marked
     agent_pref.task_preference = clamp(agent_pref.task_preference, MINIMUM, MAXIMUM);
   }
   setType(_traits) {
