@@ -247,6 +247,29 @@ class IrisModel {
     //   // if (singleView) agent.infographic();
     //   // else drawInfos(agent);
     // }
+
+    // here we alter the bar informing how many agents are working resting etc.
+    // console.log(this.agents);
+    const working = this.agents.filter(result => result.working === true).length;
+    const swapping = this.agents.filter(result => result.has_swapped === true).length;
+    const resting = this.agents.filter(result => result.resting === true).length;
+    const available = this.agents.length - (working + swapping + resting)
+    // console.log(working, swapping, resting, available);
+    
+    const w_elt = document.getElementById('working');
+    w_elt.style.width = (working / this.agents.length) * 100 + '%'
+    const sw_elt = document.getElementById('swapping');
+    sw_elt.style.width = (swapping / this.agents.length) * 100 + '%'
+    const r_elt = document.getElementById('resting');
+    r_elt.style.width = (resting / this.agents.length) * 100 + '%'
+    const av_elt = document.getElementById('available')
+    av_elt.style.width = (available / this.agents.length) * 100 + '%'
+    
+    w_elt.previousElementSibling.innerText = '🏋🏻‍♂️' + working;
+    sw_elt.previousElementSibling.innerText = '🤷🏻‍♂️' + swapping;
+    r_elt.previousElementSibling.innerText = '💆🏻‍♂️' + resting;
+    av_elt.previousElementSibling.innerText = '🙋🏻‍♂️' + available;
+    // console.log(w_elt.previousElementSibling)
   }
   /**
    * displays the median values of the agents

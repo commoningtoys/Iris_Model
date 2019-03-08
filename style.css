@@ -62,7 +62,7 @@ input{
     left: 0px;
     bottom: 0px;
     width: 100%;
-    height: 50px;
+    height: 150px;
     background-color: #00f;
     /* margin: auto 0; */
 }
@@ -74,6 +74,50 @@ input{
     transform: translate(0%, 50%);
     -moz-transform: translate(0%, 50%);
     -webkit-transform: translate(0%, 50%); */
+}
+.footer-btns{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+.footer-agent-info div{
+    /* float: left; */
+    /* font-size: 1.4rem; */
+    /* text-align: center;
+    width: 25%;
+    height: 20px;
+    color: #fff;
+    text-overflow: ellipsis; */
+}
+.footer-agent-elt{
+    /* float: left; */
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    text-align: center;
+    /* width: 25%; */
+    height: 30px;
+    color: #fff;
+    text-overflow: ellipsis;
+    font-size: 1.5rem;
+}
+#working{
+    background-color: #0f0;
+    width: 25%;
+    height: 10px;
+}
+#swapping{
+    background-color: #0ff;
+    width: 25%;
+    height: 10px;
+}
+#resting{
+    background-color: #fa0;
+    width: 25%;
+    height: 10px;
+}
+#available{
+    background-color: #f00;
+    width: 25%;
+    height: 10px;
 }
 
 .menu{
@@ -89,6 +133,7 @@ input{
     width: 80%;
     height: 80vh;
     overflow-y: scroll;
+    z-index: 99999999;
 }
 .traits-input{
     display: grid;
@@ -193,15 +238,15 @@ button#close-menu {
     font-style: italic;
 }
 .info{
-    background-color: #fff;
-    width: 33%;
-    max-width: 250px;
-    right: 0px;
     position: fixed;
-    height: 100vh;
+    background-color: #fff;
+    width: 250px;
+    right: 0px;
+    height: calc(100vh - 150px);
     overflow-y: scroll;
     max-height: none;
     padding-left: 5px;
+    z-index: 9999;
 }
 .preference{
     color: #f00;
