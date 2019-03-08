@@ -8,7 +8,7 @@ class Agent {
     this.playerName = 'PLAYER_';
     this.ID = nf(id, 4);//is_player ? this.playerName + nf(id, 4) : nf(id, 4);
 
-    this.behavior = '';//_behavior;
+    this.behavior = _traits.trait;//_behavior;
     this.behavior_exp = new Behavior(_traits, this);
     this.time_coins = 0;
     this.resting = false;

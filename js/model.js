@@ -260,7 +260,9 @@ class IrisModel {
     let i = 0;
     Object.keys(data).forEach(key => {
       // console.log(data[key], key)
-
+      // console.log(this.agents);
+      // this returns the number of agents by behavior
+      const num_agents_by_behavior = this.agents.filter(result => result.behavior === key).length;
 
       // the trick below is useful to spread the 
       // the visualization in 4 regions of the screen
@@ -275,7 +277,7 @@ class IrisModel {
       noStroke();
       fill(255);
       textAlign(CENTER, CENTER)
-      text(key, infoX, infoY - PADDING, INFO_WIDTH, PADDING);
+      text(`${num_agents_by_behavior} ${key}`, infoX, infoY - PADDING, INFO_WIDTH, PADDING);
       let lines = 0;
       Object.keys(this.colors).forEach(pref => {
         textAlign(RIGHT, CENTER);
@@ -344,12 +346,12 @@ class IrisModel {
           // console.log(h)
           // ellipse(currX + (r / 2), INFO_HEIGHT * 0.33333, r);
           // rect(currX + (r / 2), INFO_HEIGHT * 0.33333, 1, -h);
-          stroke(0, 255, 0);
+          // stroke(0, 255, 0);
           line(currX, (INFO_HEIGHT * 0.33333) - (h / 2), currX, (INFO_HEIGHT * 0.33333) + (h / 2));
         } else {
           // ellipse(currX + ((r * 10)/ 2), INFO_HEIGHT * 0.66666, r * 10);
           // rect(currX + ((r * 10) / 2), INFO_HEIGHT * 0.66666, 1, -h);
-          stroke(255, 0, 255);
+          // stroke(255, 0, 255);
           line(currX, (INFO_HEIGHT * 0.66666) - (h / 2), currX, (INFO_HEIGHT * 0.66666) + (h / 2));
         }
         index++;

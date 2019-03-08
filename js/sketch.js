@@ -284,12 +284,13 @@ function init_menu() {
 
 function get_decimal_value(val) {
   console.log(val);
-  val = parseInt(val);
-  console.log(val);
+  val = parseFloat(val);
   if(val <= 1)return val;
   else {
+    // if the value is bigger than one than we round it
+    val = parseInt(val);
     const dec = val.toString();
-    console.log(dec)
+    // console.log(dec)
     const result = val / Math.pow(10, dec.length);
     // console.log(result);
     return result
