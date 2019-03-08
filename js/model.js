@@ -1,5 +1,6 @@
 class IrisModel {
   constructor(traits, min_wage, num_task, num_players) {
+    // this.plot = new Plot();
     // console.log(behaviors);
     this.agents = [];
     this.tasks = [];
@@ -232,6 +233,7 @@ class IrisModel {
     }
     // console.log(medianValuesByBehavior);
     this.infographic(medianValuesByBehavior);
+    // this.plot.draw(medianValuesByBehavior, { h: this.hours, d: this.days, m: this.months, y: this.years })
     // console.log(medianValuesByBehavior);
     // this.plot.show(median, this.pointIndex);
     this.pointIndex++;

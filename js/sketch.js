@@ -183,10 +183,10 @@ function init_model() {
       // here we extract the values we neeed
       const amount = parseInt(elt.children['amount'].value);
       const trait_name = elt.children['trait'].value; // this must stay a string
-      const cur_val = parseInt(elt.children['curiosity'].value);
-      const perf_val = parseInt(elt.children['perfectionism'].value);
-      const endu_val = parseInt(elt.children['endurance'].value);
-      const good_val = parseInt(elt.children['goodwill'].value);
+      const cur_val = parseFloat(elt.children['curiosity'].value);
+      const perf_val = parseFloat(elt.children['perfectionism'].value);
+      const endu_val = parseFloat(elt.children['endurance'].value);
+      const good_val = parseFloat(elt.children['goodwill'].value);
       // and we push them inside the array
       for (let i = 0; i < amount; i++)traits_list.push(make_trait(trait_name, cur_val, perf_val, endu_val, good_val));
 
@@ -237,12 +237,21 @@ function init_menu() {
     // console.log('parent', elt.children);
     const input_labels = ['curiosity', 'endurance', 'goodwill', 'perfectionism'];
     const inputs = [];
+    // here we get all the inputs
     for (const term of input_labels) {
       inputs.push(elt.children[term])
     }
     // here we squish all the values between 0 and 1
     for (const term of input_labels) {
-      elt.children[term].addEventListener('change', () => {
+      elt.children[term].addEventListener('change', (event) => {
+        // let sum = 0;
+        // const values = 
+        // for (const input of inputs) {
+        //   sum += parseFloat(input.value);
+        // }
+        // for (const input of inputs) {
+        //   input.value = parseFloat(input.value) / sum;
+        // }
         const input = elt.children[term];
         input.value = get_decimal_value(input.value);
       })
@@ -274,10 +283,13 @@ function init_menu() {
 }
 
 function get_decimal_value(val) {
-  if (val == 1) return 1
+  console.log(val);
+  val = parseInt(val);
+  console.log(val);
+  if(val <= 1)return val;
   else {
     const dec = val.toString();
-    // console.log(dec.length)
+    console.log(dec)
     const result = val / Math.pow(10, dec.length);
     // console.log(result);
     return result

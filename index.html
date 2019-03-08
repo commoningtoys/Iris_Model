@@ -8,7 +8,7 @@
   <script src="js/libraries/jquery-3.3.1.min.js"></script>
   <script src="js/libraries/p5.min.js"></script>
   <script src="js/libraries/p5.dom.min.js"></script>
-  <script src="js/libraries/grafica.min.js"></script>
+  <script src="js/libraries/d3.min.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/const.js"></script>
   <link rel="stylesheet" href="style.css">
@@ -16,6 +16,7 @@
 
 <body>
   <div id="p5Sketch"></div>
+  <div id="d3"></div>
   <!-- <div id="display-date"></div> -->
   <div class="info" id="info-window">
     <div id="whatFrameRate"></div>
@@ -103,7 +104,7 @@
         </div>
         <div class="traits-item">
           <div class="traits-elt">trait:</div> <input type="text" name="trait" value="goodwiller">
-          <div class="traits-elt">curiosity:</div> <input type="number" value="0.5" autocomplete="off" name="curiosity">
+          <div class="traits-elt">curiosity:</div> <input type="number" value="0.1" autocomplete="off" name="curiosity">
           <div class="traits-elt">perfectionism:</div> <input type="number" value="0" autocomplete="off"
             name="perfectionism">
           <div class="traits-elt">endurance:</div> <input type="number" value="1" autocomplete="off" name="endurance">
@@ -113,7 +114,7 @@
       </div>
       <!-- <input id="restart-model" type="checkbox"> restart model? <span id="yes/no">no</span> -->
       <div class="menu-set-agents">
-        <div style="font-size: 30px;">Total number of agents: <span id="how-many-agents">40</span></div>
+        <div style="font-size: 30px;">Total number of agents: <span id="how-many-agents">4</span></div>
         How many task-sets:<input input type="number" value="1" autocomplete="off" id="how-many-task"
           class="custom-input">
         <br>

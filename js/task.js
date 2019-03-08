@@ -23,7 +23,7 @@ class Task {
     this.value = 0;// BETWEEN 1 - 100
     this.minWage = min_wage;
     this.agentsPool = [];// this is the pool of availabale agents where task picks a random one
-    this.tradingAgents = 0;// to keep track of the agents that traded
+    this.swapping_agents = 0;// to keep track of the agents that traded
     /**
      * after how many ticks do I need to call this task again?
      * here we need an algorithm that calculates the urgency based
@@ -117,10 +117,10 @@ class Task {
       }
     } else {
       // here we don't give any resting time
-      // we should think also on how the agent react when no resting time ids given for a task
+      // we should think also on how the agent react when no resting time is given for a task
       // console.log(`GRT is ${this.time_coins_reserve}`)
       // console.log(this.minWage);
-      this.value = this.minWage;
+      this.value = 0;//this.minWage;
       this.time_coins_reserve = 0;
     }
     return;
@@ -191,19 +191,19 @@ class Task {
   chooseAgent(agents) {
 
     this.agentsPool = [];
-    this.tradingAgents = 0;
+    this.swapping_agents = 0;
     let amountOfSkill = 0;
     let skill = 0;
     shuffleArray(agents);// we shuffle the agents 
     // here we check if the agent has traded before if yes he executes the task
     for (const agent of agents) {
       // skill = agent.getPreferences(this.type).skill_level;
-      if (agent.hasTraded && agent.tradeTask === this.type && (!agent.working || !agent.resting)) {
+      if ((agent.has_swapped && agent.swap_task === this.type) && (!agent.working || !agent.resting)) {
         // this is where chooseTask() happens
         if (agent.isPlayer) {
           // if the agent is the player than make him work
           agent.playerTaskToExecute = this;
-          agent.hasTraded = false; // reset here the traded boolean
+          agent.has_swapped = false; // reset here the traded boolean
           agent.playerWorks(agents);
           return;// WE RETURN BECAUSE THE AGENT IS THE PLAYER THEREFORE WE DON'T NEED TO CHECK FOR MORE AGENTS TO DO THE TASK
         } else {
@@ -213,19 +213,20 @@ class Task {
            * TRADED FOR THIS TASK ONTO A POOL AND THEN PICK A RANDOM ONE
            */
           // this.agentsPool.push(agent);
-          this.tradingAgents++;
+          this.swapping_agents++;
           //////DEPRECATED//////
           // amountOfSkill += skill;// we will use this when we will need more agents to carry out the task
           //////////////////////
+          // console.log(agent.ID, agent.swap_task)
           skill = agent.getPreferences(this.type).skill_level;
           let time = this.amountOfTimeBasedOnSkill(skill);
           agent.work(time, this, agents);//the agent works
-          agent.hasTraded = false; // reset here the traded boolean | needs to be done after the the agent.work otherwise the it is not possible to visualize the trade happening
+          agent.has_swapped = false; // reset here the traded boolean | needs to be done after the the agent.work otherwise the it is not possible to visualize the trade happening
           // this.executed++;
           // console.log('swapping agent doing the task!');
           return;// IF THE AGENT HAS TRADED FOR THIS TASK THAN HE GETS PICKED THEREFORE WE RETURN
         }
-      } else if (!agent.working && agent.ability && !agent.hasTraded) {// maybe the trade happens once we have the pool
+      } else if (!agent.working && agent.ability && !agent.has_swapped) {// maybe the trade happens once we have the pool
         this.agentsPool.push(agent);// IF NONE OF THE ABOVE THINGS HAPPENED THAN WE PUSH THE AGENT INTO A POOL OF POSSIBLE CANDIDATE FOR THE TASK
       }
     }
@@ -280,8 +281,8 @@ class Task {
     while (controlState) {
       let index = Math.floor(Math.random() * agents.length);
       let agent = agents[index];
-      // console.log(`working: ${agent.working}, resting: ${agent.resting}, traded: ${agent.hasTraded}`);
-      if (!agent.working || agent.resting || agent.hasTraded || agent.isPlayer) {
+      // console.log(`working: ${agent.working}, resting: ${agent.resting}, traded: ${agent.has_swapped}`);
+      if (!agent.working || agent.resting || agent.has_swapped || agent.isPlayer) {
         /**
          * HERE WE NEED TO CHECK WHICH 
          * BEHAVIOR THE AGENT HAS
@@ -293,8 +294,8 @@ class Task {
         agent.resting = false;
         agent.restingTimer = 0;
         // check resting timer!!!
-        agent.hasTraded = false;
-        agent.tradeTask = '';
+        agent.has_swapped = false;
+        agent.swap_task = '';
         agent.stress += agent.stress_increase_val;
         agent.stress = clamp(agent.stress, MINIMUM, MAXIMUM);
         let skill = agent.getPreferences(this.type).skill_level;
@@ -316,7 +317,7 @@ class Task {
       }
     }
     // for (const agent of agents) {
-    //     if(agent.resting || agent.hasTraded){
+    //     if(agent.resting || agent.has_swapped){
     //         console.log(agent.ID);
     //     }
     // }

@@ -23,12 +23,14 @@ function makeTask(time_needed, how_often, name) {
  * @return an object with the traits
  */
 function make_trait(name, cur_val, perf_val, endu_val, good_val) {
+    const sum = cur_val + perf_val + good_val;
+    console.log(cur_val / sum, perf_val / sum , endu_val, good_val / sum, name)
     return {
         trait: name,
-        curiosity: cur_val,
-        perfectionism: perf_val,
+        curiosity: cur_val / sum,
+        perfectionism: perf_val / sum,
         endurance: endu_val,
-        goodwill: good_val
+        goodwill: good_val / sum
     }
 }
 function extract_unique_keys(arr, key) {

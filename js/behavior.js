@@ -35,21 +35,21 @@ class Behavior {
     //     this.computed_traits[key] = null;
     //   }
     // });
-    console.log(this.traits);
+    // console.log(this.traits);
     let mx = 0;
     Object.keys(this.traits).forEach(key => {
       if (key !== 'trait' && key !== 'endurance') {
         if (this.traits[key] >= mx) mx = this.traits[key];
       }
     });
-    console.log(mx)
+    // console.log(mx)
     this.dominant_traits = [];
     Object.keys(this.traits).forEach(key => {
       if (key !== 'trait' && key !== 'endurance') {
         if (this.traits[key] >= mx) this.dominant_traits.push(key);
       }
     });
-    console.log(this.dominant_traits);
+    // console.log(this.dominant_traits);
 
   }
   /**
@@ -61,21 +61,30 @@ class Behavior {
    * @returns a boolean stating if he swapped or accepted the task
    */
   decide(task, agents, agent) {
+    // console.log(agent.ID, this.dominant_traits)
     const task_name = task.type;
     const agent_archive = agent.preferenceArchive;
-    this.computed_traits.curiosity     = compute_curiosity(agent_archive, task_name);
+    this.computed_traits.curiosity = compute_curiosity(agent_archive, task_name);
     this.computed_traits.perfectionism = compute_perfectionism(agent, task_name);
-    this.computed_traits.endurance    = compute_endurance(agent, task);
-    this.computed_traits.goodwill    = compute_goodwill(agent, agents, task);
+    this.computed_traits.endurance = compute_endurance(agent, task);
+    this.computed_traits.goodwill = compute_goodwill(agent, agents, task);
+    // console.log(this.computed_traits);
+    // const sum = this.computed_traits.curiosity.value + this.computed_traits.perfectionism.value + this.computed_traits.endurance + this.computed_traits.goodwill.value;
+    // console.log(`sum of traits: ${sum}`);
     this.result_traits = {
-      curiosity: (this.computed_traits.curiosity.value + this.traits.curiosity) / 2,
-      perfectionism: (this.computed_traits.perfectionism.value + this.traits.perfectionism) / 2,
-      endurance: (this.computed_traits.endurance + this.traits.endurance) / 2,
-      goodwill: (this.computed_traits.goodwill.value + this.traits.goodwill) / 2
+      curiosity: (this.computed_traits.curiosity.value * this.traits.curiosity),
+      perfectionism: (this.computed_traits.perfectionism.value * this.traits.perfectionism),
+      endurance: (this.computed_traits.endurance + this.traits.endurance) / 2,// endurance won't be part of the swap
+      goodwill: (this.computed_traits.goodwill.value * this.traits.goodwill)
     }
     let swap_value = 0;
-    Object.keys(this.result_traits).forEach(key => swap_value += this.result_traits[key]);
-    swap_value /= 4;
+    Object.keys(this.result_traits).forEach(key => {
+      if (key !== 'endurance') {
+        // console.log(key)
+        swap_value += this.result_traits[key];
+      }
+    });
+    // swap_value /= 2;
     // console.log(task.type, agent.behavior)
     // console.log(this.traits);
     // console.log(this.computed_traits);
@@ -90,11 +99,11 @@ class Behavior {
       // console.log('agent resting...');
       agent.rest(task);
       return true;
-    } else if (swap_value > 0.5) {
-      // console.log('agent takes the task')
+    } else if (swap_value > 0.7) {
+      // console.log('WORK')
       return false
     } else {
-      // console.log('agent swaps task');
+      // console.log('SWAP');
       const swap_trait = random_arr_element(this.dominant_traits);
       // console.log(this, this.computed_traits[swap_trait])
       const swap_task = this.computed_traits[swap_trait].swap_task
@@ -143,12 +152,12 @@ class Behavior {
         // console.log(task_execution)
         const len = Math.floor(task_execution.length / 2);
         const less_executed_tasks = [];
-        for(let i = 0; i < len; i++)less_executed_tasks.push(task_execution[i].name)
+        for (let i = 0; i < len; i++)less_executed_tasks.push(task_execution[i].name)
         // console.log(less_executed_tasks);
         // console.log(task_execution, this_task_execution, result);
         return {
           value: result,
-          swap_task: random_arr_element(less_executed_tasks).name
+          swap_task: random_arr_element(less_executed_tasks)
         };
       } else {
         // if we don't have enough data we just return 1
@@ -169,6 +178,7 @@ class Behavior {
         swap_task: ''
       }
       if (agent.masterTask === task_name) {
+        // console.log(agent)
         // if it is a match we return the max value 1
         result.value = 1;
         result.swap_task = task_name;
@@ -238,7 +248,8 @@ class Behavior {
       result curr: ${(curr_fld * tot_perc) + curr_fld}\n
       result top: ${result}`
       // console.log(log)
-      return result;
+      if (result >= 1) return 1
+      else return result;
     }
     /**
      * this methods computes the likeliness to choose a more renumerative

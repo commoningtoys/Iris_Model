@@ -31,14 +31,16 @@ class Agent {
     Object.keys(myObj).forEach(key => {
       let pref = myObj[key].skill_level;
       let name = myObj[key].task_name;
+      // console.log(pref, name)
       if (pref > max) {
         max = pref;
         result = name;
       }
     });
+    result = random_arr_element(Object.keys(this.preferences))
     // the master tast is the one with higher skill level
     this.masterTask = result;
-    // console.log(this.masterTask);
+    console.log(this.masterTask);
     // }
 
     // the next attributes are used for the trading system,
@@ -601,6 +603,7 @@ class Agent {
   }
 
   assign_swapped_task(task_name) {
+    // console.log(task_name)
     this.has_swapped = true;
     this.swap_task = task_name;
     this.setInfo();
