@@ -1,17 +1,17 @@
 class IrisModel {
   constructor(traits, min_wage, num_task, num_players) {
-    // this.plot = new Plot();
+    this.plot = new Plot();
     // console.log(behaviors);
     this.agents = [];
     this.tasks = [];
     // this.behaviors = behaviors;
 
     this.traits = traits;
-    console.log(this.traits)
+    // console.log(this.traits)
     shuffleArray(this.traits)
     this.traits_list = extract_unique_keys(this.traits, 'trait');
-    console.log(this.traits_list);
-    console.log(this.traits)
+    // console.log(this.traits_list);
+    // console.log(this.traits)
     // /**
     //  * here below we fill our Agents array
     //  * 
@@ -233,7 +233,7 @@ class IrisModel {
     }
     // console.log(medianValuesByBehavior);
     this.infographic(medianValuesByBehavior);
-    // this.plot.draw(medianValuesByBehavior, { h: this.hours, d: this.days, m: this.months, y: this.years })
+    this.plot.draw(medianValuesByBehavior, { h: this.hours, d: this.days, m: this.months, y: this.years })
     // console.log(medianValuesByBehavior);
     // this.plot.show(median, this.pointIndex);
     this.pointIndex++;
@@ -390,6 +390,7 @@ class IrisModel {
       this.hours++;
     }
     if (this.hours > 0 && this.hours % 24 == 0) {
+      // here we can add a function to set the agent to available
       this.days++;
       this.hours = 0;
     }

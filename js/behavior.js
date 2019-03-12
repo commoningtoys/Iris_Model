@@ -116,7 +116,7 @@ class Behavior {
     /**
      * this methods computes the curiosity of the agent
      * it checks how often the task has been done and
-     * returns a value between 
+     * returns a value between [0,1]
      * @param {Array} agent_archive the archive of the agent's preferences
      * @param {String} task_name the task the agent s requested to execute
      * @returns an object with the computed value between [0, 1] and a suggested task to swap
@@ -262,6 +262,7 @@ class Behavior {
      * @returns an object with the computed value between [0, 1] and a suggested task to swap
      */
     function compute_goodwill(agent, agents, _task) {
+
       const task_values = {}
       for (const task of TASK_LIST) {
         if (task.type !== _task.type) task_values[task.type] = agent.taskValue(agents, task.type) * task.amount_of_time;
@@ -293,9 +294,9 @@ class Behavior {
    * in the different traits areas. Than we take the one where it socred the higher
    * and we subtract the two who scored the worst  ad and we compute the sign [+, 0, -]
    * than we use the sign to add or remove value to the preference for that task.
-   * this system has the advantage of being a mre genral way to update preference for a task,
+   * this system has the advantage of being a more general way to update preference for a task,
    * as it take in consideration the fact that agents may prefer a task that doesn't
-   * score good with the dominant trait, bu that nevertheless has scored good with
+   * score good with the dominant trait, but that nevertheless has scored good with
    * the other traits, this could also be used to alter the traits, making the traits more dynamic
    * @param {Object} agent 
    * @param {Array} agents 
@@ -319,5 +320,8 @@ class Behavior {
   }
   setType(_traits) {
     this.traits = _traits;
+  }
+  get_endurance(){
+    return this.computed_traits.endurance;
   }
 }

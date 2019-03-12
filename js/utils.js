@@ -47,6 +47,19 @@ function random_arr_element(arr) {
     return arr[random_idx];
 }
 
+//allows to parse time. not used.
+function parse_time(date){
+	//we need to modify the date slightly to get a proper string..
+	const y = date["y"] + 2018;
+	const m = date["m"] + 1;
+	const d = date["d"]+1;
+	const h = date["h"]
+	const string = y+"-"+m+"-"+d+"-"+h;
+	const parser = d3.timeParse("%Y-%m-%d-%H")
+
+	return parser(string);
+
+}
 
 /**
  * clamps a value between a maximum and a minimum

@@ -235,7 +235,6 @@ class Task {
      * of agents that are not working and able
      * the task should pick a random agent from the pool
      * if he trades than it looks for another agent
-     * and updates the value of the task by increment
      */
     // console.log('agent pool: ', this.agentsPool.length);
     let swapping = true;

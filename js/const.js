@@ -7,7 +7,8 @@
 const TIME_SCALE = 1; // each time unit is equivalent to 10 minutes 
 
 const TS_FRACTION = 6;
-const DAY = 24 * TIME_SCALE * TS_FRACTION;// 1 day
+const HOUR = TIME_SCALE * TS_FRACTION;
+const DAY = 24 * TIME_SCALE * TS_FRACTION;// 1 day // reduce to 12 hours 
 const MAXIMUM = 100; // we need this to clamp values for preferences
 const MINIMUM = 1;
 const AGENT_NUM = 10;
