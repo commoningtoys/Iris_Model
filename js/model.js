@@ -391,6 +391,7 @@ class IrisModel {
     }
     if (this.hours > 0 && this.hours % 24 == 0) {
       // here we can add a function to set the agent to available
+      // and also reset if he was
       this.days++;
       this.hours = 0;
     }
