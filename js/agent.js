@@ -49,6 +49,8 @@ class Agent {
     this.totalTaskCompleted = 0;
     this.totalTaskCompletedByAgents = 0;
 
+    this.done_for_the_day = false;
+
     this.currentTask = '';
     this.FLD = MAXIMUM; //this.behavior === 'capitalist' ? 100 : randomMinMAx();// feel like doing
     this.solidarity = randomMinMAx();
@@ -317,6 +319,7 @@ class Agent {
         this.swap_task = '';
         this.working = false;
         this.currentTask = '';
+        this.done_for_the_day = true;
         this.setInfo();
       }
     }
@@ -598,6 +601,8 @@ class Agent {
     this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
     this.resting = true;
     this.restingTimer = task.aot;
+    // when the agent has rested he also is less stressed
+    this.stress /= this.stress_decrease_val;
     // this.updateAttributes(task, true);
     this.setInfo();
   }
@@ -777,7 +782,7 @@ class Agent {
         // we can include something else here on how to update the skill
         // this.preferences[task.type].skill_level += (sum - this.forget_rate) * this.step;
 
-        console.log(sum, sum * this.step, task.type, this.ID)
+        // console.log(sum, sum * this.step, task.type, this.ID)
         this.preferences[task.type].skill_level += sum * this.step;
 
         this.preferences[task.type].skill_level = clamp(this.preferences[task.type].skill_level, MINIMUM, MAXIMUM);
@@ -1044,7 +1049,7 @@ class Agent {
         task_preference: 0,
         forget_rate: (10 + Math.floor(Math.random() * 10)) / 100,
         forget_skill: () => {
-          console.log('forget rate ' + el.type + ' ' + result[el.type].forget_rate)
+          // console.log('forget rate ' + el.type + ' ' + result[el.type].forget_rate)
           // console.log('skill before ' + el.type + ' ' + result[el.type].skill_level);
           result[el.type].skill_level -= (result[el.type].forget_rate * this.step)
           result[el.type].skill_level = clamp(result[el.type].skill_level, MINIMUM, MAXIMUM);
