@@ -232,7 +232,7 @@ class IrisModel {
       medianValuesByBehavior[behavior] = median;
     }
     // console.log(medianValuesByBehavior);
-    this.infographic(medianValuesByBehavior);
+    // this.infographic(medianValuesByBehavior);
     // this.plot.draw(medianValuesByBehavior, { h: this.hours, d: this.days, m: this.months, y: this.years })
     // console.log(medianValuesByBehavior);
     // this.plot.show(median, this.pointIndex);
@@ -241,12 +241,12 @@ class IrisModel {
 
     // // here we have to build the filter to visualize the agents
     // // for (let i = this.showFrom; i < this.showTo; i++) {
-    // for (const agent of this.agents) {
-    //   // let agent = this.agents[i];
-    //   agent.infographic();
-    //   // if (singleView) agent.infographic();
-    //   // else drawInfos(agent);
-    // }
+    for (const agent of this.agents) {
+      // let agent = this.agents[i];
+      agent.infographic();
+      // if (singleView) agent.infographic();
+      // else drawInfos(agent);
+    }
 
     // here we alter the bar informing how many agents are working resting etc.
     // console.log(this.agents);
@@ -390,6 +390,7 @@ class IrisModel {
       this.hours++;
     }
     if (this.hours > 0 && this.hours % 24 == 0) {
+      // here we update the agent status rest and availability to work
       this.days++;
       this.hours = 0;
     }

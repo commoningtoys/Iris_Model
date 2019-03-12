@@ -158,7 +158,7 @@ class Agent {
       keys.forEach(key => {
         //appending more HTML string with key and value aginst that key;
         // str6 += "<strong>preferences</strong> <br>"
-        if(!key.startsWith('forget'))str6 += "<strong>" + key + "</strong>: " + roundPrecision(objAttribute[key], 2) + "<br>";
+        if (!key.startsWith('forget')) str6 += "<strong>" + key + "</strong>: " + roundPrecision(objAttribute[key], 2) + "<br>";
       });
       //final HTML sting is appending to close the DIV element.
       str6 += "</div><br>";
@@ -758,7 +758,7 @@ class Agent {
        * here we compute the which agent has executed a task 
        * the most
        */
-      let max = 1;
+      let max = 0;
       for (const a of agents) {
         if (a.preferenceArchive.length > 0) {
           lastPreferences = a.preferenceArchive[a.preferenceArchive.length - 1].preferences;
@@ -768,16 +768,20 @@ class Agent {
       /**
        * here we check how often an agent has completed this task.type
        */
-      let completed = this.preferenceArchive[this.preferenceArchive.length - 1].preferences;
-      let sum = (completed[task.type].completed / max);
-      // console.log(sum, this.forget_rate, sum - this.forget_rate);
-      // we can include something else here on how to update the skill
-      // this.preferences[task.type].skill_level += (sum - this.forget_rate) * this.step;
-      
-      // console.log(sum)
-      this.preferences[task.type].skill_level += sum * this.step;
 
-      this.preferences[task.type].skill_level = clamp(this.preferences[task.type].skill_level, MINIMUM, MAXIMUM);
+      if (task.type === _task.type) {
+        // here we update the skill for the task the agent has executed
+        let completed = this.preferenceArchive[this.preferenceArchive.length - 1].preferences;
+        let sum = max == 0 ? 0 : (completed[task.type].completed / max);
+        // console.log(sum, this.forget_rate, sum - this.forget_rate);
+        // we can include something else here on how to update the skill
+        // this.preferences[task.type].skill_level += (sum - this.forget_rate) * this.step;
+
+        console.log(sum, sum * this.step, task.type, this.ID)
+        this.preferences[task.type].skill_level += sum * this.step;
+
+        this.preferences[task.type].skill_level = clamp(this.preferences[task.type].skill_level, MINIMUM, MAXIMUM);
+      }
       this.preferences[task.type].forget_skill();
     }
 
@@ -1038,13 +1042,13 @@ class Agent {
         completed: 0, // how many times the task has been completed
         skill_level: 0,
         task_preference: 0,
-        forget_rate: (20 + Math.floor(Math.random() * 60)) / 100,
+        forget_rate: (10 + Math.floor(Math.random() * 10)) / 100,
         forget_skill: () => {
-          // console.log(el.type)
-          // console.log(result[el.type].skill_level);
+          console.log('forget rate ' + el.type + ' ' + result[el.type].forget_rate)
+          // console.log('skill before ' + el.type + ' ' + result[el.type].skill_level);
           result[el.type].skill_level -= (result[el.type].forget_rate * this.step)
           result[el.type].skill_level = clamp(result[el.type].skill_level, MINIMUM, MAXIMUM);
-          // console.log(result[el.type].skill_level)
+          // console.log('skill after ' + el.type + ' ' + result[el.type].skill_level)
         }
       }
     }
