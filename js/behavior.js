@@ -66,7 +66,7 @@ class Behavior {
     const agent_archive = agent.preferenceArchive;
     this.computed_traits.curiosity = compute_curiosity(agent_archive, task_name);
     this.computed_traits.perfectionism = compute_perfectionism(agent, task_name);
-    this.computed_traits.endurance = compute_endurance(agent, task);
+    this.computed_traits.endurance = compute_endurance(agent, task, this.traits.endurance);
     this.computed_traits.goodwill = compute_goodwill(agent, agents, task);
     // console.log(this.computed_traits);
     // const sum = this.computed_traits.curiosity.value + this.computed_traits.perfectionism.value + this.computed_traits.endurance + this.computed_traits.goodwill.value;
@@ -74,7 +74,7 @@ class Behavior {
     this.result_traits = {
       curiosity: (this.computed_traits.curiosity.value * this.traits.curiosity),
       perfectionism: (this.computed_traits.perfectionism.value * this.traits.perfectionism),
-      endurance: (this.computed_traits.endurance + this.traits.endurance) / 2,// endurance won't be part of the swap
+      endurance: this.computed_traits.endurance,// endurance won't be part of the swap
       goodwill: (this.computed_traits.goodwill.value * this.traits.goodwill)
     }
     let swap_value = 0;
@@ -93,18 +93,31 @@ class Behavior {
     // first we handle the case of resting therefore if endurance is lower than 0.3
     // console.log(this.traits.trait)
     // console.log(`behavior: ${agent.time_coins} && ${task.aot}`)
-    if (this.computed_traits.endurance < 0.3 && agent.time_coins >= task.aot) {
+    // console.log(this.computed_traits.endurance)
+
+    // if the agents endurance reaches a treshold
+    if (this.computed_traits.endurance < 0.3) {
       // in here we handle the coins aspect
       // does the agent have enough money?
       // console.log('agent resting...');
-      agent.rest(task);
-      return true;
-    } else if (swap_value > 0.7) {
+      if (agent.time_coins >= task.aot) {
+        //if the agent has enough time coins he rests and tells the task that he rests
+        agent.rest(task);
+        return true;
+      } else {
+        // here we update the stress value
+        agent.stress += agent.stress_increase_val;
+        agent.stress = clamp(agent.stress, MINIMUM, MAXIMUM);
+        // we don't return anything we just go on with the swapping
+      }
+    }
+    // here the swapping happens
+    if (swap_value > 0.5) {
       // console.log('WORK')
       return false
     } else {
-      // console.log('SWAP');
       const swap_trait = random_arr_element(this.dominant_traits);
+      // console.log('SWAP', swap_trait);
       // console.log(this, this.computed_traits[swap_trait])
       const swap_task = this.computed_traits[swap_trait].swap_task
       // console.log(`agent swaps for: ${swap_task}`);
@@ -204,7 +217,7 @@ class Behavior {
      * @param {String} task_aot
      * @returns the endurance as avalue between [0, 1]
      */
-    function compute_endurance(agent, task) {
+    function compute_endurance(agent, task, input_val) {
       const divider = agent.time_coins == 0 ? 1 : agent.time_coins;
       let perc_wealth = task.aot / divider;
       if (perc_wealth >= 1) perc_wealth = 1;
@@ -227,28 +240,32 @@ class Behavior {
       // than we sum them up and divide by 2 to get a median value
       // console.log(nudge())
       const tot_perc = ((perc_preference + perc_wealth) / 2) + nudge();
+      // console.log(((input_val - 0.5) * 10) * tot_perc);
+      const compute_input_tot = (((input_val - 0.5) * 10) * tot_perc) / MAXIMUM; // needs refactoring
       /**
-       * we compute resilince on top of FLD therefore
-       * first we compute the difference between FLD
-       * and its max value (100), we multiply
-       * it by the tot_perc and we add the agent.FLD
+       * we compute endurance on top of FLD therefore
+       * we add the result between the input value, 
+       * wealth and preference.
        */
       const top_fld = (MAXIMUM - agent.FLD) / MAXIMUM;
       const curr_fld = agent.FLD / MAXIMUM;
+      const result = curr_fld + compute_input_tot;
+      // console.log(curr_fld, compute_input_tot);
       // const result = (top_fld * tot_perc) + (agent.FLD / MAXIMUM);
-      const result = (curr_fld * tot_perc) + curr_fld;
-      const log = `
-      pref: ${perc_preference}\n
-      wealth: ${perc_wealth}\n
-      tot: ${tot_perc}\n
-      topfld: ${top_fld}\n
-      curr fld: ${curr_fld}\n
-      result curr: ${curr_fld * tot_perc}\n
-      result nofld: ${top_fld * tot_perc}\n
-      result curr: ${(curr_fld * tot_perc) + curr_fld}\n
-      result top: ${result}`
-      // console.log(log)
+      // const result = (curr_fld * tot_perc) + curr_fld;
+      // const log = `
+      // pref: ${perc_preference}\n
+      // wealth: ${perc_wealth}\n
+      // tot: ${tot_perc}\n
+      // topfld: ${top_fld}\n
+      // curr fld: ${curr_fld}\n
+      // result curr: ${curr_fld * tot_perc}\n
+      // result nofld: ${top_fld * tot_perc}\n
+      // result curr: ${(curr_fld * tot_perc) + curr_fld}\n
+      // result top: ${result}`
+      // // console.log(log)
       if (result >= 1) return 1
+      else if (result <= 0) return 0
       else return result;
     }
     /**

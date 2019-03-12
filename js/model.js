@@ -232,21 +232,17 @@ class IrisModel {
       medianValuesByBehavior[behavior] = median;
     }
     // console.log(medianValuesByBehavior);
-    // this.infographic(medianValuesByBehavior);
+    this.infographic(medianValuesByBehavior);
     // this.plot.draw(medianValuesByBehavior, { h: this.hours, d: this.days, m: this.months, y: this.years })
     // console.log(medianValuesByBehavior);
     // this.plot.show(median, this.pointIndex);
     this.pointIndex++;
     this.agents.sort((a, b) => a.ID - b.ID);
 
-    // // here we have to build the filter to visualize the agents
-    // // for (let i = this.showFrom; i < this.showTo; i++) {
-    for (const agent of this.agents) {
-      // let agent = this.agents[i];
-      agent.infographic();
-      // if (singleView) agent.infographic();
-      // else drawInfos(agent);
-    }
+    // preference debug view only 4 agents
+    // for (const agent of this.agents) {
+    //   agent.infographic();
+    // }
 
     // here we alter the bar informing how many agents are working resting etc.
     // console.log(this.agents);
@@ -312,7 +308,6 @@ class IrisModel {
       Object.keys(preferences).forEach(pref => {
         // console.log(pref)
         if (pref === 'swapped' || pref === 'brute_force') {
-          // console.log(preferences[pref]);
 
           const agent_num = this.traits.filter(result => result.trait === key).length;
           drawLine(preferences[pref], agent_num, infoX, infoY, this.colors[pref], pref)
@@ -391,6 +386,10 @@ class IrisModel {
     }
     if (this.hours > 0 && this.hours % 24 == 0) {
       // here we update the agent status rest and availability to work
+      for (const agent of this.agents) {
+        agent.resting = false;
+        agent.done_for_the_day = false;
+      }
       this.days++;
       this.hours = 0;
     }

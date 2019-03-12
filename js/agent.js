@@ -45,7 +45,7 @@ class Agent {
 
     // the next attributes are used for the trading system,
     this.swap_task = '';// this defines the task the agent wants to do
-    this.has_swapped = false;// if has traded than it will be selecteds for the trade task
+    this.has_swapped = false;// if has swapped than it will be selecteds for the trade task
     this.totalTaskCompleted = 0;
     this.totalTaskCompletedByAgents = 0;
 
@@ -95,7 +95,7 @@ class Agent {
       time_coins: color(255, 0, 0),
       stress: color(255, 255, 0),
       time: color(45, 105, 245),
-      traded: color(0, 255, 100, 100),
+      swapped: color(0, 255, 100, 100),
       brute_force: color(255, 125, 0, 100)
     };
 
@@ -144,8 +144,9 @@ class Agent {
     str12 += "</div><br>";
     let str2 = (this.working == true ? 'doing this task: ' + BR + this.currentTask : 'is not working' + BR) + BR;
     let str21 = 'working timer: ' + BR + this.workingTimer + BR;
-    let str3 = (this.has_swapped === true ? 'has swapped for: ' + BR + this.swap_task : 'has not traded' + BR) + BR;
-    let str31 = (this.resting === true ? `is resting for: ${this.restingTimer}` : 'not resting') + BR;
+    let str22 = (this.done_for_the_day == true ? 'agent is done for today' : 'agent is available to work') + BR;
+    let str3 = (this.has_swapped === true ? 'has swapped for: ' + BR + this.swap_task : 'has not swapped' + BR) + BR;
+    let str31 = (this.resting === true ? `is resting` : 'not resting') + BR;
     let str4 = 'feel like doing: ' + this.FLD + BR;
     let str5 = 'time coins: ' + this.time_coins + BR;
     let str6 = '<div class="toggle">preferences:';
@@ -166,7 +167,7 @@ class Agent {
       str6 += "</div><br>";
     });
     str6 += '</div>';
-    return str1 + str11 + str12 + str2 + str21 + str3 + str31 + str4 + str5 + str6;
+    return str1 + str11 + str12 + str2 + str21 + str22 + str3 + str31 + str4 + str5 + str6;
   }
   /**
    * 
@@ -203,8 +204,8 @@ class Agent {
     let rt = this.preferenceArchive.map(result => result.time_coins);
     let stress = this.preferenceArchive.map(result => result.stress_level);
     let aot = this.preferenceArchive.map(result => result.amount_of_time);
-    let traded = this.preferenceArchive.map(result => result.traded);
-    // console.log(traded);
+    let swapped = this.preferenceArchive.map(result => result.swapped);
+    // console.log(swapped);
     let bruteForce = this.preferenceArchive.map(result => result.brute_force);
     // and here we draw them in the infographic
     stroke(255);
@@ -221,8 +222,8 @@ class Agent {
       line(posX(0, MAXIMUM, i, TASK_LIST.length), posY(MINIMUM, ROW_NUMBER - 1), posX(MAXIMUM, MAXIMUM, i, TASK_LIST.length), posY(MINIMUM, ROW_NUMBER - 1));
       i++;
     }
-    // here we draw when an agent has traded or has been brute forced to do a task
-    drawLine(traded, this.preferenceColors.traded, ROW_NUMBER);
+    // here we draw when an agent has swapped or has been brute forced to do a task
+    drawLine(swapped, this.preferenceColors.swapped, ROW_NUMBER);
     drawLine(bruteForce, this.preferenceColors.brute_force, ROW_NUMBER);
     // here below we draw the information about the preferences of the agent
     printGraphic(`AGENT_ID${this.ID}\n${this.behavior_exp.traits.trait}\nFLD`, fld, this.preferenceColors.FLD, ROW_NUMBER);
@@ -298,16 +299,16 @@ class Agent {
       this.setInfo();
     }
 
-    if (this.resting) {
-      this.restingTimer -= timeUpdate();
-      this.setInfo();
-      if (this.restingTimer <= 0) {
-        this.resting = false;
-        // when the agent has rested he also is less stressed
-        this.stress /= this.stress_decrease_val;
-        this.setInfo();
-      }
-    }
+    // if (this.resting) {
+    //   this.restingTimer -= timeUpdate();
+    //   this.setInfo();
+    //   if (this.restingTimer <= 0) {
+    //     this.resting = false;
+    //     // when the agent has rested he also is less stressed
+    //     this.stress /= this.stress_decrease_val;
+    //     this.setInfo();
+    //   }
+    // }
 
     if (this.working && !this.isPlayer) {
 
@@ -315,7 +316,7 @@ class Agent {
       this.workingTimer -= timeUpdate();
       this.setInfo();
       if (this.workingTimer <= 0) {
-        this.has_swapped = false;// reset to false, very IMPORTANT otherwise the agent will always be called to do a traded task
+        this.has_swapped = false;// reset to false, very IMPORTANT otherwise the agent will always be called to do a swapped task
         this.swap_task = '';
         this.working = false;
         this.currentTask = '';
@@ -435,8 +436,8 @@ class Agent {
                */
 
               agent.has_swapped = true;
-              // need to keep track how often the agent traded
-              agent.swap_task = toDoTask;// traded task should be different than this task
+              // need to keep track how often the agent swapped
+              agent.swap_task = toDoTask;// swapped task should be different than this task
               agent.setInfo();
             }
           }
@@ -621,7 +622,7 @@ class Agent {
 
     // here we can check the preference for the task?
 
-    // traded task should be different than this task
+    // swapped task should be different than this task
     let result = ''
     let loop = true;
     while (loop) {
@@ -673,7 +674,7 @@ class Agent {
       feel_like_doing: this.FLD,
       stress_level: this.stress,
       amount_of_time: this.mappedAmountOfTime,
-      traded: this.has_swapped,// === true ? this.swap_task : '',
+      swapped: this.has_swapped,// === true ? this.swap_task : '',
       brute_force: this.wasBruteForced
     });
 
@@ -685,7 +686,7 @@ class Agent {
         feel_like_doing: this.FLD,
         stress_level: this.stress,
         amount_of_time: this.mappedAmountOfTime,
-        traded: this.has_swapped,
+        swapped: this.has_swapped,
         brute_force: this.wasBruteForced
       });
     }
@@ -1010,7 +1011,7 @@ class Agent {
       stress: this.stress,
       time_coins: this.time_coins,
       amount_of_time_task: this.mappedAmountOfTime,
-      traded: this.has_swapped,
+      swapped: this.has_swapped,
       brute_force: this.wasBruteForced
     };
     // arr.push(this.FLD);

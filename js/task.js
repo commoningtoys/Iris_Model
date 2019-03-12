@@ -195,8 +195,11 @@ class Task {
     let amountOfSkill = 0;
     let skill = 0;
     shuffleArray(agents);// we shuffle the agents 
+    // here we filter out all the agents who already have done the task for the day
+    const available_agents = agents.filter(result => result.done_for_the_day === false);
+    // console.log(available_agents);
     // here we check if the agent has traded before if yes he executes the task
-    for (const agent of agents) {
+    for (const agent of available_agents) {
       // skill = agent.getPreferences(this.type).skill_level;
       if ((agent.has_swapped && agent.swap_task === this.type) && (!agent.working || !agent.resting)) {
         // this is where chooseTask() happens
@@ -248,7 +251,7 @@ class Task {
       if (counter > maximumTradings || this.agentsPool.length < 1) {
         // we need to handle the case in which no agent is available for one task
         this.bruteForceTask(agents);
-        // console.log(`NO AGENT FOUND FOR ${this.type}!`);
+        console.log(`NO AGENT FOUND FOR ${this.type}!`);
         // noLoop();
         break;
       } else {
@@ -275,7 +278,7 @@ class Task {
 
   bruteForceTask(agents) {
     //assigns the task to someone as next task to do.
-    // console.log('BRUTE FORCE!!!')
+    console.log('BRUTE FORCE!!!')
     let i = 0;
     let controlState = true;
     while (controlState) {
