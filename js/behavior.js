@@ -136,32 +136,69 @@ class Behavior {
      */
     function compute_curiosity(agent_archive, task_name) {
       if (agent_archive.length > 1) {
+        let archive = agent_archive;
         /**
-         * first we extract all the task and how often have been executed
+         * first we extract the last 10 tasks and how often have been executed
          */
         const task_execution = [];
-        for (const task of TASK_LIST) {
-          const executed_tasks = agent_archive.filter(result => result.executed_task === task.type).length;
-          let result = {
-            name: task.type,
-            executions: executed_tasks
-          }
-          task_execution.push(result);
+        if(agent_archive.length < 10){
+          
+          // console.log(result)
+        }else{
+          // use only the last ten tasks of the archive
         }
+
+        if(agent_archive.length > 10){
+          archive = [];
+          for(let i = agent_archive.length - 11; i < agent_archive.length - 1; i++){
+            // console.log(i)
+            // console.log(agent_archive[i])
+            archive.push(agent_archive[i]);
+          }
+        }
+        // console.log(agent_archive)
+        // console.log(archive);
+
+        // fill with the data in the archive
+        const executed_tasks = archive.map(result => result.executed_task);
+        // console.log(executed_tasks);
+        // const result = {};
+        for (const task of TASK_LIST) {
+          let sum = 0;
+          for (const exec_task of executed_tasks) {
+            if(exec_task === task.type)sum++
+          }
+          // task_execution[task.type] = sum;
+          task_execution.push({
+            name: task.type,
+            num: sum
+          })
+        }
+
+        // for (const task of TASK_LIST) {
+        //   const executed_tasks = agent_archive.filter(result => result.executed_task === task.type).length;
+        //   let result = {
+        //     name: task.type,
+        //     executions: executed_tasks
+        //   }
+        //   task_execution.push(result);
+        // }
         // than we get how often this task the agent has executed
-        const this_task_execution = task_execution.filter(result => result.name === task_name)[0];
+        // console.log(task_execution);
+        const this_task_execution = task_execution.filter(result => result.name === task_name);
+        // console.log(this_task_execution);
         // we compute the curiosity by getting the inversve percentage
         // between the execution of this task and the total of task executions
         // this returns a value between [0, 1] that tends to 1 when the task has been
         // executed less often
-        const result = 1 - this_task_execution.executions / agent_archive.length;
+        const result = 1 - this_task_execution.num / archive.length;
         // this method also returns a suggestion for a task to be executed in the case
         // the agent decides to swap for another task
         // first we look for the task with minimum value
         // const minimum = Math.min(...task_execution.map(result => result.executions));
         // const less_executed_tasks = task_execution.filter(result => result.executions === minimum);
         // we sort the array by execution
-        task_execution.sort((a, b) => a.executions - b.executions);
+        task_execution.sort((a, b) => a.num - b.num);
         // console.log(task_execution)
         const len = Math.floor(task_execution.length / 2);
         const less_executed_tasks = [];
@@ -279,6 +316,7 @@ class Behavior {
      * @returns an object with the computed value between [0, 1] and a suggested task to swap
      */
     function compute_goodwill(agent, agents, _task) {
+      // console.log(_task.value);
       const task_values = {}
       for (const task of TASK_LIST) {
         if (task.type !== _task.type) task_values[task.type] = agent.taskValue(agents, task.type) * task.amount_of_time;

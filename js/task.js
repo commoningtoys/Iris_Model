@@ -123,9 +123,9 @@ class Task {
       this.value = 0;//this.minWage;
       this.time_coins_reserve = 0;
     }
+    // console.log(this.value)
     return;
   }
-
   get_value(agents) {
     // INVERSE TO THE NUMBER OF AGENTS WITH PREFERENCE FOR SUCH TASK
     // here we remove some time from the amout of resting tim the task can give away
