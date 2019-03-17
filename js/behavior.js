@@ -185,13 +185,14 @@ class Behavior {
         // }
         // than we get how often this task the agent has executed
         // console.log(task_execution);
-        const this_task_execution = task_execution.filter(result => result.name === task_name);
+        const this_task_execution = task_execution.filter(result => result.name === task_name)[0];
         // console.log(this_task_execution);
         // we compute the curiosity by getting the inversve percentage
         // between the execution of this task and the total of task executions
         // this returns a value between [0, 1] that tends to 1 when the task has been
         // executed less often
         const result = 1 - this_task_execution.num / archive.length;
+        // console.log(result)
         // this method also returns a suggestion for a task to be executed in the case
         // the agent decides to swap for another task
         // first we look for the task with minimum value
