@@ -99,9 +99,9 @@ class Behavior {
     if (this.computed_traits.endurance < 0.3) {
       // in here we handle the coins aspect
       // does the agent have enough money?
-      // console.log('agent resting...');
       if (agent.time_coins >= task.aot) {
         //if the agent has enough time coins he rests and tells the task that he rests
+        console.log('agent resting...');
         agent.rest(task);
         return true;
       } else {
@@ -141,16 +141,16 @@ class Behavior {
          * first we extract the last 10 tasks and how often have been executed
          */
         const task_execution = [];
-        if(agent_archive.length < 10){
-          
+        if (agent_archive.length < 10) {
+
           // console.log(result)
-        }else{
+        } else {
           // use only the last ten tasks of the archive
         }
 
-        if(agent_archive.length > 10){
+        if (agent_archive.length > 10) {
           archive = [];
-          for(let i = agent_archive.length - 11; i < agent_archive.length - 1; i++){
+          for (let i = agent_archive.length - 11; i < agent_archive.length - 1; i++) {
             // console.log(i)
             // console.log(agent_archive[i])
             archive.push(agent_archive[i]);
@@ -166,7 +166,7 @@ class Behavior {
         for (const task of TASK_LIST) {
           let sum = 0;
           for (const exec_task of executed_tasks) {
-            if(exec_task === task.type)sum++
+            if (exec_task === task.type) sum++
           }
           // task_execution[task.type] = sum;
           task_execution.push({

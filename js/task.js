@@ -118,7 +118,7 @@ class Task {
     } else {
       // here we don't give any resting time
       // we should think also on how the agent react when no resting time is given for a task
-      // console.log(`GRT is ${this.time_coins_reserve}`)
+      console.log(`GRT is ${this.time_coins_reserve}`)
       // console.log(this.minWage);
       this.value = 0;//this.minWage;
       this.time_coins_reserve = 0;
@@ -176,8 +176,9 @@ class Task {
   }
 
   updateGRT(amount_of_time) {
+
     this.time_coins_reserve += amount_of_time;
-    // console.log(`GRT got updated by ${amount_of_time}, total GRT = ${this.time_coins_reserve}`)
+    console.log(`GRT got updated by ${amount_of_time}, total GRT = ${this.time_coins_reserve}`)
   }
 
   /**
