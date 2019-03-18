@@ -97,8 +97,8 @@ class Task {
      * than the capitalist are the less stressed.
      */
     let amountOfTime = this.minWage + ((NUMBER_OF_AGENTS - counter) / NUMBER_OF_AGENTS) * this.aot;
-    // console.log(this.type, amountOfTime, this.aot, counter)
     amountOfTime = Math.ceil(amountOfTime);
+    // console.log(this.type, amountOfTime, this.aot, counter);
     // down here we remove time from the GRT if it reaches 0 it stays 0!
     if (this.time_coins_reserve > 0) {
       if (this.time_coins_reserve - amountOfTime < 0) {
@@ -113,17 +113,17 @@ class Task {
         // else we set the amout of time as the valuse for the task
         this.value = amountOfTime;
         this.time_coins_reserve -= amountOfTime;
-        this.time_coins_reserve = roundPrecision(this.time_coins_reserve, 1)
+        // this.time_coins_reserve = roundPrecision(this.time_coins_reserve, 1)
       }
     } else {
       // here we don't give any resting time
       // we should think also on how the agent react when no resting time is given for a task
-      console.log(`GRT is ${this.time_coins_reserve}`)
+      // console.log(`GRT is ${this.time_coins_reserve}`)
       // console.log(this.minWage);
       this.value = 0;//this.minWage;
       this.time_coins_reserve = 0;
     }
-    // console.log(this.value)
+    console.log(this.type, this.value, this.time_coins_reserve)
     return;
   }
   get_value(agents) {
@@ -178,7 +178,7 @@ class Task {
   updateGRT(amount_of_time) {
 
     this.time_coins_reserve += amount_of_time;
-    console.log(`GRT got updated by ${amount_of_time}, total GRT = ${this.time_coins_reserve}`)
+    console.log(`task ${this.type} GRT got updated by ${amount_of_time}, total GRT = ${this.time_coins_reserve}`)
   }
 
   /**
@@ -223,7 +223,7 @@ class Task {
           //////////////////////
           // console.log(agent.ID, agent.swap_task)
           skill = agent.getPreferences(this.type).skill_level;
-          let time = this.amountOfTimeBasedOnSkill(skill);
+          const time = this.amountOfTimeBasedOnSkill(skill);
           agent.work(time, this, agents);//the agent works
           agent.has_swapped = false; // reset here the traded boolean | needs to be done after the the agent.work otherwise the it is not possible to visualize the trade happening
           // this.executed++;
@@ -252,6 +252,8 @@ class Task {
       if (counter > maximumTradings || this.agentsPool.length < 1) {
         // we need to handle the case in which no agent is available for one task
         this.bruteForceTask(agents);
+        // flush the pool
+        this.agentsPool = [];
         // console.log(`NO AGENT FOUND FOR ${this.type}!`);
         // noLoop();
         break;
@@ -265,6 +267,8 @@ class Task {
           agent.work(time, this, agents);// we set the agent at work
           // this.executed++;
           swapping = false;// here we exit the while loop
+          // flush the pool
+          this.agentsPool = [];
           break;//DEPRECATED
         } else {
           // if the agent has traded we remove him from the pool
@@ -279,7 +283,7 @@ class Task {
 
   bruteForceTask(agents) {
     //assigns the task to someone as next task to do.
-    console.log('BRUTE FORCE!!!')
+    // console.log('BRUTE FORCE!!!')
     let i = 0;
     let controlState = true;
     while (controlState) {
@@ -315,7 +319,7 @@ class Task {
       i++;
       if (i > 5000) {
         // assign task as next to do to an agent
-        console.log('no agent found');
+        // console.log('no agent found');
         controlState = false;
         break;
       }

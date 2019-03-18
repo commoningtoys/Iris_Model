@@ -12,6 +12,8 @@ class IrisModel {
     this.traits_list = extract_unique_keys(this.traits, 'trait');
     console.log(this.traits_list);
     console.log(this.traits)
+
+    this.max_time_coins = 0;
     // /**
     //  * here below we fill our Agents array
     //  * 
@@ -135,7 +137,8 @@ class IrisModel {
     }
 
     // here we need to redistribbute the time coins for all the tasks
-    this.distribute_time_coins();
+    // this could be done every two months or every semester
+    // this.distribute_time_coins();
 
     // this needs refactoring
     if (this.counter % TIME_SCALE == 0) {
@@ -160,6 +163,12 @@ class IrisModel {
      * during the choose agent process of task.js
      */
     background(51);
+    // const max_time_coins = Math.max(...this.agents.map(result => result.time_coins))
+    // // for (const agent of this.agents) {
+      
+    // // }
+    // console.log(this.agents.map(result => result.preferenceArchive))
+    console.log(this.max_time_coins);
     const medianValuesByBehavior = {};
     for (const behavior of this.traits_list) {
       const median = {};
@@ -175,6 +184,7 @@ class IrisModel {
       const len = extractedAgents.length;
       const agentsData = {
         fld: [],
+        time_coins_real: [],
         time_coins: [],
         stress: [],
         aot: [],
@@ -185,16 +195,26 @@ class IrisModel {
       for (const agent of extractedAgents) {
         const fld = agent.preferenceArchive.map(result => result.feel_like_doing);
         const time_coins = agent.preferenceArchive.map(result => result.time_coins);
-        const rtMax100 = agent.preferenceArchive.map(el => {
-          let val = (el.time_coins / (this.GLOBAL_RESTING_TIME / extractedAgents.length)) * 100;
-          return val;
+        const tcMax100 = agent.preferenceArchive.map(el => {
+          if(el.time_coins > this.max_time_coins){
+            this.max_time_coins = el.time_coins;//here we update the max value for time coins 
+          }
+          let result = el.time_coins;
+          // if (el.time_coins > 100) {
+            // console.log(el.time_coins, max_time_coins);
+            result = (el.time_coins / this.max_time_coins) * 100;
+            // console.log(result); 
+          // }
+          // let val = (el.time_coins / (this.GLOBAL_RESTING_TIME / extractedAgents.length)) * 100;
+          return result;
         });
         const stress = agent.preferenceArchive.map(result => result.stress_level);
         const aot = agent.preferenceArchive.map(result => result.amount_of_time);
         const swapped = agent.preferenceArchive.map(result => result.swapped);
         const bruteForce = agent.preferenceArchive.map(result => result.brute_force);
         agentsData.fld.push(fld);
-        agentsData.time_coins.push(rtMax100);
+        agentsData.time_coins_real.push(time_coins);
+        agentsData.time_coins.push(tcMax100);
         agentsData.stress.push(stress);
         agentsData.aot.push(aot);
         agentsData.swapped.push(swapped);
@@ -300,18 +320,25 @@ class IrisModel {
       noStroke();
       fill(255);
       textAlign(CENTER, CENTER)
+      textSize(10);
       text(`${num_agents_by_behavior} ${key}`, infoX, infoY - PADDING, INFO_WIDTH, PADDING);
       let lines = 0;
       Object.keys(this.colors).forEach(pref => {
         textAlign(RIGHT, CENTER);
         fill(this.colors[pref])
+        
         text(pref, infoX - 10, (infoY + 50) + (lines * TEXT_SIZE));
         lines++;
       })
       const preferences = data[key];
       Object.keys(preferences).forEach(pref => {
         // console.log(pref)
-        if (pref === 'swapped' || pref === 'brute_force') {
+        if(pref === 'time_coins_real'){
+          textSize(20);
+          const arr = preferences[pref];
+          const last = arr[arr.length -1];
+          text(round(last), infoX, infoY)
+        }else if (pref === 'swapped' || pref === 'brute_force') {
 
           const agent_num = this.traits.filter(result => result.trait === key).length;
           drawLine(preferences[pref], agent_num, infoX, infoY, this.colors[pref], pref)
@@ -396,6 +423,7 @@ class IrisModel {
       }
       this.days++;
       this.hours = 0;
+      this.distribute_time_coins();
     }
     if (this.days > 0 && this.days % 30 == 0) {
       this.months++;
@@ -425,16 +453,22 @@ class IrisModel {
     console.log(`agent resting time: ${sumAgent}, task time_coins_reserve: ${sumTask} GLOBAL ${this.GLOBAL_RESTING_TIME}`);
   }
 
-  distribute_time_coins(){
+  distribute_time_coins() {
     // here we need to redistribute the time coins
     // between the task to avoid that some tasks accumulate
     // all the time coins
-    const sum = this.tasks.map(result => result.time_coins_reserve).reduce((acc, curr) => acc + curr);
-    const result = sum / this.tasks.length;
+    const get_coins = this.tasks.map(result => result.time_coins_reserve)
+    const sum = get_coins.reduce((acc, curr) => acc + curr);
+    const result = Math.floor(sum / this.tasks.length);
+    const advance = sum % this.tasks.length;
+    console.log(sum, result, advance);
     for (const task of this.tasks) {
       task.time_coins_reserve = result;
     }
-    console.log(this.tasks, sum, result)
+    const rand_idx = Math.floor(Math.random() * this.tasks.length)
+    this.tasks[rand_idx].time_coins_reserve += advance
+    console.log(this.tasks);
+    // console.log(sum, result)
 
   }
 

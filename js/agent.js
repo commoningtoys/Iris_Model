@@ -587,7 +587,7 @@ class Agent {
   work(amount_of_time, task, agents, brute_forced) {
     this.working = true;
     this.workingTimer = amount_of_time;
-    this.updateAttributes(task, agents, brute_forced, amount_of_time);
+    this.updateAttributes(task, agents, amount_of_time, brute_forced);
     this.currentTask = task.type;// we set the current task according to the task the agent is currently working on
     this.setInfo();
     // this.makeInfo(`AGENT: ${this.ID} is executing ${task.type}. It will take ${amount_of_time} ticks`);
@@ -642,7 +642,7 @@ class Agent {
    * @param {Array} task 
    * @param {Array} agents 
    */
-  updateAttributes(task, agents, brute_forced, _amount_of_time) {
+  updateAttributes(task, agents, _amount_of_time, brute_forced) {
     /**
      * - resting time (++) increases by some value depending on the value of the task
      * - preference (could be fixed, or updating, as described on the left); 
@@ -657,7 +657,7 @@ class Agent {
     this.updateFLD(agents, task, brute_forced);
     this.time_coins += task.value;// * task_executed == true ? 1 : -1;
     // console.log(this.time_coins, task.value)
-    // console.log(`executed task: ${this.time_coins}, value: ${task.value}`);
+    console.log(`executed ${task.type}: ${this.time_coins}, value: ${task.value}`);
     const arr = TASK_LIST.map(result => result.amount_of_time);
     const max = Math.max(...arr);
     this.mappedAmountOfTime = map(_amount_of_time, 0, max + (max / 2), MINIMUM, MAXIMUM);
