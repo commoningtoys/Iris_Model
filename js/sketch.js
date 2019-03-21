@@ -11,9 +11,9 @@ let check_values = true;
 
 
 init_menu();
-
+let cnv;
 function setup() {
-  createCanvas(WIDTH(), HEIGHT());
+  cnav = createCanvas(WIDTH(), HEIGHT());
   // let behaviors = {
   //   curious: 1,
   //   perfectionist: 1,
@@ -69,9 +69,11 @@ function drawInfos(agent) {
  * here we add all the event listeners for the menu
  */
 
-let start_stop = true;
-$('#start-stop').click(() => {
-  console.log('start-stop')
+let start_stop = false;
+$('#start-stop').click(start_stop_model);
+
+function start_stop_model() {
+  console.log('start-stop');
   start_stop = !start_stop;
   if (start_stop) {
     $('#start-stop').text('RESTART');
@@ -80,7 +82,7 @@ $('#start-stop').click(() => {
     $('#start-stop').text('STOP');
     loop();
   }
-});
+}
 
 let recordData = document.getElementById('record-data')
 recordData.addEventListener('click', () => {
@@ -90,12 +92,12 @@ recordData.addEventListener('click', () => {
 let showSideBar = true;
 $('#show-sidebar').click(() => {
   showSideBar = !showSideBar;
-  $('#show-sidebar').text(showSideBar == false ? 'SHOW SIDEBAR' : 'HIDE SIDEBAR');
+  $('#show-sidebar').text(showSideBar == true ? 'SHOW SIDEBAR' : 'HIDE SIDEBAR');
   $('#info-window').toggle('fast', () => {
     // whe the window is closed resize the sketch
     resizeCanvas(WIDTH(), HEIGHT());
     let info = document.getElementById('info-window')
-    console.log(info.getBoundingClientRect().width);
+    // console.log(info.getBoundingClientRect().width);
   });
 });
 
@@ -192,7 +194,7 @@ function init_model() {
 
     }
     // next we shuffle the array to distribute all the traits randomly
-    shuffleArray(traits_list);
+    // shuffleArray(traits_list);
     console.log(traits_list);
     // const agents = [];
     // let idx = 0;
@@ -207,23 +209,20 @@ function init_model() {
     console.log(min_wage, tasks_num);
 
     irisModel = new IrisModel(traits_list, min_wage, tasks_num, players);
-    $('.menu').toggle('fast');
-  }
-  // const customBehavior = document.getElementsByClassName('custom-behavior');
-  // const minWage = document.getElementById('min-wage');
-  // const tasksNum = document.getElementById('how-many-task');
-  // const behaviors = {
-  //   curious: parseInt(customBehavior.curious.value),
-  //   perfectionist: parseInt(customBehavior.perfectionist.value),
-  //   geniesser: parseInt(customBehavior.geniesser.value),
-  //   capitalist: parseInt(customBehavior.capitalist.value)
-  // }
 
-  // const min_wage = parseInt(minWage.value);
-  // const tasks_num = parseInt(tasksNum.value);
-  // players = parseInt(document.getElementById('num-players').value);
-  // irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
-  // $('.menu').toggle('fast');
+    const stop_model = parseInt(document.getElementById('stop-model').value)
+
+    irisModel.end_after(stop_model);
+
+    $('.menu').toggle('fast');
+
+    $('#info-window').toggle('fast', () => {
+      // whe the window is closed resize the sketch
+      resizeCanvas(WIDTH(), HEIGHT());
+      let info = document.getElementById('info-window')
+      // console.log(info.getBoundingClientRect().width);
+    });
+  }
 }
 
 function init_menu() {
@@ -285,7 +284,7 @@ function init_menu() {
 function get_decimal_value(val) {
   console.log(val);
   val = parseFloat(val);
-  if(val <= 1)return val;
+  if (val <= 1) return val;
   else {
     // if the value is bigger than one than we round it
     val = parseInt(val);

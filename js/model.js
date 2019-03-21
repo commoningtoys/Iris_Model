@@ -8,47 +8,11 @@ class IrisModel {
 
     this.traits = traits;
     console.log(this.traits)
-    shuffleArray(this.traits)
     this.traits_list = extract_unique_keys(this.traits, 'trait');
     console.log(this.traits_list);
     console.log(this.traits)
 
     this.max_time_coins = 0;
-    // /**
-    //  * here below we fill our Agents array
-    //  * 
-    //  * first we extract all the behaviors that
-    //  * have been passed from the object into an array
-    //  */
-    // let behaviorList = [];
-    // let agentsNum = 0;
-    // Object.keys(behaviors).forEach(key => {
-    //   console.log(key, behaviors[key]);
-    //   for (let i = 0; i < behaviors[key]; i++) {
-    //     behaviorList.push(key);
-    //     agentsNum++;
-    //   }
-    // });
-    // /**
-    //  * in order to have them more omogenous distributed we 
-    //  * shuffle the array containing the bahaviors
-    //  * and than we fill the agents array and we assign their behaviors
-    //  */
-    // shuffleArray(behaviorList);
-    // let index = 0;
-    // for (const behavior of behaviorList) {
-    //   const traits = this.traits[index];
-    //   this.agents.push(new Agent(TASK_LIST, index, false, behavior, this.traits[index]));
-    //   index++;
-    // }
-    // // add players
-    // for (let i = 0; i < num_players || 0; i++) {
-    //   this.agents.push(new Agent(TASK_LIST, agentsNum + i, true, 'curious'))
-    //   agentsNum++;
-    // }
-    // here we set the max value of the slider that shows the agents
-    // const slider = document.getElementById('view')
-    // slider.max = agentsNum;
     let idx = 0;
     for (const trait of this.traits) {
       this.agents.push(new Agent(idx, false, trait))
@@ -69,6 +33,7 @@ class IrisModel {
 
     this.GLOBAL_RESTING_TIME = this.calcGlobalRestTime();
     console.log(this.GLOBAL_RESTING_TIME);
+    this.getTotalRestingTime();
     this.counter = 0;
 
     this.timeUnit = 0;
@@ -78,8 +43,9 @@ class IrisModel {
     this.weeks = 0;
     this.months = 0;
     this.years = 0;
-    this.getTotalRestingTime();
 
+    this.termination = 0;
+    this.termination_counter = 0;
     /**
      * PLOT
      */
@@ -168,7 +134,7 @@ class IrisModel {
       
     // // }
     // console.log(this.agents.map(result => result.preferenceArchive))
-    console.log(this.max_time_coins);
+    // console.log(this.max_time_coins);
     const medianValuesByBehavior = {};
     for (const behavior of this.traits_list) {
       const median = {};
@@ -428,6 +394,17 @@ class IrisModel {
     if (this.days > 0 && this.days % 30 == 0) {
       this.months++;
       this.days = 0;
+
+      this.termination_counter++;
+      if(this.termination_counter >= this.termination){
+        console.log('terminate');
+        start_stop_model();
+        const d = new Date();
+        let save_txt = d.toISOString() + '_model';
+        save_txt = save_txt.replace('.', '_');
+        console.log(save_txt);
+        saveCanvas(save_txt, 'png');
+      }
     }
     if (this.months > 0 && this.months % 12 == 0) {
       this.years++;
@@ -437,6 +414,9 @@ class IrisModel {
     let currentDate = `years: ${this.years}<br>months: ${this.months}<br>days: ${this.days}<br>hours: ${this.hours}`;
     // console.log(currentDate);
     document.getElementById('display-date').innerHTML = currentDate;
+  }
+  end_after(val){
+    this.termination = val;
   }
   /**
    * computes the total resting time in the model
@@ -461,13 +441,13 @@ class IrisModel {
     const sum = get_coins.reduce((acc, curr) => acc + curr);
     const result = Math.floor(sum / this.tasks.length);
     const advance = sum % this.tasks.length;
-    console.log(sum, result, advance);
+    // console.log(sum, result, advance);
     for (const task of this.tasks) {
       task.time_coins_reserve = result;
     }
     const rand_idx = Math.floor(Math.random() * this.tasks.length)
     this.tasks[rand_idx].time_coins_reserve += advance
-    console.log(this.tasks);
+    // console.log(this.tasks);
     // console.log(sum, result)
 
   }

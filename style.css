@@ -237,6 +237,10 @@ button#close-menu {
     text-decoration: underline #00f;
     font-style: italic;
 }
+
+#info-window{
+    display: none;
+}
 .info{
     position: fixed;
     background-color: #fff;

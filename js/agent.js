@@ -657,7 +657,7 @@ class Agent {
     this.updateFLD(agents, task, brute_forced);
     this.time_coins += task.value;// * task_executed == true ? 1 : -1;
     // console.log(this.time_coins, task.value)
-    console.log(`executed ${task.type}: ${this.time_coins}, value: ${task.value}`);
+    // console.log(`executed ${task.type}: ${this.time_coins}, value: ${task.value}`);
     const arr = TASK_LIST.map(result => result.amount_of_time);
     const max = Math.max(...arr);
     this.mappedAmountOfTime = map(_amount_of_time, 0, max + (max / 2), MINIMUM, MAXIMUM);
@@ -670,7 +670,7 @@ class Agent {
     this.preferenceArchive.push({
       preferences: insert,
       executed_task: task.type,
-      time_coins: this.time_coins / TIME_SCALE, // this maps the value to a better scale
+      time_coins: this.time_coins, // this maps the value to a better scale
       feel_like_doing: this.FLD,
       stress_level: this.stress,
       amount_of_time: this.mappedAmountOfTime,
@@ -883,7 +883,7 @@ class Agent {
   updateFLD(agents, task, brute_forced) {// rename me: motivation
     /**
       * this algorithm looks how much the other agents have been 
-      * working. If the others are working more than this agent than
+      * working. If the others are working more than this agent then
       * his FLD decreases slower, if he is working more than it 
       * decreses faster.
       * it could be possible to introduce the concept of groups here where 
@@ -904,7 +904,7 @@ class Agent {
     //   if (this.behavior === 'capitalist') {
     //     /**
     //      * we check who has the highest amout of resting time if it is 
-    //      * me the capitalist than the FLD drops 2 points or less
+    //      * me the capitalist then the FLD drops 2 points or less
     //      * otherwise it drops by 0.5 points
     //      */
     //     // console.log(agents.length);

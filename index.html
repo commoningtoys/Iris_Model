@@ -23,6 +23,10 @@
   <div class="info" id="info-window">
     <div id="whatFrameRate"></div>
     <div id="display-date"></div>
+    <div class="model-settings-item">
+      set model speed:<br>
+      <input type="range" value="1" min="1" max="10" id="model-speed">
+    </div>
   </div>
   <div class="player-work">
     <span id="start" class="content" onclick="irisModel.startPlayerTime()">START YOUR TASK</span>
@@ -80,7 +84,8 @@
         <div class="traits-item">
           <div class="traits-elt">trait:</div> <input type="text" name="trait" value="curious">
           <div class="traits-elt">curiosity:</div> <input type="number" value="1" autocomplete="off" name="curiosity">
-          <div class="traits-elt">perfectionism:</div> <input type="number" value="0" autocomplete="off" name="perfectionism">
+          <div class="traits-elt">perfectionism:</div> <input type="number" value="0" autocomplete="off"
+            name="perfectionism">
           <div class="traits-elt">endurance:</div> <input type="number" value="0.5" autocomplete="off" name="endurance">
           <div class="traits-elt">goodwill:</div> <input type="number" value="0" autocomplete="off" name="goodwill">
           <div class="traits-elt">how many?</div> <input type="number" value="3" autocomplete="off" name="amount">
@@ -88,7 +93,8 @@
         <div class="traits-item">
           <div class="traits-elt">trait:</div> <input type="text" name="trait" value="perfectionist">
           <div class="traits-elt">curiosity:</div> <input type="number" value="0" autocomplete="off" name="curiosity">
-          <div class="traits-elt">perfectionism:</div> <input type="number" value="1" autocomplete="off" name="perfectionism">
+          <div class="traits-elt">perfectionism:</div> <input type="number" value="1" autocomplete="off"
+            name="perfectionism">
           <div class="traits-elt">endurance:</div> <input type="number" value="0.7" autocomplete="off" name="endurance">
           <div class="traits-elt">goodwill:</div> <input type="number" value="0" autocomplete="off" name="goodwill">
           <div class="traits-elt">how many?</div> <input type="number" value="3" autocomplete="off" name="amount">
@@ -96,7 +102,8 @@
         <div class="traits-item">
           <div class="traits-elt">trait:</div> <input type="text" name="trait" value="lazy">
           <div class="traits-elt">curiosity:</div> <input type="number" value="1" autocomplete="off" name="curiosity">
-          <div class="traits-elt">perfectionism:</div> <input type="number" value="0" autocomplete="off" name="perfectionism">
+          <div class="traits-elt">perfectionism:</div> <input type="number" value="0" autocomplete="off"
+            name="perfectionism">
           <div class="traits-elt">endurance:</div> <input type="number" value="0.2" autocomplete="off" name="endurance">
           <div class="traits-elt">goodwill:</div> <input type="number" value="0" autocomplete="off" name="goodwill">
           <div class="traits-elt">how many?</div> <input type="number" value="3" autocomplete="off" name="amount">
@@ -104,7 +111,8 @@
         <div class="traits-item">
           <div class="traits-elt">trait:</div> <input type="text" name="trait" value="goodwiller">
           <div class="traits-elt">curiosity:</div> <input type="number" value="0.1" autocomplete="off" name="curiosity">
-          <div class="traits-elt">perfectionism:</div> <input type="number" value="0" autocomplete="off" name="perfectionism">
+          <div class="traits-elt">perfectionism:</div> <input type="number" value="0" autocomplete="off"
+            name="perfectionism">
           <div class="traits-elt">endurance:</div> <input type="number" value="0.8" autocomplete="off" name="endurance">
           <div class="traits-elt">goodwill:</div> <input type="number" value="1" autocomplete="off" name="goodwill">
           <div class="traits-elt">how many?</div> <input type="number" value="3" autocomplete="off" name="amount">
@@ -124,22 +132,22 @@
       <div class="model-settings">
         <div class="model-settings-item">
           set minimum wage to: <span id="set-min-wage">0</span> <br>
-          <input type="range" min="0" max="10" value="0" id="min-wage">
+          <input type="range" min="0" max="10" value="0" autocomplete="off" id="min-wage">
         </div>
+
         <div class="model-settings-item">
-          set model speed:<br>
-          <input type="range" value="1" min="1" max="10" id="model-speed">
+          stop model after: <input type="number" value="1" autocomplete="off" id="stop-model"> months
         </div>
 
         <div class="model-settings-item">
           set stress increment level: <span id="set-stress-increment">1</span> <br>
-          <input type="range" value="1" min="0.2" max="5" step="0.2" id="stress-increment">
+          <input type="range" value="1" min="0.2" max="5" step="0.2" autocomplete="off" id="stress-increment">
         </div>
 
 
         <div class="model-settings-item">
           set stress decrement level: <span id="set-stress-decrement">1.5</span> <br>
-          <input type="range" value="1.5" min="0.2" max="5" step="0.2" id="stress-decrement">
+          <input type="range" value="1.5" min="0.2" max="5" step="0.2" autocomplete="off" id="stress-decrement">
         </div>
 
       </div>
@@ -151,7 +159,7 @@
   <div class="footer-menu" id="footer">
     <!-- <button onclick="singleView = !singleView">CHANGE VIEW</button> -->
     <div class="footer-btns">
-      <button id="start-stop">START</button>
+      <button id="start-stop">STOP</button>
       <button id="record-data">RECORD DATA</button>
       <button id="show-menu">SHOW MENU</button>
       <button id="show-sidebar">HIDE SIDEBAR</button>

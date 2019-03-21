@@ -11,7 +11,7 @@ const DAY = 24 * TIME_SCALE * TS_FRACTION;// 1 day
 const MAXIMUM = 100; // we need this to clamp values for preferences
 const MINIMUM = 1;
 const AGENT_NUM = 10;
-const DATA_POINTS = 100;
+const DATA_POINTS = 500;
 // animation const
 const TEXT_SIZE = 12;
 const LEFT_GUTTER = 80;

@@ -123,7 +123,7 @@ class Task {
       this.value = 0;//this.minWage;
       this.time_coins_reserve = 0;
     }
-    console.log(this.type, this.value, this.time_coins_reserve)
+    // console.log(this.type, this.value, this.time_coins_reserve)
     return;
   }
   get_value(agents) {
@@ -178,7 +178,7 @@ class Task {
   updateGRT(amount_of_time) {
 
     this.time_coins_reserve += amount_of_time;
-    console.log(`task ${this.type} GRT got updated by ${amount_of_time}, total GRT = ${this.time_coins_reserve}`)
+    // console.log(`task ${this.type} GRT got updated by ${amount_of_time}, total GRT = ${this.time_coins_reserve}`)
   }
 
   /**
