@@ -53,13 +53,27 @@ class IrisModel {
     this.colors = {
       // skill: color(0, 255, 0),
       // preference: color(255, 0, 255),
-      fld: color(0, 255, 255),
-      time_coins: color(255, 0, 0),
-      stress: color(255, 255, 0),
-      aot: color(45, 105, 245),
-      swapped: color(0, 255, 100, 150),
-      brute_force: color(255, 125, 0, 150)
+      fld: '#0ff',
+      time_coins: '#f00',
+      time_coins_real: '#fff',
+      stress: '#ff0',
+      aot: '#2d69f5',//color(45, 105, 245)
+      swapped: '#00ff6496', //color(0, 255, 100, 150)
+      brute_force: '#ff7d0096'//color(255, 125, 0, 150)
     };
+
+    this.to_emoji = {
+      skill: '🤸🏻‍♀️',
+      preference: '🥰',
+      fld: '🙇🏻‍♀️',
+      time_coins: '💵',
+      time_coins_real: '💰',
+      stress: '😰',
+      aot: '⏳',//color(45, 105, 245)
+      swapped: '🔄', //color(0, 255, 100, 150)
+      brute_force: '💪🏻'//color(255, 125, 0, 150)
+
+    }
 
     // this.plot = new Plot(parent, 20, 20, this.colors);
     this.pointIndex = 0;
@@ -131,7 +145,7 @@ class IrisModel {
     background(51);
     // const max_time_coins = Math.max(...this.agents.map(result => result.time_coins))
     // // for (const agent of this.agents) {
-      
+
     // // }
     // console.log(this.agents.map(result => result.preferenceArchive))
     // console.log(this.max_time_coins);
@@ -162,14 +176,14 @@ class IrisModel {
         const fld = agent.preferenceArchive.map(result => result.feel_like_doing);
         const time_coins = agent.preferenceArchive.map(result => result.time_coins);
         const tcMax100 = agent.preferenceArchive.map(el => {
-          if(el.time_coins > this.max_time_coins){
+          if (el.time_coins > this.max_time_coins) {
             this.max_time_coins = el.time_coins;//here we update the max value for time coins 
           }
           let result = el.time_coins;
           // if (el.time_coins > 100) {
-            // console.log(el.time_coins, max_time_coins);
-            result = (el.time_coins / this.max_time_coins) * 100;
-            // console.log(result); 
+          // console.log(el.time_coins, max_time_coins);
+          result = (el.time_coins / this.max_time_coins) * 100;
+          // console.log(result); 
           // }
           // let val = (el.time_coins / (this.GLOBAL_RESTING_TIME / extractedAgents.length)) * 100;
           return result;
@@ -268,6 +282,8 @@ class IrisModel {
     let infoY = PADDING;
     let i = 0;
     Object.keys(data).forEach(key => {
+
+      const preferences = data[key];
       // console.log(data[key], key)
       // console.log(this.agents);
       // this returns the number of agents by behavior
@@ -286,25 +302,31 @@ class IrisModel {
       noStroke();
       fill(255);
       textAlign(CENTER, CENTER)
-      textSize(10);
+      textSize(TEXT_SIZE);
       text(`${num_agents_by_behavior} ${key}`, infoX, infoY - PADDING, INFO_WIDTH, PADDING);
       let lines = 0;
+
+
       Object.keys(this.colors).forEach(pref => {
         textAlign(RIGHT, CENTER);
         fill(this.colors[pref])
-        
-        text(pref, infoX - 10, (infoY + 50) + (lines * TEXT_SIZE));
-        lines++;
+
+        const arr = preferences[pref];
+        let last = Math.round(arr[arr.length - 1])
+        last = isNaN(last) ? 0 : last;
+        text(this.to_emoji[pref]+': '+last, infoX - 10, (infoY + 50) + (lines * TEXT_SIZE));
+        lines += 1.3;
       })
-      const preferences = data[key];
       Object.keys(preferences).forEach(pref => {
         // console.log(pref)
-        if(pref === 'time_coins_real'){
-          textSize(20);
-          const arr = preferences[pref];
-          const last = arr[arr.length -1];
-          text(round(last), infoX, infoY)
-        }else if (pref === 'swapped' || pref === 'brute_force') {
+        if (pref === 'time_coins_real') {
+          // textSize(20);
+          // fill('#fff');
+          // noStroke();
+          // const arr = preferences[pref];
+          // const last = arr[arr.length - 1];
+          // text('💰 ' + round(last), infoX, infoY)
+        } else if (pref === 'swapped' || pref === 'brute_force') {
 
           const agent_num = this.traits.filter(result => result.trait === key).length;
           drawLine(preferences[pref], agent_num, infoX, infoY, this.colors[pref], pref)
@@ -396,7 +418,7 @@ class IrisModel {
       this.days = 0;
 
       this.termination_counter++;
-      if(this.termination_counter >= this.termination){
+      if (this.termination_counter >= this.termination) {
         console.log('terminate');
         start_stop_model();
         const d = new Date();
@@ -415,7 +437,7 @@ class IrisModel {
     // console.log(currentDate);
     document.getElementById('display-date').innerHTML = currentDate;
   }
-  end_after(val){
+  end_after(val) {
     this.termination = val;
   }
   /**

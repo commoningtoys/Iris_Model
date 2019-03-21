@@ -13,7 +13,7 @@ const MINIMUM = 1;
 const AGENT_NUM = 10;
 const DATA_POINTS = 500;
 // animation const
-const TEXT_SIZE = 12;
+const TEXT_SIZE = 20;
 const LEFT_GUTTER = 80;
 const PADDING = 30;
 const COL = 10;
