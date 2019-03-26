@@ -112,7 +112,7 @@ class Behavior {
       }
     }
     // here the swapping happens
-    if (swap_value > 0.5) {
+    if (swap_value > 0.5) { // make it a slider between 0.3 – 0.7
       // console.log('WORK')
       return false
     } else {
@@ -124,8 +124,6 @@ class Behavior {
       agent.assign_swapped_task(swap_task);
       return true;
     }
-    // comp_cur + comp_perf + comp_res + comp_acc = [0, 4]
-    // return true
     /**
      * this methods computes the curiosity of the agent
      * it checks how often the task has been done and

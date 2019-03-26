@@ -287,8 +287,10 @@ class IrisModel {
       // console.log(data[key], key)
       // console.log(this.agents);
       // this returns the number of agents by behavior
-      const num_agents_by_behavior = this.agents.filter(result => result.behavior === key).length;
-
+      const agents_by_behavior = this.agents.filter(result => result.behavior === key)
+      // console.log(agents_by_behavior);
+      const num_agents_by_behavior = agents_by_behavior.length;
+      const agents_traits = agents_by_behavior[0].behavior_exp.traits;
       // the trick below is useful to spread the 
       // the visualization in 4 regions of the screen
       infoX = LEFT_GUTTER + ((width / 2) * (i % 2));
@@ -302,8 +304,9 @@ class IrisModel {
       noStroke();
       fill(255);
       textAlign(CENTER, CENTER)
-      textSize(TEXT_SIZE);
-      text(`${num_agents_by_behavior} ${key}`, infoX, infoY - PADDING, INFO_WIDTH, PADDING);
+      textSize(TEXT_SIZE - 5);
+      const agents_info = `${num_agents_by_behavior} ${key}: c: ${roundPrecision(agents_traits.curiosity, 2)} p: ${roundPrecision(agents_traits.perfectionism, 2)} e: ${roundPrecision(agents_traits.endurance, 2)} gw: ${roundPrecision(agents_traits.goodwill, 2)}`;
+      text(agents_info, infoX, infoY - PADDING, INFO_WIDTH, PADDING);
       let lines = 0;
 
 
@@ -314,7 +317,7 @@ class IrisModel {
         const arr = preferences[pref];
         let last = Math.round(arr[arr.length - 1])
         last = isNaN(last) ? 0 : last;
-        text(this.to_emoji[pref]+': '+last, infoX - 10, (infoY + 50) + (lines * TEXT_SIZE));
+        text(this.to_emoji[pref] + ': ' + last, infoX - 10, (infoY + 50) + (lines * TEXT_SIZE));
         lines += 1.3;
       })
       Object.keys(preferences).forEach(pref => {
