@@ -1,43 +1,51 @@
-// const PLAYER_ID = 'PLAYER';
-
-// let singleView = true;
-// function HEIGHT() { return PADDING + (agentNum * (INFO_HEIGHT + PADDING)) }
-// let agents = [];
-// let tasks = [];
 let irisModel = null;
-let loops = 1;
+let loops = 50;
 let players = 0;
 let check_values = true;
-
+let batch_mode = false;
+let execution_is_finished = true;
+let execution_combinations;
 
 init_menu();
 let cnv;
 function setup() {
   cnav = createCanvas(WIDTH(), HEIGHT());
-  // let behaviors = {
-  //   curious: 1,
-  //   perfectionist: 1,
-  //   geniesser: 1,
-  //   capitalist: 1
-  // };
-
-  // let min_wage = 1;
-  // let tasks_num = 1;
-  // players = 0; // here you set the players for the game
-  // irisModel = new IrisModel(behaviors, min_wage, tasks_num, players);
-  // textSize(TEXT_SIZE);
-  // noLoop();
 }
 
 function draw() {
 
-  if (irisModel != null) {
-    for (let i = 0; i < loops; i++) {
-      irisModel.update();
+  if (batch_mode) {
+    // console.log('batch!')
+    if (execution_is_finished) {
+      // reset model with new inputs
+      initialize_batch()
+      // set model to batch mode
+      irisModel.set_batch_executions(true);
+      // set termination of the model
+      irisModel.end_after(24);
+      execution_is_finished = false;
+    } else {
+      // execution_is_finished = true;
+      for (let i = 0; i < 100; i++) {
+        // if the model is done exit the loop and start new batch
+        if (irisModel.terminated) {
+          execution_is_finished = true;
+          break;
+        }
+        irisModel.update();
+      }
     }
-    if (frameCount % 15 == 0) irisModel.show();
-    document.getElementById('whatFrameRate').innerHTML = 'Frame rate: <br>' + frameRate();
+  } else {
+    if (irisModel != null) {
+      for (let i = 0; i < loops; i++) {
+        irisModel.update();
+      }
+      // if (frameCount % 15 == 0) irisModel.show();
+      document.getElementById('whatFrameRate').innerHTML = 'Frame rate: <br>' + frameRate();
+    }
   }
+
+  document.getElementById('whatFrameRate').innerHTML = 'Frame rate: <br>' + frameRate();
 }
 
 function windowResized() {
@@ -46,25 +54,6 @@ function windowResized() {
   console.log(info.getBoundingClientRect().width);
 }
 
-// function mouseClicked(){
-//   irisModel.update();
-// }
-
-function drawInfos(agent) {
-  let infos = agent.getPreferencesAsArray();
-  noFill();
-  beginShape();
-  stroke(0, 255, 255, 70)
-  let i = 0;
-  for (const info of infos) {
-    let posX = map(i, 0, infos.length, PADDING, width - PADDING);
-    let posY = map(info, MINIMUM, MAXIMUM, height - PADDING, height - COL_HEIGHT);
-    vertex(posX, posY);
-    i++;
-  }
-  endShape();
-  // console.log(infos);
-}
 /**
  * here we add all the event listeners for the menu
  */
@@ -177,32 +166,8 @@ function init_model() {
   if (check_values) {// if the input given in the menu are correct than start the model
 
 
-    // here we need to extract the values of the menu
-    const traits_input = document.getElementsByClassName('traits-input');
-    const traits_list = [];
-    for (const elt of traits_input[0].children) {
-      // console.log(elt);
-      // here we extract the values we neeed
-      const amount = parseInt(elt.children['amount'].value);
-      const trait_name = elt.children['trait'].value; // this must stay a string
-      const cur_val = parseFloat(elt.children['curiosity'].value);
-      const perf_val = parseFloat(elt.children['perfectionism'].value);
-      const endu_val = parseFloat(elt.children['endurance'].value);
-      const good_val = parseFloat(elt.children['goodwill'].value);
-      // and we push them inside the array
-      for (let i = 0; i < amount; i++)traits_list.push(make_trait(trait_name, cur_val, perf_val, endu_val, good_val));
 
-    }
-    // next we shuffle the array to distribute all the traits randomly
-    // shuffleArray(traits_list);
-    console.log(traits_list);
-    // const agents = [];
-    // let idx = 0;
-    // for (const trait of traits_list) {
-    //   agents.push(new Agent(idx, false, trait))
-    //   idx++;
-    // }
-
+    const traits_list = extract_traits();
     const min_wage = parseInt(document.getElementById('min-wage').value);
     const tasks_num = parseInt(document.getElementById('how-many-task').value);
     const players = 0; // for now
@@ -219,10 +184,112 @@ function init_model() {
     $('#info-window').toggle('fast', () => {
       // whe the window is closed resize the sketch
       resizeCanvas(WIDTH(), HEIGHT());
-      let info = document.getElementById('info-window')
-      // console.log(info.getBoundingClientRect().width);
     });
   }
+}
+function extract_traits() {
+  // here we need to extract the values of the menu
+  const result = [];
+  const traits_input = document.getElementsByClassName('traits-input');
+
+  for (const elt of traits_input[0].children) {
+    // here we extract the values we neeed
+    const amount = parseInt(elt.children['amount'].value);
+    const trait_name = elt.children['trait'].value; // this must stay a string
+    const cur_val = parseFloat(elt.children['curiosity'].value);
+    const perf_val = parseFloat(elt.children['perfectionism'].value);
+    const endu_val = parseFloat(elt.children['endurance'].value);
+    const good_val = parseFloat(elt.children['goodwill'].value);
+    // and we push them inside the array
+    for (let i = 0; i < amount; i++)result.push(make_trait(trait_name, cur_val, perf_val, endu_val, good_val));
+
+  }
+  console.log(result);
+  return result;
+}
+
+function batch_executions() {
+  batch_mode = true;
+  // batch execution is alwazs with n agents maybe 100
+  const traits_list = [];
+  const traits_input = document.getElementsByClassName('traits-input');
+
+  for (const elt of traits_input[0].children) {
+    // here we extract the values we neeed
+    const amount = parseInt(elt.children['amount'].value);
+    const trait_name = elt.children['trait'].value; // this must stay a string
+    const cur_val = parseFloat(elt.children['curiosity'].value);
+    const perf_val = parseFloat(elt.children['perfectionism'].value);
+    const endu_val = parseFloat(elt.children['endurance'].value);
+    const good_val = parseFloat(elt.children['goodwill'].value);
+    // and we push them inside the array
+    traits_list.push(make_trait(trait_name, cur_val, perf_val, endu_val, good_val));
+
+  }
+  console.log(traits_list);
+  execution_combinations = combination_of_array_elements(traits_list);
+  console.log(execution_combinations)
+  // first execute all the single traits with n agents
+  // executions need to be done with minimum and maximum amount of ratio between agents and tasks
+  $('.menu').toggle('fast');
+
+    $('#info-window').toggle('fast', () => {
+      // whe the window is closed resize the sketch
+      resizeCanvas(WIDTH(), HEIGHT());
+    });
+}
+
+const max_task = 8;
+const max_agents = 50;
+let task_amount_counter = 1;
+let combinations_counter = 0;
+let combination_elts_length = 0;
+let combination_elts_counter = 0;
+let batch_save_txt = '';
+let tot_batch_counter = 0;
+function initialize_batch() {
+
+  // console.log('batch!');
+  // get the combinations as an array
+  const curr_combinations = Object.keys(execution_combinations)[combinations_counter];
+  // console.log(`current combinations is with ${curr_combinations} items and this task numbers ${task_amount_counter}`)
+  batch_save_txt = nf(tot_batch_counter, 4)+ '_' + curr_combinations + '_task#' + task_amount_counter;
+  console.log(batch_save_txt);
+  const combination_list = execution_combinations[curr_combinations];
+  // console.log(combination_list);
+  // execute all the elements of the list
+  // console.log(`combinations counter ${combination_elts_counter}`)
+  const agent_traits = combination_list[combination_elts_counter];
+  const amount = max_agents / agent_traits.length;
+  // console.log(`amount ${amount}`);
+  // console.log(agent_traits);
+  const traits_list = [];
+  for (let i = 0; i < max_agents; i += amount) {
+    const index = Math.floor(i / amount);
+    for (let j = 0; j < amount; j += 1) {
+      const traits = agent_traits[index]
+      traits_list.push(make_trait(traits.trait, traits.curiosity, traits.perfectionism, traits.endurance, traits.goodwill))
+    }
+    // console.log(`index ${index}`);
+  }
+  // console.log(traits_list);
+  const min_wage = parseInt(document.getElementById('min-wage').value);
+  irisModel = new IrisModel(traits_list, min_wage, task_amount_counter, 0);
+  task_amount_counter++
+  if (task_amount_counter > max_task) {
+    task_amount_counter = 1;
+    combination_elts_counter++;
+  }
+  if (combination_elts_counter >= combination_list.length) {
+    combination_elts_counter = 0;
+    combinations_counter++;
+    // console.log(`next ${combinations_counter}`);
+  }
+  if (combinations_counter >= 4) {
+    console.log('terminate batch...')
+    start_stop_model();
+  }
+  tot_batch_counter++;
 }
 
 function init_menu() {

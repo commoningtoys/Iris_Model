@@ -2,6 +2,7 @@ class IrisModel {
   constructor(traits, min_wage, num_task, num_players) {
     // this.plot = new Plot();
     // console.log(behaviors);
+    this.batch = false;
     this.agents = [];
     this.tasks = [];
     // this.behaviors = behaviors;
@@ -46,6 +47,7 @@ class IrisModel {
 
     this.termination = 0;
     this.termination_counter = 0;
+    this.terminated = false;
     /**
      * PLOT
      */
@@ -124,8 +126,9 @@ class IrisModel {
     if (this.counter % TIME_SCALE == 0) {
       this.timeUnit++;
 
-      this.setModelTime();
+      // this.setModelTime();
     }
+    this.setModelTime();
     this.counter++;
     // console.log(this.counter, this.timeUnit);
     // if we are recording the data, we show how much has been collected
@@ -143,12 +146,6 @@ class IrisModel {
      * during the choose agent process of task.js
      */
     background(51);
-    // const max_time_coins = Math.max(...this.agents.map(result => result.time_coins))
-    // // for (const agent of this.agents) {
-
-    // // }
-    // console.log(this.agents.map(result => result.preferenceArchive))
-    // console.log(this.max_time_coins);
     const medianValuesByBehavior = {};
     for (const behavior of this.traits_list) {
       const median = {};
@@ -403,9 +400,9 @@ class IrisModel {
    * sets the time passed in the form of hours | days | months | yeara
    */
   setModelTime() {
-    if (this.timeUnit > 0 && this.timeUnit % TS_FRACTION == 0) {
+    // if (this.timeUnit > 0 && this.timeUnit % TS_FRACTION == 0) {
       this.hours++;
-    }
+    // }
     if (this.hours > 0 && this.hours % 24 == 0) {
       // here we update the agent status rest and availability to work
       for (const agent of this.agents) {
@@ -421,14 +418,31 @@ class IrisModel {
       this.days = 0;
 
       this.termination_counter++;
-      if (this.termination_counter >= this.termination) {
-        console.log('terminate');
-        start_stop_model();
-        const d = new Date();
-        let save_txt = d.toISOString() + '_model';
-        save_txt = save_txt.replace('.', '_');
-        console.log(save_txt);
-        saveCanvas(save_txt, 'png');
+      if (this.batch) {
+        // save images every 3 months
+        if(this.months % 6 === 0){
+          this.show();
+          const d = new Date();
+          const milliseconds = Date.parse(d) / 1000;
+          let save_txt = milliseconds + '_'+ batch_save_txt +  '_model';
+          console.log(save_txt);
+          // saveCanvas(save_txt, 'png');
+        }
+
+        if(this.termination_counter >= this.termination){
+          this.terminated = true;
+        }
+      } else {
+        if (this.termination_counter >= this.termination) {
+          console.log('terminate');
+          start_stop_model();
+          const d = new Date();
+          const milliseconds = Date.parse(d) / 1000;
+          let save_txt = batch_save_txt + '_'+ milliseconds +'_model';
+          // save_txt = save_txt.replace('.', '_');
+          console.log(save_txt);
+          saveCanvas(save_txt, 'png');
+        }
       }
     }
     if (this.months > 0 && this.months % 12 == 0) {
@@ -443,6 +457,11 @@ class IrisModel {
   end_after(val) {
     this.termination = val;
   }
+
+  set_batch_executions(bool) {
+    this.batch = bool;
+  }
+
   /**
    * computes the total resting time in the model
    */

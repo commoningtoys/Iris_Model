@@ -40,7 +40,7 @@ class Agent {
     result = random_arr_element(Object.keys(this.preferences))
     // the master tast is the one with higher skill level
     this.masterTask = result;
-    console.log(this.masterTask);
+    // console.log(this.masterTask);
     // }
 
     // the next attributes are used for the trading system,
