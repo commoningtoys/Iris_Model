@@ -84,17 +84,8 @@ class Behavior {
         swap_value += this.result_traits[key];
       }
     });
-    // swap_value /= 2;
-    // console.log(task.type, agent.behavior)
-    // console.log(this.traits);
-    // console.log(this.computed_traits);
-    // console.log(this.result_traits);
-    // console.log(swap_value);
-    // first we handle the case of resting therefore if endurance is lower than 0.3
-    // console.log(this.traits.trait)
-    // console.log(`behavior: ${agent.time_coins} && ${task.aot}`)
-    // console.log(this.computed_traits.endurance)
 
+    // first we handle the case of resting therefore if endurance is lower than 0.3
     // if the agents endurance reaches a treshold
     if (this.computed_traits.endurance < 0.3) {
       // in here we handle the coins aspect
@@ -154,8 +145,6 @@ class Behavior {
             archive.push(agent_archive[i]);
           }
         }
-        // console.log(agent_archive)
-        // console.log(archive);
 
         // fill with the data in the archive
         const executed_tasks = archive.map(result => result.executed_task);
@@ -173,14 +162,6 @@ class Behavior {
           })
         }
 
-        // for (const task of TASK_LIST) {
-        //   const executed_tasks = agent_archive.filter(result => result.executed_task === task.type).length;
-        //   let result = {
-        //     name: task.type,
-        //     executions: executed_tasks
-        //   }
-        //   task_execution.push(result);
-        // }
         // than we get how often this task the agent has executed
         // console.log(task_execution);
         const this_task_execution = task_execution.filter(result => result.name === task_name)[0];
@@ -194,8 +175,6 @@ class Behavior {
         // this method also returns a suggestion for a task to be executed in the case
         // the agent decides to swap for another task
         // first we look for the task with minimum value
-        // const minimum = Math.min(...task_execution.map(result => result.executions));
-        // const less_executed_tasks = task_execution.filter(result => result.executions === minimum);
         // we sort the array by execution
         task_execution.sort((a, b) => a.num - b.num);
         // console.log(task_execution)
@@ -268,10 +247,6 @@ class Behavior {
         if (perc_preference > perc_wealth) {
           return (perc_preference - perc_wealth) / 4
         } else return 0;
-        // const mx = Math.max(perc_preference, perc_wealth);
-        // const mn = Math.min(perc_preference, perc_wealth);
-        // const result = (mx - mn) / 4;
-        // return isNaN(result) ? 0 : result;
       };
       // than we sum them up and divide by 2 to get a median value
       // console.log(nudge())
@@ -286,9 +261,6 @@ class Behavior {
       const top_fld = (MAXIMUM - agent.FLD) / MAXIMUM;
       const curr_fld = agent.FLD / MAXIMUM;
       const result = curr_fld + compute_input_tot;
-      // console.log(curr_fld, compute_input_tot);
-      // const result = (top_fld * tot_perc) + (agent.FLD / MAXIMUM);
-      // const result = (curr_fld * tot_perc) + curr_fld;
       // const log = `
       // pref: ${perc_preference}\n
       // wealth: ${perc_wealth}\n

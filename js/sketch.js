@@ -6,34 +6,42 @@ let batch_mode = false;
 let execution_is_finished = true;
 let execution_combinations;
 
+let batch_tick;
+
 init_menu();
 let cnv;
 function setup() {
   cnav = createCanvas(WIDTH(), HEIGHT());
+  // frameRate(200);
 }
 
 function draw() {
   if (batch_mode) {
     // console.log('batch!')
-    if (execution_is_finished) {
-      // reset model with new inputs
-      initialize_batch()
-      // set model to batch mode
-      irisModel.set_batch_executions(true);
-      // set termination of the model
-      irisModel.end_after(24);
-      execution_is_finished = false;
-    } else {
-      // execution_is_finished = true;
-      for (let i = 0; i < 100; i++) {
-        // if the model is done exit the loop and start new batch
-        if (irisModel.terminated) {
-          execution_is_finished = true;
-          break;
-        }
-        irisModel.update();
-      }
-    }
+    // if (execution_is_finished) {
+    //   // reset model with new inputs
+    //   initialize_batch()
+    //   // set model to batch mode
+    //   irisModel.set_batch_executions(true);
+    //   // set termination of the model
+    //   irisModel.end_after(24);
+    //   execution_is_finished = false;
+    // } else {
+    //   // execution_is_finished = true;
+    //   if (irisModel.terminated) {
+    //     execution_is_finished = true;
+    //     // continue;
+    //   }
+    //   irisModel.update();
+    //   // for (let i = 0; i < 1; i++) {
+    //   //   // if the model is done exit the loop and start new batch
+    //   //   if (irisModel.terminated) {
+    //   //     execution_is_finished = true;
+    //   //     break;
+    //   //   }
+    //   //   irisModel.update();
+    //   // }
+    // }
   } else {
     if (irisModel != null) {
       for (let i = 0; i < loops; i++) {
@@ -45,6 +53,8 @@ function draw() {
 
   document.getElementById('whatFrameRate').innerHTML = 'Frame rate: <br>' + frameRate();
 }
+
+
 
 function windowResized() {
   resizeCanvas(WIDTH(), HEIGHT());
@@ -118,10 +128,28 @@ function batch_executions() {
   execution_combinations = combination_of_array_elements(traits_list);
   $('.menu').toggle('fast');
 
-    $('#info-window').toggle('fast', () => {
-      // whe the window is closed resize the sketch
-      resizeCanvas(WIDTH(), HEIGHT());
-    });
+  $('#info-window').toggle('fast', () => {
+    // whe the window is closed resize the sketch
+    resizeCanvas(WIDTH(), HEIGHT());
+  });
+
+  batch_tick = setInterval(() => {
+    if (execution_is_finished) {
+      // reset model with new inputs
+      initialize_batch()
+      // set model to batch mode
+      irisModel.set_batch_executions(true);
+      // set termination of the model
+      irisModel.end_after(24);
+      execution_is_finished = false;
+    } else {
+      // execution_is_finished = true;
+      if (irisModel.terminated) {
+        execution_is_finished = true;
+      }
+      irisModel.update();
+    }
+  }, 0.1);//apparently it can't be faster than 5ms
 }
 
 /**
@@ -129,7 +157,7 @@ function batch_executions() {
  */
 
 const max_task = 8;
-const max_agents = 50;
+const max_agents = 100;
 let task_amount_counter = 1;
 let combinations_counter = 0;
 let combination_elts_length = 0;
@@ -140,7 +168,7 @@ function initialize_batch() {
   // get the combinations type: 1, 2, 3, or types of agents
   const curr_combinations = Object.keys(execution_combinations)[combinations_counter];
   // create  a text file with reference to this batch
-  batch_save_txt = nf(tot_batch_counter, 4)+ '_' + curr_combinations + '_task#' + task_amount_counter;
+  batch_save_txt = nf(tot_batch_counter, 4) + '_' + curr_combinations + '_task#' + task_amount_counter;
   console.log(batch_save_txt);
   // extract the combination 
   const combination_list = execution_combinations[curr_combinations];

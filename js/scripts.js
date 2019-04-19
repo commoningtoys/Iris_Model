@@ -8,12 +8,16 @@ $('#start-stop').click(start_stop_model);
 function start_stop_model() {
   console.log('start-stop');
   start_stop = !start_stop;
-  if (start_stop) {
-    $('#start-stop').text('RESTART');
-    noLoop();
+  if (batch_mode) {
+    clearInterval(batch_tick);
   } else {
-    $('#start-stop').text('STOP');
-    loop();
+    if (start_stop) {
+      $('#start-stop').text('RESTART');
+      noLoop();
+    } else {
+      $('#start-stop').text('STOP');
+      loop();
+    }
   }
 }
 

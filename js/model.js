@@ -420,7 +420,8 @@ class IrisModel {
       this.termination_counter++;
       if (this.batch) {
         // save images every 3 months
-        if(this.months % 6 === 0){
+        // if(this.months % 2 === 0)this.show();
+        if(this.months % 12 === 0){
           this.show();
           const d = new Date();
           const milliseconds = Date.parse(d) / 1000;

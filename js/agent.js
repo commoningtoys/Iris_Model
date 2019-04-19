@@ -63,24 +63,6 @@ class Agent {
     this.working = false;
     this.workingTimer = 0;// how long is the agent at work
     this.mappedAmountOfTime = 0;
-    // ANIMATION && colors
-    // this.color = color(255);
-    // switch (_behavior) {
-    //   case 'curious':
-    //     this.color = color(45, 245, 100); // greenish
-    //     break;
-    //   case 'perfectionist':
-    //     this.color = color(45, 100, 245); // blueish
-    //     break;
-    //   case 'geniesser':
-    //     this.color = color(245, 45, 100); // reddish
-    //     break;
-    //   case 'capitalist':
-    //     this.color = color(245, 45, 245); // magentaish
-    //     break;
-    //   default:
-    //     this.color = color(255);
-    // }
     this.colors = {
       working: color(255, 0, 0),
       available: color(0, 255, 0),
@@ -112,8 +94,6 @@ class Agent {
       .addClass('content')
       .attr('id', this.ID)
       .click(() => {
-
-        // $('#' + this.ID + ' .preference').toggle('slow');
         this.showStatistics = true;
         for (const agent of agents) {// this needs to be refactored
           if (this !== agent) agent.showStatistics = false;
@@ -127,7 +107,6 @@ class Agent {
   setInfo() {
     // to update the infos
     document.getElementById(this.ID).innerHTML = this.htmlText();
-    // if (this.isPlayer) document.getElementById('player-stats').innerHTML = this.htmlText();
   }
   /**
    * 
@@ -183,22 +162,10 @@ class Agent {
    */
   infographic() {
     const INFO_WIDTH = width - LEFT_GUTTER;
-    // const INFO_HEIGHT = (height - (6 * PADDING)) / ROWS;
     let ROW_NUMBER = 0;
-    // NEED TO FIX THE VIZ FOR THE PLAYER AGENT!!!!!!
-
-    // if (this.isPlayer) {
-    //     let str = this.ID.substr(this.playerName.length, 4);
-    //     // console.log(str);
-    //     // console.log(`is player ${parseInt(str)}`);
-    //     ROW_NUMBER += (ROWS + parseInt(str)) % ROWS;
-    // } else {
-    //     ROW_NUMBER += (ROWS + parseInt(this.ID)) % ROWS;
-    // }
     ROW_NUMBER += (ROWS + parseInt(this.ID)) % ROWS;
     ROW_NUMBER *= 2;
     const CT = this.currentTask;
-    // console.log(this.currentTask);
     // here we extract the values of FLD, resting time && stress && more
     let fld = this.preferenceArchive.map(result => result.feel_like_doing);
     let rt = this.preferenceArchive.map(result => result.time_coins);
@@ -210,10 +177,6 @@ class Agent {
     // and here we draw them in the infographic
     stroke(255);
     // FIrst we draw the infographic outline
-    // for (let i = 1; i < 6; i++) {
-    //     line(posX(0, MAXIMUM), posY(MAXIMUM, i), posX(0, MINIMUM), posY(MINIMUM, i));
-    //     line(posX(0, MAXIMUM), posY(MINIMUM, i), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, i));
-    // }
     line(posX(0, MAXIMUM), posY(MAXIMUM, ROW_NUMBER), posX(0, MINIMUM), posY(MINIMUM, ROW_NUMBER));
     line(posX(0, MAXIMUM), posY(MINIMUM, ROW_NUMBER), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, ROW_NUMBER));
     let i = 0;
@@ -299,20 +262,8 @@ class Agent {
       this.setInfo();
     }
 
-    // if (this.resting) {
-    //   this.restingTimer -= timeUpdate();
-    //   this.setInfo();
-    //   if (this.restingTimer <= 0) {
-    //     this.resting = false;
-    //     // when the agent has rested he also is less stressed
-    //     this.stress /= this.stress_decrease_val;
-    //     this.setInfo();
-    //   }
-    // }
-
     if (this.working && !this.isPlayer) {
 
-      // console.log((1 / frameRate()) * TIME_SCALE);
       this.workingTimer -= timeUpdate();
       this.setInfo();
       if (this.workingTimer <= 0) {
@@ -325,9 +276,6 @@ class Agent {
       }
     }
   }
-  // setAgents(_agents) {
-  //     this.agents = _agents;
-  // }
   /**
    * We will need this later
    */
