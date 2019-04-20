@@ -6,7 +6,7 @@ let batch_mode = false;
 let execution_is_finished = true;
 let execution_combinations;
 
-let batch_tick;
+let tick;
 
 init_menu();
 let cnv;
@@ -18,12 +18,7 @@ function setup() {
 function draw() {
   if (!batch_mode) {
 
-    if (irisModel != null) {
-      for (let i = 0; i < loops; i++) {
-        irisModel.update();
-      }
-      if (frameCount % 15 == 0) irisModel.show();
-    }
+
   }
 
   document.getElementById('whatFrameRate').innerHTML = 'Frame rate: <br>' + frameRate();
@@ -58,8 +53,19 @@ function init_model() {
       // whe the window is closed resize the sketch
       resizeCanvas(WIDTH(), HEIGHT());
     });
+    tick = setInterval(single_execution, 0.1);
   }
 }
+
+function single_execution(){
+  if (irisModel != null) {
+    for (let i = 0; i < loops; i++) {
+      irisModel.update();
+    }
+    if (frameCount % 15 == 0) irisModel.show();
+  }
+}
+
 function extract_traits() {
   // here we need to extract the values of the menu
   const result = [];
@@ -83,7 +89,7 @@ function extract_traits() {
  * this function fills the executions combination array with
  * all the possible combiation of agents in groups of 1, 2, 3 and 4 agents
  */
-function batch_executions() {
+function init_batch() {
 
   batch_mode = true;
   const traits_list = [];
@@ -108,23 +114,25 @@ function batch_executions() {
     resizeCanvas(WIDTH(), HEIGHT());
   });
 
-  batch_tick = setInterval(() => {
-    if (execution_is_finished) {
-      // reset model with new inputs
-      initialize_batch()
-      // set model to batch mode
-      irisModel.set_batch_executions(true);
-      // set termination of the model
-      irisModel.end_after(24);
-      execution_is_finished = false;
-    } else {
-      // execution_is_finished = true;
-      if (irisModel.terminated) {
-        execution_is_finished = true;
-      }
-      irisModel.update();
+  tick = setInterval(batch_executions, 0.1);//apparently it can't be faster than 5ms
+}
+
+function batch_executions() {
+  if (execution_is_finished) {
+    // reset model with new inputs
+    initialize_batch()
+    // set model to batch mode
+    irisModel.set_batch_executions(true);
+    // set termination of the model
+    irisModel.end_after(24);
+    execution_is_finished = false;
+  } else {
+    // execution_is_finished = true;
+    if (irisModel.terminated) {
+      execution_is_finished = true;
     }
-  }, 0.1);//apparently it can't be faster than 5ms
+    irisModel.update();
+  }
 }
 
 /**

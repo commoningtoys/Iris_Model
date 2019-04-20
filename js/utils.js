@@ -7,11 +7,11 @@
  * @returns Object
  */
 function makeTask(time_needed, how_often, name) {
-    return {
-        amount_of_time: time_needed,
-        executions_per_day: how_often,
-        type: name
-    }
+  return {
+    amount_of_time: time_needed,
+    executions_per_day: how_often,
+    type: name
+  }
 }
 /**
  * 
@@ -23,43 +23,31 @@ function makeTask(time_needed, how_often, name) {
  * @return an object with the traits
  */
 function make_trait(name, cur_val, perf_val, endu_val, good_val) {
-    const sum = cur_val + perf_val + good_val;
-    // console.log(cur_val / sum, perf_val / sum , endu_val, good_val / sum, name)
-    return {
-        trait: name,
-        curiosity: cur_val / sum,
-        perfectionism: perf_val / sum,
-        endurance: endu_val,
-        goodwill: good_val / sum
-    }
+  const sum = cur_val + perf_val + good_val;
+  // console.log(cur_val / sum, perf_val / sum , endu_val, good_val / sum, name)
+  return {
+    trait: name,
+    curiosity: cur_val / sum,
+    perfectionism: perf_val / sum,
+    endurance: endu_val,
+    goodwill: good_val / sum
+  }
 }
 function extract_unique_keys(arr, key) {
 
-    const result = []
-    arr.reduce((accumulator, curr_value, currentIndex, array) => {
-        let parent = curr_value[key]
-        result.push(parent)
-    }, {})
-    return result;
+  const result = []
+  arr.reduce((accumulator, curr_value, currentIndex, array) => {
+    let parent = curr_value[key]
+    result.push(parent)
+  }, {})
+  return result;
 }
 function random_arr_element(arr) {
-    const random_idx = Math.floor(Math.random() * arr.length);
-    return arr[random_idx];
+  const random_idx = Math.floor(Math.random() * arr.length);
+  return arr[random_idx];
 }
 
-//allows to parse time. not used.
-function parse_time(date){
-	//we need to modify the date slightly to get a proper string..
-	const y = date["y"] + 2018;
-	const m = date["m"] + 1;
-	const d = date["d"]+1;
-	const h = date["h"]
-	const string = y+"-"+m+"-"+d+"-"+h;
-	const parser = d3.timeParse("%Y-%m-%d-%H")
 
-	return parser(string);
-
-}
 
 /**
  * clamps a value between a maximum and a minimum
@@ -69,11 +57,11 @@ function parse_time(date){
  * @returns the clamped value
  */
 function clamp(val, min, max) {
-    return Math.min(Math.max(min, val), max);
+  return Math.min(Math.max(min, val), max);
 }
 
 function randomMinMAx() {
-    return MINIMUM + Math.floor(Math.random() * MAXIMUM);
+  return MINIMUM + Math.floor(Math.random() * MAXIMUM);
 }
 
 /**
@@ -82,87 +70,87 @@ function randomMinMAx() {
  * @param {Array} array 
 */
 function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
-        let temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    let temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
 }
 
 function sumArray(arr1, arr2) {
-    for (let i = 0; i < arr2.length; i++) {
-        if (arr1[i] === undefined || arr1[i] === null) arr1[i] = 0;
-        arr1[i] += arr2[i]
-    }
+  for (let i = 0; i < arr2.length; i++) {
+    if (arr1[i] === undefined || arr1[i] === null) arr1[i] = 0;
+    arr1[i] += arr2[i]
+  }
 }
 function timeUpdate() {
-    // return (1 / frameRate()) * TIME_SCALE;
-    return 1;
+  // return (1 / frameRate()) * TIME_SCALE;
+  return 1;
 }
 
 
 function WIDTH() {
-    const info = document.getElementById('info-window');
-    const w = info.getBoundingClientRect().width;
-    return innerWidth - w;
+  const info = document.getElementById('info-window');
+  const w = info.getBoundingClientRect().width;
+  return innerWidth - w;
 };
 
 function HEIGHT() {
-    const footer = document.getElementById('footer');
-    const h = footer.getBoundingClientRect().height;
-    return innerHeight - h;
+  const footer = document.getElementById('footer');
+  const h = footer.getBoundingClientRect().height;
+  return innerHeight - h;
 }
 
 function roundPrecision(value, precision) {
-    if (typeof value === 'number') {
-        let multiplier = Math.pow(10, precision || 0);
-        return Math.round(value * multiplier) / multiplier;
-    } else return value;
+  if (typeof value === 'number') {
+    let multiplier = Math.pow(10, precision || 0);
+    return Math.round(value * multiplier) / multiplier;
+  } else return value;
 }
 
 function saveRAWData(agents, id) {
-    let json = {};
-    agents.sort(function (a, b) {
-        return a.ID - b.ID;
-    });
-    console.log(agents);
-    for (const agent of agents) {
-        json['AGENT_ID_' + agent.ID] = agent.data;
-    }
-    saveJSON(json, 'RAW_DATA_' + nf(id, 4) + '.json');
+  let json = {};
+  agents.sort(function (a, b) {
+    return a.ID - b.ID;
+  });
+  console.log(agents);
+  for (const agent of agents) {
+    json['AGENT_ID_' + agent.ID] = agent.data;
+  }
+  saveJSON(json, 'RAW_DATA_' + nf(id, 4) + '.json');
 }
 
 function modelTime() {
-    return TS_FRACTION * TIME_SCALE;
+  return TS_FRACTION * TIME_SCALE;
 }
 
 function combination_of_array_elements(arr) {
-    const result = {
-        i: [],
-        ii: [],
-        iii: [],
-        iiii: []
-    }
-    for (let i = 0; i < arr.length; i++) {
-        result.i.push([arr[i]])
-        for (let j = i; j < arr.length; j++) {
-            if (!(i === j)) {
-                result.ii.push([arr[i], arr[j]]);
-            }
-            for (let k = j; k < arr.length; k++) {
-                if (!(i === j || j === k)) {
-                    result.iii.push([arr[i], arr[j], arr[k]])
-                }
-                for (let l = k; l < arr.length; l++) {
-                    if (!(i === j || j === k || k === l)) {
-                        result.iiii.push([arr[i], arr[j], arr[k], arr[l]])
-                    }
-                }
-            }
+  const result = {
+    i: [],
+    ii: [],
+    iii: [],
+    iiii: []
+  }
+  for (let i = 0; i < arr.length; i++) {
+    result.i.push([arr[i]])
+    for (let j = i; j < arr.length; j++) {
+      if (!(i === j)) {
+        result.ii.push([arr[i], arr[j]]);
+      }
+      for (let k = j; k < arr.length; k++) {
+        if (!(i === j || j === k)) {
+          result.iii.push([arr[i], arr[j], arr[k]])
         }
+        for (let l = k; l < arr.length; l++) {
+          if (!(i === j || j === k || k === l)) {
+            result.iiii.push([arr[i], arr[j], arr[k], arr[l]])
+          }
+        }
+      }
     }
-    return result
+  }
+  return result
 }
 
 /**
@@ -172,26 +160,26 @@ function combination_of_array_elements(arr) {
  * @returns Object containing slope, intercept and r2
  */
 function linearRegression(y, x) {
-    let lr = {};
-    let n = y.length;
-    let sum_x = 0;
-    let sum_y = 0;
-    let sum_xy = 0;
-    let sum_xx = 0;
-    let sum_yy = 0;
+  let lr = {};
+  let n = y.length;
+  let sum_x = 0;
+  let sum_y = 0;
+  let sum_xy = 0;
+  let sum_xx = 0;
+  let sum_yy = 0;
 
-    for (let i = 0; i < n; i++) {
+  for (let i = 0; i < n; i++) {
 
-        sum_x += x[i];
-        sum_y += y[i];
-        sum_xy += (x[i] * y[i]);
-        sum_xx += (x[i] * x[i]);
-        sum_yy += (y[i] * y[i]);
-    }
+    sum_x += x[i];
+    sum_y += y[i];
+    sum_xy += (x[i] * y[i]);
+    sum_xx += (x[i] * x[i]);
+    sum_yy += (y[i] * y[i]);
+  }
 
-    lr['slope'] = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x * sum_x);
-    lr['intercept'] = (sum_y - lr.slope * sum_x) / n;
-    lr['r2'] = Math.pow((n * sum_xy - sum_x * sum_y) / Math.sqrt((n * sum_xx - sum_x * sum_x) * (n * sum_yy - sum_y * sum_y)), 2);
+  lr['slope'] = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x * sum_x);
+  lr['intercept'] = (sum_y - lr.slope * sum_x) / n;
+  lr['r2'] = Math.pow((n * sum_xy - sum_x * sum_y) / Math.sqrt((n * sum_xx - sum_x * sum_x) * (n * sum_yy - sum_y * sum_y)), 2);
 
-    return lr;
+  return lr;
 }

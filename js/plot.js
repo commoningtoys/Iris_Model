@@ -54,7 +54,7 @@ class Plot {
   }
   draw(data, date) {
     // this.data = [];
-    this.date = parse_time(date);
+    this.date = this.parse_time(date);
     // console.log(data['curious']);
     // const arr = this.data['curious'].fld;
     const tmp_obj = {}
@@ -118,6 +118,20 @@ class Plot {
       .attr("width", w + this.margin.left + this.margin.right)
       .attr("height", h + this.margin.top + this.margin.bottom)
   }
+
+  //allows to parse time. not used.
+parse_time(date){
+	//we need to modify the date slightly to get a proper string..
+	const y = date["y"] + 2018;
+	const m = date["m"] + 1;
+	const d = date["d"]+1;
+	const h = date["h"]
+	const string = y+"-"+m+"-"+d+"-"+h;
+	const parser = d3.timeParse("%Y-%m-%d-%H")
+
+	return parser(string);
+
+}
 }
 
 
