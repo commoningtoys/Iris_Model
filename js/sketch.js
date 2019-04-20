@@ -11,38 +11,13 @@ let batch_tick;
 init_menu();
 let cnv;
 function setup() {
-  cnav = createCanvas(WIDTH(), HEIGHT());
+  cnv = createCanvas(WIDTH(), HEIGHT());
   // frameRate(200);
 }
 
 function draw() {
-  if (batch_mode) {
-    // console.log('batch!')
-    // if (execution_is_finished) {
-    //   // reset model with new inputs
-    //   initialize_batch()
-    //   // set model to batch mode
-    //   irisModel.set_batch_executions(true);
-    //   // set termination of the model
-    //   irisModel.end_after(24);
-    //   execution_is_finished = false;
-    // } else {
-    //   // execution_is_finished = true;
-    //   if (irisModel.terminated) {
-    //     execution_is_finished = true;
-    //     // continue;
-    //   }
-    //   irisModel.update();
-    //   // for (let i = 0; i < 1; i++) {
-    //   //   // if the model is done exit the loop and start new batch
-    //   //   if (irisModel.terminated) {
-    //   //     execution_is_finished = true;
-    //   //     break;
-    //   //   }
-    //   //   irisModel.update();
-    //   // }
-    // }
-  } else {
+  if (!batch_mode) {
+
     if (irisModel != null) {
       for (let i = 0; i < loops; i++) {
         irisModel.update();
