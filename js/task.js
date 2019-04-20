@@ -97,8 +97,8 @@ class Task {
      * than the capitalist are the less stressed.
      */
     let amountOfTime = this.minWage + ((NUMBER_OF_AGENTS - counter) / NUMBER_OF_AGENTS) * this.aot;
-    // console.log(this.type, amountOfTime, this.aot, counter)
     amountOfTime = Math.ceil(amountOfTime);
+    // console.log(this.type, amountOfTime, this.aot, counter);
     // down here we remove time from the GRT if it reaches 0 it stays 0!
     if (this.time_coins_reserve > 0) {
       if (this.time_coins_reserve - amountOfTime < 0) {
@@ -113,7 +113,7 @@ class Task {
         // else we set the amout of time as the valuse for the task
         this.value = amountOfTime;
         this.time_coins_reserve -= amountOfTime;
-        this.time_coins_reserve = roundPrecision(this.time_coins_reserve, 1)
+        // this.time_coins_reserve = roundPrecision(this.time_coins_reserve, 1)
       }
     } else {
       // here we don't give any resting time
@@ -123,9 +123,9 @@ class Task {
       this.value = 0;//this.minWage;
       this.time_coins_reserve = 0;
     }
+    // console.log(this.type, this.value, this.time_coins_reserve)
     return;
   }
-
   get_value(agents) {
     // INVERSE TO THE NUMBER OF AGENTS WITH PREFERENCE FOR SUCH TASK
     // here we remove some time from the amout of resting tim the task can give away
@@ -176,8 +176,9 @@ class Task {
   }
 
   updateGRT(amount_of_time) {
+
     this.time_coins_reserve += amount_of_time;
-    // console.log(`GRT got updated by ${amount_of_time}, total GRT = ${this.time_coins_reserve}`)
+    // console.log(`task ${this.type} GRT got updated by ${amount_of_time}, total GRT = ${this.time_coins_reserve}`)
   }
 
   /**
@@ -195,8 +196,11 @@ class Task {
     let amountOfSkill = 0;
     let skill = 0;
     shuffleArray(agents);// we shuffle the agents 
+    // here we filter out all the agents who already have done the task for the day
+    const available_agents = agents.filter(result => result.done_for_the_day === false);
+    // console.log(available_agents);
     // here we check if the agent has traded before if yes he executes the task
-    for (const agent of agents) {
+    for (const agent of available_agents) {
       // skill = agent.getPreferences(this.type).skill_level;
       if ((agent.has_swapped && agent.swap_task === this.type) && (!agent.working || !agent.resting)) {
         // this is where chooseTask() happens
@@ -219,7 +223,7 @@ class Task {
           //////////////////////
           // console.log(agent.ID, agent.swap_task)
           skill = agent.getPreferences(this.type).skill_level;
-          let time = this.amountOfTimeBasedOnSkill(skill);
+          const time = this.amountOfTimeBasedOnSkill(skill);
           agent.work(time, this, agents);//the agent works
           agent.has_swapped = false; // reset here the traded boolean | needs to be done after the the agent.work otherwise the it is not possible to visualize the trade happening
           // this.executed++;
@@ -247,6 +251,8 @@ class Task {
       if (counter > maximumTradings || this.agentsPool.length < 1) {
         // we need to handle the case in which no agent is available for one task
         this.bruteForceTask(agents);
+        // flush the pool
+        this.agentsPool = [];
         // console.log(`NO AGENT FOUND FOR ${this.type}!`);
         // noLoop();
         break;
@@ -260,6 +266,8 @@ class Task {
           agent.work(time, this, agents);// we set the agent at work
           // this.executed++;
           swapping = false;// here we exit the while loop
+          // flush the pool
+          this.agentsPool = [];
           break;//DEPRECATED
         } else {
           // if the agent has traded we remove him from the pool
@@ -310,7 +318,7 @@ class Task {
       i++;
       if (i > 5000) {
         // assign task as next to do to an agent
-        console.log('no agent found');
+        // console.log('no agent found');
         controlState = false;
         break;
       }

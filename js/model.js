@@ -2,51 +2,18 @@ class IrisModel {
   constructor(traits, min_wage, num_task, num_players) {
     this.plot = new Plot();
     // console.log(behaviors);
+    this.batch = false;
     this.agents = [];
     this.tasks = [];
     // this.behaviors = behaviors;
 
     this.traits = traits;
-    // console.log(this.traits)
-    shuffleArray(this.traits)
+    console.log(this.traits)
     this.traits_list = extract_unique_keys(this.traits, 'trait');
-    // console.log(this.traits_list);
-    // console.log(this.traits)
-    // /**
-    //  * here below we fill our Agents array
-    //  * 
-    //  * first we extract all the behaviors that
-    //  * have been passed from the object into an array
-    //  */
-    // let behaviorList = [];
-    // let agentsNum = 0;
-    // Object.keys(behaviors).forEach(key => {
-    //   console.log(key, behaviors[key]);
-    //   for (let i = 0; i < behaviors[key]; i++) {
-    //     behaviorList.push(key);
-    //     agentsNum++;
-    //   }
-    // });
-    // /**
-    //  * in order to have them more omogenous distributed we 
-    //  * shuffle the array containing the bahaviors
-    //  * and than we fill the agents array and we assign their behaviors
-    //  */
-    // shuffleArray(behaviorList);
-    // let index = 0;
-    // for (const behavior of behaviorList) {
-    //   const traits = this.traits[index];
-    //   this.agents.push(new Agent(TASK_LIST, index, false, behavior, this.traits[index]));
-    //   index++;
-    // }
-    // // add players
-    // for (let i = 0; i < num_players || 0; i++) {
-    //   this.agents.push(new Agent(TASK_LIST, agentsNum + i, true, 'curious'))
-    //   agentsNum++;
-    // }
-    // here we set the max value of the slider that shows the agents
-    // const slider = document.getElementById('view')
-    // slider.max = agentsNum;
+    console.log(this.traits_list);
+    console.log(this.traits)
+
+    this.max_time_coins = 0;
     let idx = 0;
     for (const trait of this.traits) {
       this.agents.push(new Agent(idx, false, trait))
@@ -67,6 +34,7 @@ class IrisModel {
 
     this.GLOBAL_RESTING_TIME = this.calcGlobalRestTime();
     console.log(this.GLOBAL_RESTING_TIME);
+    this.getTotalRestingTime();
     this.counter = 0;
 
     this.timeUnit = 0;
@@ -76,8 +44,10 @@ class IrisModel {
     this.weeks = 0;
     this.months = 0;
     this.years = 0;
-    this.getTotalRestingTime();
 
+    this.termination = 0;
+    this.termination_counter = 0;
+    this.terminated = false;
     /**
      * PLOT
      */
@@ -85,13 +55,27 @@ class IrisModel {
     this.colors = {
       // skill: color(0, 255, 0),
       // preference: color(255, 0, 255),
-      fld: color(0, 255, 255),
-      time_coins: color(255, 0, 0),
-      stress: color(255, 255, 0),
-      aot: color(45, 105, 245),
-      swapped: color(0, 255, 100, 150),
-      brute_force: color(255, 125, 0, 150)
+      fld: '#0ff',
+      time_coins: '#f00',
+      time_coins_real: '#fff',
+      stress: '#ff0',
+      aot: '#2d69f5',//color(45, 105, 245)
+      swapped: '#00ff6496', //color(0, 255, 100, 150)
+      brute_force: '#ff7d0096'//color(255, 125, 0, 150)
     };
+
+    this.to_emoji = {
+      skill: '🤸🏻‍♀️',
+      preference: '🥰',
+      fld: '🙇🏻‍♀️',
+      time_coins: '💵',
+      time_coins_real: '💰',
+      stress: '😰',
+      aot: '⏳',//color(45, 105, 245)
+      swapped: '🔄', //color(0, 255, 100, 150)
+      brute_force: '💪🏻'//color(255, 125, 0, 150)
+
+    }
 
     // this.plot = new Plot(parent, 20, 20, this.colors);
     this.pointIndex = 0;
@@ -133,12 +117,18 @@ class IrisModel {
       // task.show();
       task.updateUrgency(this.agents);
     }
+
+    // here we need to redistribbute the time coins for all the tasks
+    // this could be done every two months or every semester
+    // this.distribute_time_coins();
+
     // this needs refactoring
     if (this.counter % TIME_SCALE == 0) {
       this.timeUnit++;
 
-      this.setModelTime();
+      // this.setModelTime();
     }
+    this.setModelTime();
     this.counter++;
     // console.log(this.counter, this.timeUnit);
     // if we are recording the data, we show how much has been collected
@@ -171,6 +161,7 @@ class IrisModel {
       const len = extractedAgents.length;
       const agentsData = {
         fld: [],
+        time_coins_real: [],
         time_coins: [],
         stress: [],
         aot: [],
@@ -181,16 +172,26 @@ class IrisModel {
       for (const agent of extractedAgents) {
         const fld = agent.preferenceArchive.map(result => result.feel_like_doing);
         const time_coins = agent.preferenceArchive.map(result => result.time_coins);
-        const rtMax100 = agent.preferenceArchive.map(el => {
-          let val = (el.time_coins / (this.GLOBAL_RESTING_TIME / extractedAgents.length)) * 100;
-          return val;
+        const tcMax100 = agent.preferenceArchive.map(el => {
+          if (el.time_coins > this.max_time_coins) {
+            this.max_time_coins = el.time_coins;//here we update the max value for time coins 
+          }
+          let result = el.time_coins;
+          // if (el.time_coins > 100) {
+          // console.log(el.time_coins, max_time_coins);
+          result = (el.time_coins / this.max_time_coins) * 100;
+          // console.log(result); 
+          // }
+          // let val = (el.time_coins / (this.GLOBAL_RESTING_TIME / extractedAgents.length)) * 100;
+          return result;
         });
         const stress = agent.preferenceArchive.map(result => result.stress_level);
         const aot = agent.preferenceArchive.map(result => result.amount_of_time);
         const swapped = agent.preferenceArchive.map(result => result.swapped);
         const bruteForce = agent.preferenceArchive.map(result => result.brute_force);
         agentsData.fld.push(fld);
-        agentsData.time_coins.push(rtMax100);
+        agentsData.time_coins_real.push(time_coins);
+        agentsData.time_coins.push(tcMax100);
         agentsData.stress.push(stress);
         agentsData.aot.push(aot);
         agentsData.swapped.push(swapped);
@@ -239,13 +240,9 @@ class IrisModel {
     this.pointIndex++;
     this.agents.sort((a, b) => a.ID - b.ID);
 
-    // // here we have to build the filter to visualize the agents
-    // // for (let i = this.showFrom; i < this.showTo; i++) {
+    // preference debug view only 4 agents
     // for (const agent of this.agents) {
-    //   // let agent = this.agents[i];
     //   agent.infographic();
-    //   // if (singleView) agent.infographic();
-    //   // else drawInfos(agent);
     // }
 
     // here we alter the bar informing how many agents are working resting etc.
@@ -255,7 +252,7 @@ class IrisModel {
     const resting = this.agents.filter(result => result.resting === true).length;
     const available = this.agents.length - (working + swapping + resting)
     // console.log(working, swapping, resting, available);
-    
+
     const w_elt = document.getElementById('working');
     w_elt.style.width = (working / this.agents.length) * 100 + '%'
     const sw_elt = document.getElementById('swapping');
@@ -264,7 +261,7 @@ class IrisModel {
     r_elt.style.width = (resting / this.agents.length) * 100 + '%'
     const av_elt = document.getElementById('available')
     av_elt.style.width = (available / this.agents.length) * 100 + '%'
-    
+
     w_elt.previousElementSibling.innerText = '🏋🏻‍♂️' + working;
     sw_elt.previousElementSibling.innerText = '🤷🏻‍♂️' + swapping;
     r_elt.previousElementSibling.innerText = '💆🏻‍♂️' + resting;
@@ -282,11 +279,15 @@ class IrisModel {
     let infoY = PADDING;
     let i = 0;
     Object.keys(data).forEach(key => {
+
+      const preferences = data[key];
       // console.log(data[key], key)
       // console.log(this.agents);
       // this returns the number of agents by behavior
-      const num_agents_by_behavior = this.agents.filter(result => result.behavior === key).length;
-
+      const agents_by_behavior = this.agents.filter(result => result.behavior === key)
+      // console.log(agents_by_behavior);
+      const num_agents_by_behavior = agents_by_behavior.length;
+      const agents_traits = agents_by_behavior[0].behavior_exp.traits;
       // the trick below is useful to spread the 
       // the visualization in 4 regions of the screen
       infoX = LEFT_GUTTER + ((width / 2) * (i % 2));
@@ -300,19 +301,32 @@ class IrisModel {
       noStroke();
       fill(255);
       textAlign(CENTER, CENTER)
-      text(`${num_agents_by_behavior} ${key}`, infoX, infoY - PADDING, INFO_WIDTH, PADDING);
+      textSize(TEXT_SIZE - 5);
+      const agents_info = `${num_agents_by_behavior} ${key}: c: ${roundPrecision(agents_traits.curiosity, 2)} p: ${roundPrecision(agents_traits.perfectionism, 2)} e: ${roundPrecision(agents_traits.endurance, 2)} gw: ${roundPrecision(agents_traits.goodwill, 2)}`;
+      text(agents_info, infoX, infoY - PADDING, INFO_WIDTH, PADDING);
       let lines = 0;
+
+
       Object.keys(this.colors).forEach(pref => {
         textAlign(RIGHT, CENTER);
         fill(this.colors[pref])
-        text(pref, infoX - 10, (infoY + 50) + (lines * TEXT_SIZE));
-        lines++;
+
+        const arr = preferences[pref];
+        let last = Math.round(arr[arr.length - 1])
+        last = isNaN(last) ? 0 : last;
+        text(this.to_emoji[pref] + ': ' + last, infoX - 10, (infoY + 50) + (lines * TEXT_SIZE));
+        lines += 1.3;
       })
-      const preferences = data[key];
       Object.keys(preferences).forEach(pref => {
         // console.log(pref)
-        if (pref === 'swapped' || pref === 'brute_force') {
-          // console.log(preferences[pref]);
+        if (pref === 'time_coins_real') {
+          // textSize(20);
+          // fill('#fff');
+          // noStroke();
+          // const arr = preferences[pref];
+          // const last = arr[arr.length - 1];
+          // text('💰 ' + round(last), infoX, infoY)
+        } else if (pref === 'swapped' || pref === 'brute_force') {
 
           const agent_num = this.traits.filter(result => result.trait === key).length;
           drawLine(preferences[pref], agent_num, infoX, infoY, this.colors[pref], pref)
@@ -386,18 +400,51 @@ class IrisModel {
    * sets the time passed in the form of hours | days | months | yeara
    */
   setModelTime() {
-    if (this.timeUnit > 0 && this.timeUnit % TS_FRACTION == 0) {
+    // if (this.timeUnit > 0 && this.timeUnit % TS_FRACTION == 0) {
       this.hours++;
-    }
+    // }
     if (this.hours > 0 && this.hours % 24 == 0) {
-      // here we can add a function to set the agent to available
-      // and also reset if he was
+      // here we update the agent status rest and availability to work
+      for (const agent of this.agents) {
+        agent.resting = false;
+        agent.done_for_the_day = false;
+      }
       this.days++;
       this.hours = 0;
+      this.distribute_time_coins();
     }
     if (this.days > 0 && this.days % 30 == 0) {
       this.months++;
       this.days = 0;
+
+      this.termination_counter++;
+      if (this.batch) {
+        // save images every 3 months
+        // if(this.months % 2 === 0)this.show();
+        if(this.months % 12 === 0){
+          this.show();
+          const d = new Date();
+          const milliseconds = Date.parse(d) / 1000;
+          let save_txt = milliseconds + '_'+ batch_save_txt +  '_model';
+          console.log(save_txt);
+          // saveCanvas(save_txt, 'png');
+        }
+
+        if(this.termination_counter >= this.termination){
+          this.terminated = true;
+        }
+      } else {
+        if (this.termination_counter >= this.termination) {
+          console.log('terminate');
+          start_stop_model();
+          const d = new Date();
+          const milliseconds = Date.parse(d) / 1000;
+          let save_txt = batch_save_txt + '_'+ milliseconds +'_model';
+          // save_txt = save_txt.replace('.', '_');
+          console.log(save_txt);
+          saveCanvas(save_txt, 'png');
+        }
+      }
     }
     if (this.months > 0 && this.months % 12 == 0) {
       this.years++;
@@ -408,6 +455,14 @@ class IrisModel {
     // console.log(currentDate);
     document.getElementById('display-date').innerHTML = currentDate;
   }
+  end_after(val) {
+    this.termination = val;
+  }
+
+  set_batch_executions(bool) {
+    this.batch = bool;
+  }
+
   /**
    * computes the total resting time in the model
    */
@@ -422,6 +477,26 @@ class IrisModel {
     }
     console.log(`agent resting time: ${sumAgent}, task time_coins_reserve: ${sumTask} GLOBAL ${this.GLOBAL_RESTING_TIME}`);
   }
+
+  distribute_time_coins() {
+    // here we need to redistribute the time coins
+    // between the task to avoid that some tasks accumulate
+    // all the time coins
+    const get_coins = this.tasks.map(result => result.time_coins_reserve)
+    const sum = get_coins.reduce((acc, curr) => acc + curr);
+    const result = Math.floor(sum / this.tasks.length);
+    const advance = sum % this.tasks.length;
+    // console.log(sum, result, advance);
+    for (const task of this.tasks) {
+      task.time_coins_reserve = result;
+    }
+    const rand_idx = Math.floor(Math.random() * this.tasks.length)
+    this.tasks[rand_idx].time_coins_reserve += advance
+    // console.log(this.tasks);
+    // console.log(sum, result)
+
+  }
+
   /**
    * this methods records the data generated by the agents and stores it
    * in JSON that can be saved by the client

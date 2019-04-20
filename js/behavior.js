@@ -66,7 +66,7 @@ class Behavior {
     const agent_archive = agent.preferenceArchive;
     this.computed_traits.curiosity = compute_curiosity(agent_archive, task_name);
     this.computed_traits.perfectionism = compute_perfectionism(agent, task_name);
-    this.computed_traits.endurance = compute_endurance(agent, task);
+    this.computed_traits.endurance = compute_endurance(agent, task, this.traits.endurance);
     this.computed_traits.goodwill = compute_goodwill(agent, agents, task);
     // console.log(this.computed_traits);
     // const sum = this.computed_traits.curiosity.value + this.computed_traits.perfectionism.value + this.computed_traits.endurance + this.computed_traits.goodwill.value;
@@ -74,7 +74,7 @@ class Behavior {
     this.result_traits = {
       curiosity: (this.computed_traits.curiosity.value * this.traits.curiosity),
       perfectionism: (this.computed_traits.perfectionism.value * this.traits.perfectionism),
-      endurance: (this.computed_traits.endurance + this.traits.endurance) / 2,// endurance won't be part of the swap
+      endurance: this.computed_traits.endurance,// endurance won't be part of the swap
       goodwill: (this.computed_traits.goodwill.value * this.traits.goodwill)
     }
     let swap_value = 0;
@@ -84,35 +84,37 @@ class Behavior {
         swap_value += this.result_traits[key];
       }
     });
-    // swap_value /= 2;
-    // console.log(task.type, agent.behavior)
-    // console.log(this.traits);
-    // console.log(this.computed_traits);
-    // console.log(this.result_traits);
-    // console.log(swap_value);
+
     // first we handle the case of resting therefore if endurance is lower than 0.3
-    // console.log(this.traits.trait)
-    // console.log(`behavior: ${agent.time_coins} && ${task.aot}`)
-    if (this.computed_traits.endurance < 0.3 && agent.time_coins >= task.aot) {
+    // if the agents endurance reaches a treshold
+    if (this.computed_traits.endurance < 0.3) {
       // in here we handle the coins aspect
       // does the agent have enough money?
-      // console.log('agent resting...');
-      agent.rest(task);
-      return true;
-    } else if (swap_value > 0.7) {
+      if (agent.time_coins >= task.aot) {
+        //if the agent has enough time coins he rests and tells the task that he rests
+        console.log('agent resting...');
+        agent.rest(task);
+        return true;
+      } else {
+        // here we update the stress value
+        agent.stress += agent.stress_increase_val;
+        agent.stress = clamp(agent.stress, MINIMUM, MAXIMUM);
+        // we don't return anything we just go on with the swapping
+      }
+    }
+    // here the swapping happens
+    if (swap_value > 0.5) { // make it a slider between 0.3 – 0.7
       // console.log('WORK')
       return false
     } else {
-      // console.log('SWAP');
       const swap_trait = random_arr_element(this.dominant_traits);
+      // console.log('SWAP', swap_trait);
       // console.log(this, this.computed_traits[swap_trait])
       const swap_task = this.computed_traits[swap_trait].swap_task
       // console.log(`agent swaps for: ${swap_task}`);
       agent.assign_swapped_task(swap_task);
       return true;
     }
-    // comp_cur + comp_perf + comp_res + comp_acc = [0, 4]
-    // return true
     /**
      * this methods computes the curiosity of the agent
      * it checks how often the task has been done and
@@ -123,32 +125,58 @@ class Behavior {
      */
     function compute_curiosity(agent_archive, task_name) {
       if (agent_archive.length > 1) {
+        let archive = agent_archive;
         /**
-         * first we extract all the task and how often have been executed
+         * first we extract the last 10 tasks and how often have been executed
          */
         const task_execution = [];
-        for (const task of TASK_LIST) {
-          const executed_tasks = agent_archive.filter(result => result.executed_task === task.type).length;
-          let result = {
-            name: task.type,
-            executions: executed_tasks
-          }
-          task_execution.push(result);
+        if (agent_archive.length < 10) {
+
+          // console.log(result)
+        } else {
+          // use only the last ten tasks of the archive
         }
+
+        if (agent_archive.length > 10) {
+          archive = [];
+          for (let i = agent_archive.length - 11; i < agent_archive.length - 1; i++) {
+            // console.log(i)
+            // console.log(agent_archive[i])
+            archive.push(agent_archive[i]);
+          }
+        }
+
+        // fill with the data in the archive
+        const executed_tasks = archive.map(result => result.executed_task);
+        // console.log(executed_tasks);
+        // const result = {};
+        for (const task of TASK_LIST) {
+          let sum = 0;
+          for (const exec_task of executed_tasks) {
+            if (exec_task === task.type) sum++
+          }
+          // task_execution[task.type] = sum;
+          task_execution.push({
+            name: task.type,
+            num: sum
+          })
+        }
+
         // than we get how often this task the agent has executed
+        // console.log(task_execution);
         const this_task_execution = task_execution.filter(result => result.name === task_name)[0];
+        // console.log(this_task_execution);
         // we compute the curiosity by getting the inversve percentage
         // between the execution of this task and the total of task executions
         // this returns a value between [0, 1] that tends to 1 when the task has been
         // executed less often
-        const result = 1 - this_task_execution.executions / agent_archive.length;
+        const result = 1 - this_task_execution.num / archive.length;
+        // console.log(result)
         // this method also returns a suggestion for a task to be executed in the case
         // the agent decides to swap for another task
         // first we look for the task with minimum value
-        // const minimum = Math.min(...task_execution.map(result => result.executions));
-        // const less_executed_tasks = task_execution.filter(result => result.executions === minimum);
         // we sort the array by execution
-        task_execution.sort((a, b) => a.executions - b.executions);
+        task_execution.sort((a, b) => a.num - b.num);
         // console.log(task_execution)
         const len = Math.floor(task_execution.length / 2);
         const less_executed_tasks = [];
@@ -204,7 +232,7 @@ class Behavior {
      * @param {String} task_aot
      * @returns the endurance as avalue between [0, 1]
      */
-    function compute_endurance(agent, task) {
+    function compute_endurance(agent, task, input_val) {
       const divider = agent.time_coins == 0 ? 1 : agent.time_coins;
       let perc_wealth = task.aot / divider;
       if (perc_wealth >= 1) perc_wealth = 1;
@@ -219,36 +247,33 @@ class Behavior {
         if (perc_preference > perc_wealth) {
           return (perc_preference - perc_wealth) / 4
         } else return 0;
-        // const mx = Math.max(perc_preference, perc_wealth);
-        // const mn = Math.min(perc_preference, perc_wealth);
-        // const result = (mx - mn) / 4;
-        // return isNaN(result) ? 0 : result;
       };
       // than we sum them up and divide by 2 to get a median value
       // console.log(nudge())
       const tot_perc = ((perc_preference + perc_wealth) / 2) + nudge();
+      // console.log(((input_val - 0.5) * 10) * tot_perc);
+      const compute_input_tot = (((input_val - 0.5) * 10) * tot_perc) / MAXIMUM; // needs refactoring
       /**
-       * we compute resilince on top of FLD therefore
-       * first we compute the difference between FLD
-       * and its max value (100), we multiply
-       * it by the tot_perc and we add the agent.FLD
+       * we compute endurance on top of FLD therefore
+       * we add the result between the input value, 
+       * wealth and preference.
        */
       const top_fld = (MAXIMUM - agent.FLD) / MAXIMUM;
       const curr_fld = agent.FLD / MAXIMUM;
-      // const result = (top_fld * tot_perc) + (agent.FLD / MAXIMUM);
-      const result = (curr_fld * tot_perc) + curr_fld;
-      const log = `
-      pref: ${perc_preference}\n
-      wealth: ${perc_wealth}\n
-      tot: ${tot_perc}\n
-      topfld: ${top_fld}\n
-      curr fld: ${curr_fld}\n
-      result curr: ${curr_fld * tot_perc}\n
-      result nofld: ${top_fld * tot_perc}\n
-      result curr: ${(curr_fld * tot_perc) + curr_fld}\n
-      result top: ${result}`
-      // console.log(log)
+      const result = curr_fld + compute_input_tot;
+      // const log = `
+      // pref: ${perc_preference}\n
+      // wealth: ${perc_wealth}\n
+      // tot: ${tot_perc}\n
+      // topfld: ${top_fld}\n
+      // curr fld: ${curr_fld}\n
+      // result curr: ${curr_fld * tot_perc}\n
+      // result nofld: ${top_fld * tot_perc}\n
+      // result curr: ${(curr_fld * tot_perc) + curr_fld}\n
+      // result top: ${result}`
+      // // console.log(log)
       if (result >= 1) return 1
+      else if (result <= 0) return 0
       else return result;
     }
     /**
@@ -262,7 +287,7 @@ class Behavior {
      * @returns an object with the computed value between [0, 1] and a suggested task to swap
      */
     function compute_goodwill(agent, agents, _task) {
-
+      // console.log(_task.value);
       const task_values = {}
       for (const task of TASK_LIST) {
         if (task.type !== _task.type) task_values[task.type] = agent.taskValue(agents, task.type) * task.amount_of_time;

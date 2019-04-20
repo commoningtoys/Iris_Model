@@ -45,9 +45,11 @@ class Agent {
 
     // the next attributes are used for the trading system,
     this.swap_task = '';// this defines the task the agent wants to do
-    this.has_swapped = false;// if has traded than it will be selecteds for the trade task
+    this.has_swapped = false;// if has swapped than it will be selecteds for the trade task
     this.totalTaskCompleted = 0;
     this.totalTaskCompletedByAgents = 0;
+
+    this.done_for_the_day = false;
 
     this.currentTask = '';
     this.FLD = MAXIMUM; //this.behavior === 'capitalist' ? 100 : randomMinMAx();// feel like doing
@@ -61,24 +63,6 @@ class Agent {
     this.working = false;
     this.workingTimer = 0;// how long is the agent at work
     this.mappedAmountOfTime = 0;
-    // ANIMATION && colors
-    // this.color = color(255);
-    // switch (_behavior) {
-    //   case 'curious':
-    //     this.color = color(45, 245, 100); // greenish
-    //     break;
-    //   case 'perfectionist':
-    //     this.color = color(45, 100, 245); // blueish
-    //     break;
-    //   case 'geniesser':
-    //     this.color = color(245, 45, 100); // reddish
-    //     break;
-    //   case 'capitalist':
-    //     this.color = color(245, 45, 245); // magentaish
-    //     break;
-    //   default:
-    //     this.color = color(255);
-    // }
     this.colors = {
       working: color(255, 0, 0),
       available: color(0, 255, 0),
@@ -93,7 +77,7 @@ class Agent {
       time_coins: color(255, 0, 0),
       stress: color(255, 255, 0),
       time: color(45, 105, 245),
-      traded: color(0, 255, 100, 100),
+      swapped: color(0, 255, 100, 100),
       brute_force: color(255, 125, 0, 100)
     };
 
@@ -110,8 +94,6 @@ class Agent {
       .addClass('content')
       .attr('id', this.ID)
       .click(() => {
-
-        // $('#' + this.ID + ' .preference').toggle('slow');
         this.showStatistics = true;
         for (const agent of agents) {// this needs to be refactored
           if (this !== agent) agent.showStatistics = false;
@@ -125,7 +107,6 @@ class Agent {
   setInfo() {
     // to update the infos
     document.getElementById(this.ID).innerHTML = this.htmlText();
-    // if (this.isPlayer) document.getElementById('player-stats').innerHTML = this.htmlText();
   }
   /**
    * 
@@ -142,8 +123,9 @@ class Agent {
     str12 += "</div><br>";
     let str2 = (this.working == true ? 'doing this task: ' + BR + this.currentTask : 'is not working' + BR) + BR;
     let str21 = 'working timer: ' + BR + this.workingTimer + BR;
-    let str3 = (this.has_swapped === true ? 'has swapped for: ' + BR + this.swap_task : 'has not traded' + BR) + BR;
-    let str31 = (this.resting === true ? `is resting for: ${this.restingTimer}` : 'not resting') + BR;
+    let str22 = (this.done_for_the_day == true ? 'agent is done for today' : 'agent is available to work') + BR;
+    let str3 = (this.has_swapped === true ? 'has swapped for: ' + BR + this.swap_task : 'has not swapped' + BR) + BR;
+    let str31 = (this.resting === true ? `is resting` : 'not resting') + BR;
     let str4 = 'feel like doing: ' + this.FLD + BR;
     let str5 = 'time coins: ' + this.time_coins + BR;
     let str6 = '<div class="toggle">preferences:';
@@ -158,13 +140,13 @@ class Agent {
       keys.forEach(key => {
         //appending more HTML string with key and value aginst that key;
         // str6 += "<strong>preferences</strong> <br>"
-        if(!key.startsWith('forget'))str6 += "<strong>" + key + "</strong>: " + roundPrecision(objAttribute[key], 2) + "<br>";
+        if (!key.startsWith('forget')) str6 += "<strong>" + key + "</strong>: " + roundPrecision(objAttribute[key], 2) + "<br>";
       });
       //final HTML sting is appending to close the DIV element.
       str6 += "</div><br>";
     });
     str6 += '</div>';
-    return str1 + str11 + str12 + str2 + str21 + str3 + str31 + str4 + str5 + str6;
+    return str1 + str11 + str12 + str2 + str21 + str22 + str3 + str31 + str4 + str5 + str6;
   }
   /**
    * 
@@ -180,37 +162,21 @@ class Agent {
    */
   infographic() {
     const INFO_WIDTH = width - LEFT_GUTTER;
-    // const INFO_HEIGHT = (height - (6 * PADDING)) / ROWS;
     let ROW_NUMBER = 0;
-    // NEED TO FIX THE VIZ FOR THE PLAYER AGENT!!!!!!
-
-    // if (this.isPlayer) {
-    //     let str = this.ID.substr(this.playerName.length, 4);
-    //     // console.log(str);
-    //     // console.log(`is player ${parseInt(str)}`);
-    //     ROW_NUMBER += (ROWS + parseInt(str)) % ROWS;
-    // } else {
-    //     ROW_NUMBER += (ROWS + parseInt(this.ID)) % ROWS;
-    // }
     ROW_NUMBER += (ROWS + parseInt(this.ID)) % ROWS;
     ROW_NUMBER *= 2;
     const CT = this.currentTask;
-    // console.log(this.currentTask);
     // here we extract the values of FLD, resting time && stress && more
     let fld = this.preferenceArchive.map(result => result.feel_like_doing);
     let rt = this.preferenceArchive.map(result => result.time_coins);
     let stress = this.preferenceArchive.map(result => result.stress_level);
     let aot = this.preferenceArchive.map(result => result.amount_of_time);
-    let traded = this.preferenceArchive.map(result => result.traded);
-    // console.log(traded);
+    let swapped = this.preferenceArchive.map(result => result.swapped);
+    // console.log(swapped);
     let bruteForce = this.preferenceArchive.map(result => result.brute_force);
     // and here we draw them in the infographic
     stroke(255);
     // FIrst we draw the infographic outline
-    // for (let i = 1; i < 6; i++) {
-    //     line(posX(0, MAXIMUM), posY(MAXIMUM, i), posX(0, MINIMUM), posY(MINIMUM, i));
-    //     line(posX(0, MAXIMUM), posY(MINIMUM, i), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, i));
-    // }
     line(posX(0, MAXIMUM), posY(MAXIMUM, ROW_NUMBER), posX(0, MINIMUM), posY(MINIMUM, ROW_NUMBER));
     line(posX(0, MAXIMUM), posY(MINIMUM, ROW_NUMBER), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, ROW_NUMBER));
     let i = 0;
@@ -219,8 +185,8 @@ class Agent {
       line(posX(0, MAXIMUM, i, TASK_LIST.length), posY(MINIMUM, ROW_NUMBER - 1), posX(MAXIMUM, MAXIMUM, i, TASK_LIST.length), posY(MINIMUM, ROW_NUMBER - 1));
       i++;
     }
-    // here we draw when an agent has traded or has been brute forced to do a task
-    drawLine(traded, this.preferenceColors.traded, ROW_NUMBER);
+    // here we draw when an agent has swapped or has been brute forced to do a task
+    drawLine(swapped, this.preferenceColors.swapped, ROW_NUMBER);
     drawLine(bruteForce, this.preferenceColors.brute_force, ROW_NUMBER);
     // here below we draw the information about the preferences of the agent
     printGraphic(`AGENT_ID${this.ID}\n${this.behavior_exp.traits.trait}\nFLD`, fld, this.preferenceColors.FLD, ROW_NUMBER);
@@ -296,34 +262,20 @@ class Agent {
       this.setInfo();
     }
 
-    if (this.resting) {
-      this.restingTimer -= timeUpdate();
-      this.setInfo();
-      if (this.restingTimer <= 0) {
-        this.resting = false;
-        // when the agent has rested he also is less stressed
-        this.stress /= this.stress_decrease_val;
-        this.setInfo();
-      }
-    }
-
     if (this.working && !this.isPlayer) {
 
-      // console.log((1 / frameRate()) * TIME_SCALE);
       this.workingTimer -= timeUpdate();
       this.setInfo();
       if (this.workingTimer <= 0) {
-        this.has_swapped = false;// reset to false, very IMPORTANT otherwise the agent will always be called to do a traded task
+        this.has_swapped = false;// reset to false, very IMPORTANT otherwise the agent will always be called to do a swapped task
         this.swap_task = '';
         this.working = false;
         this.currentTask = '';
+        this.done_for_the_day = true;
         this.setInfo();
       }
     }
   }
-  // setAgents(_agents) {
-  //     this.agents = _agents;
-  // }
   /**
    * We will need this later
    */
@@ -432,8 +384,8 @@ class Agent {
                */
 
               agent.has_swapped = true;
-              // need to keep track how often the agent traded
-              agent.swap_task = toDoTask;// traded task should be different than this task
+              // need to keep track how often the agent swapped
+              agent.swap_task = toDoTask;// swapped task should be different than this task
               agent.setInfo();
             }
           }
@@ -583,7 +535,7 @@ class Agent {
   work(amount_of_time, task, agents, brute_forced) {
     this.working = true;
     this.workingTimer = amount_of_time;
-    this.updateAttributes(task, agents, brute_forced, amount_of_time);
+    this.updateAttributes(task, agents, amount_of_time, brute_forced);
     this.currentTask = task.type;// we set the current task according to the task the agent is currently working on
     this.setInfo();
     // this.makeInfo(`AGENT: ${this.ID} is executing ${task.type}. It will take ${amount_of_time} ticks`);
@@ -598,6 +550,8 @@ class Agent {
     this.FLD = MAXIMUM;// ?? should the FLD go to maximum??
     this.resting = true;
     this.restingTimer = task.aot;
+    // when the agent has rested he also is less stressed
+    this.stress /= this.stress_decrease_val;
     // this.updateAttributes(task, true);
     this.setInfo();
   }
@@ -616,7 +570,7 @@ class Agent {
 
     // here we can check the preference for the task?
 
-    // traded task should be different than this task
+    // swapped task should be different than this task
     let result = ''
     let loop = true;
     while (loop) {
@@ -636,7 +590,7 @@ class Agent {
    * @param {Array} task 
    * @param {Array} agents 
    */
-  updateAttributes(task, agents, brute_forced, _amount_of_time) {
+  updateAttributes(task, agents, _amount_of_time, brute_forced) {
     /**
      * - resting time (++) increases by some value depending on the value of the task
      * - preference (could be fixed, or updating, as described on the left); 
@@ -651,7 +605,7 @@ class Agent {
     this.updateFLD(agents, task, brute_forced);
     this.time_coins += task.value;// * task_executed == true ? 1 : -1;
     // console.log(this.time_coins, task.value)
-    // console.log(`executed task: ${this.time_coins}, value: ${task.value}`);
+    // console.log(`executed ${task.type}: ${this.time_coins}, value: ${task.value}`);
     const arr = TASK_LIST.map(result => result.amount_of_time);
     const max = Math.max(...arr);
     this.mappedAmountOfTime = map(_amount_of_time, 0, max + (max / 2), MINIMUM, MAXIMUM);
@@ -664,11 +618,11 @@ class Agent {
     this.preferenceArchive.push({
       preferences: insert,
       executed_task: task.type,
-      time_coins: this.time_coins / TIME_SCALE, // this maps the value to a better scale
+      time_coins: this.time_coins, // this maps the value to a better scale
       feel_like_doing: this.FLD,
       stress_level: this.stress,
       amount_of_time: this.mappedAmountOfTime,
-      traded: this.has_swapped,// === true ? this.swap_task : '',
+      swapped: this.has_swapped,// === true ? this.swap_task : '',
       brute_force: this.wasBruteForced
     });
 
@@ -680,7 +634,7 @@ class Agent {
         feel_like_doing: this.FLD,
         stress_level: this.stress,
         amount_of_time: this.mappedAmountOfTime,
-        traded: this.has_swapped,
+        swapped: this.has_swapped,
         brute_force: this.wasBruteForced
       });
     }
@@ -758,7 +712,7 @@ class Agent {
        * here we compute the which agent has executed a task 
        * the most
        */
-      let max = 1;
+      let max = 0;
       for (const a of agents) {
         if (a.preferenceArchive.length > 0) {
           lastPreferences = a.preferenceArchive[a.preferenceArchive.length - 1].preferences;
@@ -768,16 +722,20 @@ class Agent {
       /**
        * here we check how often an agent has completed this task.type
        */
-      let completed = this.preferenceArchive[this.preferenceArchive.length - 1].preferences;
-      let sum = (completed[task.type].completed / max);
-      // console.log(sum, this.forget_rate, sum - this.forget_rate);
-      // we can include something else here on how to update the skill
-      // this.preferences[task.type].skill_level += (sum - this.forget_rate) * this.step;
-      
-      // console.log(sum)
-      this.preferences[task.type].skill_level += sum * this.step;
 
-      this.preferences[task.type].skill_level = clamp(this.preferences[task.type].skill_level, MINIMUM, MAXIMUM);
+      if (task.type === _task.type) {
+        // here we update the skill for the task the agent has executed
+        let completed = this.preferenceArchive[this.preferenceArchive.length - 1].preferences;
+        let sum = max == 0 ? 0 : (completed[task.type].completed / max);
+        // console.log(sum, this.forget_rate, sum - this.forget_rate);
+        // we can include something else here on how to update the skill
+        // this.preferences[task.type].skill_level += (sum - this.forget_rate) * this.step;
+
+        // console.log(sum, sum * this.step, task.type, this.ID)
+        this.preferences[task.type].skill_level += sum * this.step;
+
+        this.preferences[task.type].skill_level = clamp(this.preferences[task.type].skill_level, MINIMUM, MAXIMUM);
+      }
       this.preferences[task.type].forget_skill();
     }
 
@@ -873,7 +831,7 @@ class Agent {
   updateFLD(agents, task, brute_forced) {// rename me: motivation
     /**
       * this algorithm looks how much the other agents have been 
-      * working. If the others are working more than this agent than
+      * working. If the others are working more than this agent then
       * his FLD decreases slower, if he is working more than it 
       * decreses faster.
       * it could be possible to introduce the concept of groups here where 
@@ -894,7 +852,7 @@ class Agent {
     //   if (this.behavior === 'capitalist') {
     //     /**
     //      * we check who has the highest amout of resting time if it is 
-    //      * me the capitalist than the FLD drops 2 points or less
+    //      * me the capitalist then the FLD drops 2 points or less
     //      * otherwise it drops by 0.5 points
     //      */
     //     // console.log(agents.length);
@@ -1001,7 +959,7 @@ class Agent {
       stress: this.stress,
       time_coins: this.time_coins,
       amount_of_time_task: this.mappedAmountOfTime,
-      traded: this.has_swapped,
+      swapped: this.has_swapped,
       brute_force: this.wasBruteForced
     };
     // arr.push(this.FLD);
@@ -1038,13 +996,13 @@ class Agent {
         completed: 0, // how many times the task has been completed
         skill_level: 0,
         task_preference: 0,
-        forget_rate: (20 + Math.floor(Math.random() * 60)) / 100,
+        forget_rate: (10 + Math.floor(Math.random() * 10)) / 100,
         forget_skill: () => {
-          // console.log(el.type)
-          // console.log(result[el.type].skill_level);
+          // console.log('forget rate ' + el.type + ' ' + result[el.type].forget_rate)
+          // console.log('skill before ' + el.type + ' ' + result[el.type].skill_level);
           result[el.type].skill_level -= (result[el.type].forget_rate * this.step)
           result[el.type].skill_level = clamp(result[el.type].skill_level, MINIMUM, MAXIMUM);
-          // console.log(result[el.type].skill_level)
+          // console.log('skill after ' + el.type + ' ' + result[el.type].skill_level)
         }
       }
     }

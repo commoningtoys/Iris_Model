@@ -24,7 +24,7 @@ function makeTask(time_needed, how_often, name) {
  */
 function make_trait(name, cur_val, perf_val, endu_val, good_val) {
     const sum = cur_val + perf_val + good_val;
-    console.log(cur_val / sum, perf_val / sum , endu_val, good_val / sum, name)
+    // console.log(cur_val / sum, perf_val / sum , endu_val, good_val / sum, name)
     return {
         trait: name,
         curiosity: cur_val / sum,
@@ -136,6 +136,35 @@ function saveRAWData(agents, id) {
 function modelTime() {
     return TS_FRACTION * TIME_SCALE;
 }
+
+function combination_of_array_elements(arr) {
+    const result = {
+        i: [],
+        ii: [],
+        iii: [],
+        iiii: []
+    }
+    for (let i = 0; i < arr.length; i++) {
+        result.i.push([arr[i]])
+        for (let j = i; j < arr.length; j++) {
+            if (!(i === j)) {
+                result.ii.push([arr[i], arr[j]]);
+            }
+            for (let k = j; k < arr.length; k++) {
+                if (!(i === j || j === k)) {
+                    result.iii.push([arr[i], arr[j], arr[k]])
+                }
+                for (let l = k; l < arr.length; l++) {
+                    if (!(i === j || j === k || k === l)) {
+                        result.iiii.push([arr[i], arr[j], arr[k], arr[l]])
+                    }
+                }
+            }
+        }
+    }
+    return result
+}
+
 /**
  * compute the linear regression of a line 
  * @param {Array} y positions on the y axis
