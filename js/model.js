@@ -88,6 +88,8 @@ class IrisModel {
     this.recordDataCounter = 0;
     this.dataCollected = 0;
   }
+
+  
   /**
    * calculates the global amount of time the agents have for resting
    * it doubles the amount of time needed to finish all the tasks by an agent
