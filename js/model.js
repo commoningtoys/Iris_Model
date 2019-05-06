@@ -1,22 +1,19 @@
 class IrisModel {
-  constructor(traits, min_wage, num_task, num_players) {
+  constructor(traits, min_wage, num_task, model_type) {
     // this.plot = new Plot();
-    // console.log(behaviors);
     this.batch = false;
     this.agents = [];
     this.tasks = [];
-    // this.behaviors = behaviors;
+
+    this.model_type = model_type;
 
     this.traits = traits;
-    console.log(this.traits)
     this.traits_list = extract_unique_keys(this.traits, 'trait');
-    console.log(this.traits_list);
-    console.log(this.traits)
 
     this.max_time_coins = 0;
     let idx = 0;
     for (const trait of this.traits) {
-      this.agents.push(new Agent(idx, false, trait))
+      this.agents.push(new Agent(idx, trait, model_type))
       idx++;
     }
     // make the info for all of the agents

@@ -64,19 +64,9 @@ class Behavior {
     // console.log(agent.ID, this.dominant_traits)
     const task_name = task.type;
     const agent_archive = agent.preferenceArchive;
-    this.computed_traits.curiosity = compute_curiosity(agent_archive, task_name);
-    this.computed_traits.perfectionism = compute_perfectionism(agent, task_name);
-    this.computed_traits.endurance = compute_endurance(agent, task, this.traits.endurance);
-    this.computed_traits.goodwill = compute_goodwill(agent, agents, task);
-    // console.log(this.computed_traits);
-    // const sum = this.computed_traits.curiosity.value + this.computed_traits.perfectionism.value + this.computed_traits.endurance + this.computed_traits.goodwill.value;
-    // console.log(`sum of traits: ${sum}`);
-    this.result_traits = {
-      curiosity: (this.computed_traits.curiosity.value * this.traits.curiosity),
-      perfectionism: (this.computed_traits.perfectionism.value * this.traits.perfectionism),
-      endurance: this.computed_traits.endurance,// endurance won't be part of the swap
-      goodwill: (this.computed_traits.goodwill.value * this.traits.goodwill)
-    }
+
+    this.compute_traits(agent_archive, task_name, agent, task, agents);
+
     let swap_value = 0;
     Object.keys(this.result_traits).forEach(key => {
       if (key !== 'endurance') {
@@ -115,6 +105,36 @@ class Behavior {
       agent.assign_swapped_task(swap_task);
       return true;
     }
+
+  }
+
+  compute_traits(agent_archive, task_name, agent, task, agents) {
+    this.computed_traits.curiosity = this.compute_curiosity(agent_archive, task_name);
+    this.computed_traits.perfectionism = this.compute_perfectionism(agent, task_name);
+    this.computed_traits.endurance = this.compute_endurance(agent, task, this.traits.endurance);
+    this.computed_traits.goodwill = this.compute_goodwill(agent, agents, task);
+    // console.log(this.computed_traits);
+    // const sum = this.computed_traits.curiosity.value + this.computed_traits.perfectionism.value + this.computed_traits.endurance + this.computed_traits.goodwill.value;
+    // console.log(`sum of traits: ${sum}`);
+    this.result_traits = {
+      curiosity: (this.computed_traits.curiosity.value * this.traits.curiosity),
+      perfectionism: (this.computed_traits.perfectionism.value * this.traits.perfectionism),
+      endurance: this.computed_traits.endurance,
+      goodwill: (this.computed_traits.goodwill.value * this.traits.goodwill)
+    };
+  }
+
+  decide_2(task, agents, agent){
+    const task_name = task.type;
+    const agent_archive = agent.preferenceArchive;
+    
+    this.compute_traits(agent_archive, task_name, agent, task, agents);
+    return false;
+
+  }
+
+
+    
     /**
      * this methods computes the curiosity of the agent
      * it checks how often the task has been done and
@@ -123,7 +143,7 @@ class Behavior {
      * @param {String} task_name the task the agent s requested to execute
      * @returns an object with the computed value between [0, 1] and a suggested task to swap
      */
-    function compute_curiosity(agent_archive, task_name) {
+    compute_curiosity(agent_archive, task_name) {
       if (agent_archive.length > 1) {
         let archive = agent_archive;
         /**
@@ -200,7 +220,7 @@ class Behavior {
      * @param {String} task_name
      * @returns an object with the computed value between [0, 1] and a suggested task to swap
      */
-    function compute_perfectionism(agent, task_name) {
+    compute_perfectionism(agent, task_name) {
       const result = {
         value: 0,
         swap_task: ''
@@ -232,7 +252,7 @@ class Behavior {
      * @param {String} task_aot
      * @returns the endurance as avalue between [0, 1]
      */
-    function compute_endurance(agent, task, input_val) {
+    compute_endurance(agent, task, input_val) {
       const divider = agent.time_coins == 0 ? 1 : agent.time_coins;
       let perc_wealth = task.aot / divider;
       if (perc_wealth >= 1) perc_wealth = 1;
@@ -286,7 +306,7 @@ class Behavior {
      * @param {Object} _task a task object
      * @returns an object with the computed value between [0, 1] and a suggested task to swap
      */
-    function compute_goodwill(agent, agents, _task) {
+    compute_goodwill(agent, agents, _task) {
       // console.log(_task.value);
       const task_values = {}
       for (const task of TASK_LIST) {
@@ -313,7 +333,7 @@ class Behavior {
       // console.log(result)
       return result;
     }
-  }
+  
   /**
    * to compute the preference for a task we look n how the task scored the
    * in the different traits areas. Than we take the one where it socred the higher

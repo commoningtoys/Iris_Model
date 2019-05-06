@@ -21,7 +21,7 @@ function draw() {
 
   }
 
-  document.getElementById('whatFrameRate').innerHTML = 'Frame rate: <br>' + frameRate();
+  // document.getElementById('whatFrameRate').innerHTML = 'Frame rate: <br>' + frameRate();
 }
 
 
@@ -40,8 +40,8 @@ function init_model() {
     const min_wage = parseInt(document.getElementById('min-wage').value);
     const tasks_num = parseInt(document.getElementById('how-many-task').value);
     const players = 0; // for now
-
-    irisModel = new IrisModel(traits_list, min_wage, tasks_num, players);
+    const model_type = get_model_type();
+    irisModel = new IrisModel(traits_list, min_wage, tasks_num, model_type);
 
     const stop_model = parseInt(document.getElementById('stop-model').value)
 
@@ -64,6 +64,19 @@ function single_execution(){
     }
     if (frameCount % 15 == 0) irisModel.show();
   }
+}
+
+function get_model_type(){
+  let inputs = document.getElementById('model-type');
+  inputs = $(inputs).find('input')
+  let result;
+  for(const input of inputs){
+    if(input.checked){
+      console.log(input.value);
+      result = input.value;
+    }
+  }
+  return result;
 }
 
 function extract_traits() {

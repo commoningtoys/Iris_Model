@@ -121,9 +121,9 @@
       </div>
       <!-- <input id="restart-model" type="checkbox"> restart model? <span id="yes/no">no</span> -->
       <div class="menu-set-agents">
-        <div style="font-size: 30px;">Total number of agents: <span id="how-many-agents">10</span></div>
-        How many task-sets:<input input type="number" value="1" autocomplete="off" id="how-many-task"
-          class="custom-input">
+
+        <div style="font-size: 30px;">Total number of agents: <span id="how-many-agents">16</span></div>
+        How many task-sets:<input input type="number" value="1" autocomplete="off" id="how-many-task" class="custom-input">
         <br>
         <i>(each set is composed by 4 tasks. <u style="color: #0ff; font-weight:bolder;">Use at least 1 task set for every 12 agents</u>)</i>
         <!-- set number of players
@@ -131,13 +131,14 @@
       </div>
 
       <div class="model-settings">
+        <div class="model-settings-item" id="model-type">
+          <i>what kind of model should the community run?</i> <br>
+          <input type="radio" name="model-type" value="time-spending" autocomplete="off"><label for="time-spending">time-spending</label>
+          <input type="radio" name="model-type" value="time-accumulate" autocomplete="off" checked><label for="time-accumulate">time-accumulate</label>
+        </div>
         <div class="model-settings-item">
           set minimum wage to: <span id="set-min-wage">0</span> <br>
           <input type="range" min="0" max="10" value="0" autocomplete="off" id="min-wage">
-        </div>
-
-        <div class="model-settings-item">
-          stop model after: <input type="number" value="24" autocomplete="off" id="stop-model"> months
         </div>
 
         <div class="model-settings-item">
@@ -149,6 +150,10 @@
         <div class="model-settings-item">
           set stress decrement level: <span id="set-stress-decrement">1.5</span> <br>
           <input type="range" value="1.5" min="0.2" max="5" step="0.2" autocomplete="off" id="stress-decrement">
+        </div>
+
+        <div class="model-settings-item">
+          stop model after: <input type="number" value="24" autocomplete="off" id="stop-model"> months
         </div>
 
       </div>

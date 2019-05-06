@@ -1,5 +1,14 @@
 # Iris_Model (beta)
 
+## TO DO:
+* [ ] Add time `spending-model` to agent.js decision:
+  * [ ] update behavior.js with `decide_2` method
+  * [ ] agent should stop working when he used all the time
+  * [ ] add traits that make an agent decide whether he uses all his credit up or if he uses it during the month
+* [ ] Add `time-spending` to task.js
+  * [ ] remove `update_value()` method
+  * [ ] remove `time_coins`
+
 ### Description
 
 🔜

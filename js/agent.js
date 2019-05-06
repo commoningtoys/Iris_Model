@@ -1,12 +1,11 @@
-let autoScrolling = true; // thius is our variable for the autoscrolling
 class Agent {
-  constructor(id, is_player, _traits) {
-    this.isPlayer = is_player;
-    this.playerTaskToExecute;
-    this.playerTimer = 0;
-    this.playerWorking = false;
-    this.playerName = 'PLAYER_';
-    this.ID = nf(id, 4);//is_player ? this.playerName + nf(id, 4) : nf(id, 4);
+  constructor(id, _traits, model_type) {
+    this.ID = nf(id, 4);
+
+    this.spending_hours = this.get_spending_hours(model_type);
+    this.monthly_hours = this.spending_hours;
+    // console.log(model_type);
+    this.spending_model = model_type === 'time-spending' ? true : false;
 
     this.behavior = _traits.trait;//_behavior;
     this.behavior_exp = new Behavior(_traits, this);
@@ -148,6 +147,11 @@ class Agent {
     str6 += '</div>';
     return str1 + str11 + str12 + str2 + str21 + str22 + str3 + str31 + str4 + str5 + str6;
   }
+
+  get_spending_hours(model_type) {
+    if (model_type === 'time-spending') return 30
+    else return 0;
+  }
   /**
    * 
    */
@@ -285,7 +289,12 @@ class Agent {
   }
   swap_2(task, agents) {
     // console.log('deciding...')
-    return this.behavior_exp.decide(task, agents, this)
+    if (this.spending_model) {
+      return this.behavior_exp.decide_2(task, agents, this);
+    }
+    else {
+      return this.behavior_exp.decide(task, agents, this);
+    }
   }
   /**
    * 
