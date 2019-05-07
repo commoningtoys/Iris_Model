@@ -290,236 +290,17 @@ class Agent {
   swap_2(task, agents) {
     // console.log('deciding...')
     if (this.spending_model) {
+      console.log(`agent_${this.ID} is deciding`);
       return this.behavior_exp.decide_2(task, agents, this);
     }
     else {
       return this.behavior_exp.decide(task, agents, this);
     }
   }
-  /**
-   * 
-   * @param {*} task 
-   */
-  swap(task, agents) {
 
-    if (this.isPlayer) {
-      // console.log(agent.ID);
-      noLoop();
-      console.log('noLoop');
-      // console.log(`noLoop ${agent.isPlayer}, ${agent.has_swapped}`)
-      this.playerTaskToExecute = task;
-      this.playerInteraction(task, agents);
-      return true; // this is a bug to be fixed!!!!!! must return false and handle the false statement in choose agent
-    }
-
-
-    /**
-     * ATTENZIONE IMPORTANTE!!!!!!!!!!
-     * don't forget to update the fld 
-     * in task.js where the agent get brute-forced to do a task!
-     */
-    /**
-     * 😯
-     * CURIOUS BEHAVIOUR
-     * Curious: tends to do as many different task as possible
-     */
-    if (this.behavior === 'curious') {
-      if (this.preferenceArchive.length > 1) {
-        const lastIndex = this.preferenceArchive.length - 1;
-        const lastTask = this.preferenceArchive[lastIndex].executed_task;
-        // console.log(lastTask);
-        if (task.type === lastTask || this.FLD < 2) {
-          /**
-           * HERE THE AGENT TRADES
-           * either he takes another task or he rests
-           */
-          if (this.FLD < 2) {
-            // if the agent has enought resting time he rests
-            if (this.time_coins >= task.aot) {
-              this.rest(task);
-              return true;
-            }
-            else {
-              // the agent trades the task
-              this.stress += this.stress_increase_val;
-              this.stress = clamp(this.stress, MINIMUM, MAXIMUM);
-              if (task.type === lastTask) assignTask(this);// if the task is the same as the last one than assign a new task 
-              else return false;// let the agent execute the task
-            }
-          } else if (task.type === lastTask) {
-            // here the agent trades for another task
-            assignTask(this);
-            return true;
-          }
-
-          function assignTask(agent) {
-            // let fld = this.preferenceArchive.map(result => result.feel_like_doing);
-            // const max = Math.max(...otherTasksCompleted);// magic trick
-            // we always check the last entry of the preference archive
-            let index = agent.preferenceArchive.length - 1;
-            if (index >= 0) {
-              let pref = agent.preferenceArchive[index].preferences;
-              let completed = [];
-              /**
-               * here we check for the task that was executed less often
-               */
-              Object.keys(pref).forEach(key => {
-                let objectAttr = pref[key]
-                completed.push(objectAttr.completed)
-              });
-              const minimum = Math.min(...completed);
-
-              /**
-               * here we make a pool of the task executed less often to be 
-               * randomly picked
-               */
-
-              let taskPool = [];
-              Object.keys(pref).forEach(key => {
-                let objectAttr = pref[key]
-                if (objectAttr.completed <= minimum) {
-                  taskPool.push(objectAttr.task_name);
-                }
-              });
-
-              /**
-               * now we pick a random task from the pool
-               */
-              let randomIndex = Math.floor(Math.random() * taskPool.length);
-              let toDoTask = taskPool[randomIndex]; // should return this task
-
-              /**
-               * now we assign the task to the agent
-               */
-
-              agent.has_swapped = true;
-              // need to keep track how often the agent swapped
-              agent.swap_task = toDoTask;// swapped task should be different than this task
-              agent.setInfo();
-            }
-          }
-          return true;
-        } else {
-          /**
-           * HERE HE EXECUTES THE TASK
-           * therefore we return true and the agent works
-           * look it up in task.js lines 200 - 202
-           */
-          // console.log('executing the task');
-
-          return false;
-        }
-      }
-    }
-
-
-    /**
-     * 👨‍🚀
-     * PERFECTIONIST BEHAVIOR
-     * tends to execute only the task he wants to master
-     */
-
-    if (this.behavior === 'perfectionist') {
-      if (task.type !== this.masterTask || this.FLD < 2) {
-        if (this.FLD < 2) {
-          // here we handle the case in which the agent wants to rest
-          // if the agent has enought resting time he rests
-          if (this.time_coins >= task.aot) {
-            this.rest(task);
-            return true;
-          }
-          else {
-            // if the agent has no resting time than he 
-            // gets a random task assigned or he just executes
-            // the task
-            this.stress += this.stress_increase_val;
-            this.stress = clamp(this.stress, MINIMUM, MAXIMUM);
-            if (task.type !== this.masterTask) {
-              // the agent decides to the task he wants to master
-              this.assign_swapped_task(this.masterTask);
-              return true;
-            }
-            else return false;// let the agent execute the task
-          }
-          // return true;
-        } else if (task.type !== this.masterTask) {
-          this.assign_swapped_task(this.masterTask);
-          return true;
-        }
-      } else {
-        /**
-         * the agent executes the task because
-         * the type matches with the one he wants to master
-         */
-        return false;
-      }
-    }
-
-
-    /**
-     * 🏖
-     * GENIESSER BEAHAVIOR
-     * uses his resting time whenever he has enough
-     */
-
-    if (this.behavior === 'geniesser') {
-      if (this.time_coins >= task.aot || this.FLD < 2) {
-        if (this.time_coins >= task.aot) {
-          // if the agent has enough resting time than he always rests
-          this.rest(task);
-          return true;
-        } else {
-          this.stress += this.stress_increase_val;
-          this.stress = clamp(this.stress, MINIMUM, MAXIMUM);
-          return false;// else he executes the task
-        }
-      } else {
-        // the agent does not trade
-        return false;
-      }
-    }
-
-
-    /**
-     * 🎩
-     * Capitalist behavior
-     * tries to accumulate as much as resting time as possible
-     */
-
-    if (this.behavior === 'capitalist') {
-      /**
-       * he takes all the tasks
-       * and he rests only if the value of the task is really low
-       */
-      let taskValues = [];
-      for (const task of TASK_LIST) {
-        let obj = {
-          task_name: task.type,
-          task_value: this.taskValue(agents, task.type)
-        }
-        taskValues.push(obj);
-      }
-      // console.log(taskValues);
-      taskValues.sort((a, b) => a.task_value - b.task_value);
-      // console.log(taskValues, 'sorted');
-      if (this.FLD < 2 && this.taskValue(agents, task.type) < 0.2 && this.time_coins >= task.aot) {
-        this.rest(task);
-        return true;
-      } else {
-        /**
-         * the capitalist should look at the difference between the
-         * current task value and the highest task value
-         * and if it is above a certain value than he trades otherwise not
-         */
-        const lastElement = taskValues.length - 1
-        if (taskValues[lastElement].task_value >= 0.5) {
-          this.assign_swapped_task(taskValues[lastElement].task_name);
-          return true;
-        } else return false;
-      }
-
-
-    }
+  increase_stress() {
+    this.stress += this.stress_increase_val;
+    this.stress = clamp(this.stress, MINIMUM, MAXIMUM);
   }
 
   taskValue(agents, task_name) {
@@ -541,7 +322,16 @@ class Agent {
    * sets the agent at work for a given amount of time
    * @param {Number} amount_of_time 
    */
-  work(amount_of_time, task, agents, brute_forced) {
+  work(task, agents, brute_forced) {
+    const skill = this.getPreferences(task.type).skill_level;
+    const amount_of_time = this.spending_model == true ? task.aot : task.amountOfTimeBasedOnSkill(skill);
+
+    // here we handle the time of the spending model
+    if (this.spending_model) {
+      this.spending_hours -= amount_of_time;
+      console.log(this.spending_hours);
+    }
+
     this.working = true;
     this.workingTimer = amount_of_time;
     this.updateAttributes(task, agents, amount_of_time, brute_forced);
@@ -551,8 +341,10 @@ class Agent {
   }
 
   rest(task) {
-    this.time_coins -= task.aot; // we could also doubble this amount
-    task.updateGRT(task.aot);
+    if (!this.spending_model) {
+      this.time_coins -= task.aot; // we could also doubble this amount
+      task.updateGRT(task.aot);
+    }
     // this.time_coins /= 2;// here add slider that chenges how much resting time is decreased
     // this.makeInfo(`AGENT: ${this.ID} is resting. Resting time ${this.time_coins}`);
     // console.log(`AGENT: ${this.ID} is resting. Behavior ${this.behavior} Resting time ${this.time_coins}`);
@@ -663,46 +455,6 @@ class Agent {
      * tasks that have not been executed  also get inversely updated 
      * a.k.a. you forget how to do a task
      */
-    // here we check how often a task has been executed in a row
-    // this.skillForget = 0.25;
-    // let counter = 0;
-    // for (let i = this.preferenceArchive.length - 1; i >= 0; i--) {
-    //     let pref = this.preferenceArchive[i];
-    //     if (pref.executed_task === task_name) counter++;
-    //     else break;
-    // }
-    // counter = constrain(counter, 1, 10);
-    // // console.log(counter, this.behavior);
-    // // here we adjust the skill and preference
-    // let myObj = this.preferences;
-    // Object.keys(myObj).forEach(key => {
-    //     let pref = myObj[key];
-    //     if (pref.task_name === task_name) {
-    //         // skill increases while preference decreases
-    //         pref.skill_level += counter * this.skillForget * 10;
-    //         let result = this.FLD / MAXIMUM;
-    //         let multiplier = 0;
-    //         if(result > 0.5) multiplier = 1 + abs(0.5 - result);
-    //         else multiplier = -(1 + abs(0.5 - result));
-    //         // console.log(multiplier, this.FLD);
-    //         pref.task_preference += counter * multiplier;
-    //         // pref.task_preference--;
-    //     } else {
-    //         // the opposit for the other tasks
-    //         pref.skill_level -= this.skillForget * 3;
-    //         // pref.task_preference += 2;
-    //         // pref.task_preference += 1;
-    //     }
-    //     // we clamp the values between 1 and 100
-    //     pref.skill_level = clamp(pref.skill_level, MINIMUM, MAXIMUM);
-    //     pref.task_preference = clamp(pref.task_preference, MINIMUM, MAXIMUM);
-    // });
-    // for (const pref of this.preferences) {
-    // }
-    // console.log(this.preferenceArchive, counter, task_name);
-    // console.log(agents);
-    // const tasks = ['admin', 'clean', 'cook', 'shop'];
-    // const forgetRate = 0.35;
     let lastPreferences = this.preferenceArchive[this.preferenceArchive.length - 1].preferences;
     let tasksCompleted = {};
     let result = {};
@@ -749,79 +501,6 @@ class Agent {
     }
 
     this.behavior_exp.update_task_preference(this, _task);
-    /**
-     * here we compute the preference for a task.
-     * each behavior defines how the preference of each agentt develops.
-     * 
-     * 🏖
-     * geniesser have higher preference for tasks that take him less time to
-     * finish.
-     * 
-     * 👨‍🚀
-     * perfectionist have higher preference for the task they want to master
-     * 
-     * 😯
-     * have hihger preference for tasks they have executed the least
-     * 
-     * 🎩
-     * capitalist have higher preference for tasks they get the more resting time from
-     */
-
-    // let fldOffset = this.FLD / MAXIMUM > 0.5 ? 1 : -1;
-
-    // if (this.behavior === 'curious') {
-    //   let completedTasks = [];
-    //   let tot = 0;
-    //   for (const task of TASK_LIST) {
-    //     let obj = {
-    //       task_name: task.type,
-    //       completed: lastPreferences[task.type].completed
-    //     }
-    //     tot += lastPreferences[task.type].completed;
-    //     completedTasks.push(obj);
-    //   }
-    //   for (const task of completedTasks) {
-    //     this.preferences[task.task_name].task_preference = ((task.completed / tot) * MAXIMUM) + fldOffset * 5;
-    //     this.preferences[task.task_name].task_preference = clamp(this.preferences[task.task_name].task_preference, MINIMUM, MAXIMUM);
-    //   }
-    // }
-    // if (this.behavior === 'perfectionist') {
-
-    // }
-    // if (this.behavior === 'geniesser' || this.behavior === 'perfectionist') {
-    //   /**
-    //    * both geniesser and perfectionist have their preference for the
-    //    * skill with higher value. but the preference offsets from the
-    //    * skill value depending on how slope of the skill over time.
-    //    */
-    //   let x_s = [];// x_s they represent the time units that
-    //   for (let i = 0; i < this.preferenceArchive.length; i++)x_s.push(i);// here we fill it 
-
-    //   for (const task of TASK_LIST) {
-    //     // here we fill the y_s with all the values of the skill
-    //     let y_s = this.preferenceArchive.map(result => result.preferences[task.type].skill_level);
-    //     let pref = this.preferences[task.type].skill_level;
-    //     let offset = 5 + (fldOffset * 3);
-    //     pref += linearRegression(y_s, x_s).slope > 0 ? offset : -offset; // here we compute the slope and we look if it is positive or negative
-    //     this.preferences[task.type].task_preference = pref;
-    //     this.preferences[task.type].task_preference = clamp(this.preferences[task.type].task_preference, MINIMUM, MAXIMUM);
-    //   }
-    // }
-
-    // if (this.behavior === 'capitalist') {
-    //   let taskValues = [];
-    //   for (const task of TASK_LIST) {
-    //     let obj = {
-    //       task_name: task.type,
-    //       task_value: this.taskValue(agents, task.type)
-    //     }
-    //     taskValues.push(obj);
-    //   }
-    //   for (const task of taskValues) {
-    //     this.preferences[task.task_name].task_preference = (task.task_value * MAXIMUM) + fldOffset * 5;
-    //     this.preferences[task.task_name].task_preference = clamp(this.preferences[task.task_name].task_preference, MINIMUM, MAXIMUM);
-    //   }
-    // }
   }
   /**
    * updates the completed task preference by adding +1
@@ -846,48 +525,6 @@ class Agent {
       * it could be possible to introduce the concept of groups here where 
       * the agents looks only how the group performs
       */
-
-    // if (brute_forced) {
-    //   // here we manage the decrease in FLD when the agents are forced to do a task
-    //   if (this.behavior === 'capitalist') {
-    //     if (this.taskValue(agents, task.type) < 0.2) this.FLD -= 2;
-    //   } else if (this.behavior === 'perfectionist') {
-    //     if (task.type !== this.masterTask) this.FLD /= 2;
-    //   } else {
-    //     this.FLD /= 2;
-    //   }
-    // } else {
-    //   // here their normal behavior when executing a task
-    //   if (this.behavior === 'capitalist') {
-    //     /**
-    //      * we check who has the highest amout of resting time if it is 
-    //      * me the capitalist then the FLD drops 2 points or less
-    //      * otherwise it drops by 0.5 points
-    //      */
-    //     // console.log(agents.length);
-    //     // let agentsCopy = JSON.parse(JSON.stringify(agents));
-    //     // console.log(agentsCopy.length)
-    //     // const lastIndex = agentsCopy.length - 1;
-    //     const lastIndex = agents.length - 1;
-    //     agents.sort((a, b) => a.time_coins - b.time_coins);
-    //     // console.log(agentsCopy[lastIndex].ID, agentsCopy[lastIndex].time_coins, this.ID);
-    //     if (agents[lastIndex].ID === this.ID) {
-    //       this.FLD -= 2;
-    //     } else {
-    //       this.FLD -= 0.5;
-    //     }
-    //   } else {
-    //     let otherTasksCompleted = [];
-    //     for (const agent of agents) {
-    //       if (agent !== this) otherTasksCompleted.push(agent.totalTaskCompleted);
-    //     }
-
-    //     const max = Math.max(...otherTasksCompleted);// magic trick
-    //     // let result = (this.totalTaskCompleted / (this.totalTaskCompletedByAgents / this.numberOfAgents));
-    //     let result = Math.floor((this.totalTaskCompleted / max) * 5); // <= hard-coded value
-    //     this.FLD -= result;
-    //   }
-    // }
     if (brute_forced) {
       // here we manage the decrease in FLD when the agents are forced to do a task
       this.FLD /= 2;
@@ -908,24 +545,6 @@ class Agent {
 
     this.FLD = clamp(this.FLD, MINIMUM, MAXIMUM);
   }
-  // /**
-  //  * updates the task_preference in this.preferences by adding +1
-  //  * @param {String} task_name 
-  //  */
-  // updateTaskPreference(task_name) {
-  //     let myObj = this.preferences;
-  //     Object.keys(myObj).forEach(key => {
-  //         if(myObj[key].task_name === task_name){
-  //             myObj[key].completed++;
-  //         }
-  //     });
-  //     // for (const el of this.preferences) {
-  //     //     if (el.task_name.includes(task_name)) {
-  //     //         el.completed++;
-  //     //         break;
-  //     //     }
-  //     // }
-  // }
 
   /**
    * @param {String} task_name 

@@ -25,7 +25,7 @@ class IrisModel {
     // let restingTimePerTask = Math.floor(this.GLOBAL_RESTING_TIME / (TASK_LIST.length * num_task))
     for (let i = 0; i < num_task; i++) {
       for (const task of TASK_LIST) {
-        this.tasks.push(new Task(task, min_wage));
+        this.tasks.push(new Task(task, min_wage, model_type));
       }
     }
 

@@ -6,15 +6,16 @@ class Task {
    * @param {Object} task_object a task object
    * @param {Number} global_resting_time amount of time/value that the task can give to the agent 
    */
-  constructor(task_object, min_wage) {
+  constructor(task_object, min_wage, model_type) {
     // this.time_coins_reserve = global_resting_time;
     // console.log(this.time_coins_reserve)
+    this.spending_model = model_type === 'time-spending' ? true : false;
     /**
      * time needed to carry out the task
      */
     this.aot = task_object.amount_of_time;
     // console.log(this.aot);
-    this.time_coins_reserve = 4 * this.aot; // quick fix to have the resting time hooked to the task
+    this.time_coins_reserve = 4 * this.aot;
     /**
      * Value of a task expresses the relative exchange rate to other task.
      * The value of a task goes up every time an agent decides to 'trade'.
@@ -63,7 +64,7 @@ class Task {
       this.urgency = this.urgencyReset;
       // every time the uregency reaches 0 we update the value in the future
       // the preference of the agent may vary according on how often he executed the same task
-      this.updateValue(agents);
+      if(!this.spending_model)this.updateValue(agents);// we update the value only when the mocdel runs on the accumulate model
       this.executed++;
       // here we choose the agent to carry out the task
       this.chooseAgent(agents);
@@ -118,61 +119,10 @@ class Task {
     } else {
       // here we don't give any resting time
       // we should think also on how the agent react when no resting time is given for a task
-      // console.log(`GRT is ${this.time_coins_reserve}`)
-      // console.log(this.minWage);
-      this.value = 0;//this.minWage;
+      this.value = 0;
       this.time_coins_reserve = 0;
     }
-    // console.log(this.type, this.value, this.time_coins_reserve)
     return;
-  }
-  get_value(agents) {
-    // INVERSE TO THE NUMBER OF AGENTS WITH PREFERENCE FOR SUCH TASK
-    // here we remove some time from the amout of resting tim the task can give away
-    let counter = agents.length;// we start from 1 to avoid 0 as result, this will result in a minimum value
-    const NUMBER_OF_AGENTS = agents.length;
-    for (const agent of agents) {
-      // we go through all the agents if their preferred task matches 
-      // this task we add one to the counter
-      let preference = agent.preferredTask();
-      if (preference === this.type) {//string comparison
-        counter--;
-      }
-    }
-
-    let result = 0;
-    /**
-     * else we return a value that is inverse proportional
-     * as many agents prefer that task as lower it is its value
-     * but it can't be 0
-     * 
-     * If the model gives a minimum resting time than the capitalist
-     * are more stressed. if we let the model give 0 resting time 
-     * than the capitalist are the less stressed.
-     */
-    let amountOfTime = this.minWage + ((NUMBER_OF_AGENTS - counter) / NUMBER_OF_AGENTS) * this.aot;
-    amountOfTime = Math.round(amountOfTime);
-    // down here we remove time from the GRT if it reaches 0 it stays 0!
-    if (this.time_coins_reserve > 0) {
-      if (this.time_coins_reserve - amountOfTime < 0) {
-        // if the amount of time computed above is 
-        // bigger than the reserve of resting time
-        // than we set the value to be the leftover of the 
-        // resting time. here we also need to set the
-        // resting time reserve to 0 because ve removed all of it.
-        result = this.time_coins_reserve;
-      } else {
-        // else we set the amout of time as the valuse for the task
-        result = amountOfTime;
-      }
-    } else {
-      // here we don't give any resting time
-      // we should think also on how the agent react when no resting time ids given for a task
-      // console.log(`GRT is ${this.time_coins_reserve}`)
-      // console.log(this.minWage);
-      result = this.minWage;
-    }
-    return result;
   }
 
   updateGRT(amount_of_time) {
@@ -193,7 +143,6 @@ class Task {
 
     this.agentsPool = [];
     this.swapping_agents = 0;
-    let amountOfSkill = 0;
     let skill = 0;
     shuffleArray(agents);// we shuffle the agents 
     // here we filter out all the agents who already have done the task for the day
@@ -222,9 +171,7 @@ class Task {
           // amountOfSkill += skill;// we will use this when we will need more agents to carry out the task
           //////////////////////
           // console.log(agent.ID, agent.swap_task)
-          skill = agent.getPreferences(this.type).skill_level;
-          const time = this.amountOfTimeBasedOnSkill(skill);
-          agent.work(time, this, agents);//the agent works
+          agent.work(this, agents, false);//the agent works
           agent.has_swapped = false; // reset here the traded boolean | needs to be done after the the agent.work otherwise the it is not possible to visualize the trade happening
           // this.executed++;
           // console.log('swapping agent doing the task!');
@@ -261,9 +208,7 @@ class Task {
           // console.log('swapped')
           // if the agent has not traded 
           // then he executes the task
-          skill = agent.getPreferences(this.type).skill_level;
-          let time = this.amountOfTimeBasedOnSkill(skill);
-          agent.work(time, this, agents);// we set the agent at work
+          agent.work(this, agents, false);// we set the agent at work
           // this.executed++;
           swapping = false;// here we exit the while loop
           // flush the pool
@@ -303,11 +248,8 @@ class Task {
         // check resting timer!!!
         agent.has_swapped = false;
         agent.swap_task = '';
-        agent.stress += agent.stress_increase_val;
-        agent.stress = clamp(agent.stress, MINIMUM, MAXIMUM);
-        let skill = agent.getPreferences(this.type).skill_level;
-        let time = this.amountOfTimeBasedOnSkill(skill);
-        agent.work(time, this, agents, true);
+        agent.increase_stress();
+        agent.work(this, agents, true);
         // agent.FLD /= 2;
         // add this to the html text
         // console.log(`agent_${agent.ID} has been brute forced to do ${this.type}`);
@@ -349,7 +291,7 @@ class Task {
     result = Math.round(result);
     result += this.aot;
     // console.log(`${this.type}this is the skill level: ${skill_level} and this the median: 50. this is the amount of time: ${this.aot} and the result: ${result}`);
-    const MINIMUM_TIME = TIME_SCALE * 2;// this is the minimum time an agent has to invest for an assigned task aka 15 minutes
+    const MINIMUM_TIME = TIME_SCALE;// this is the minimum time an agent has to invest for an assigned task aka 1 hour
     if (result <= MINIMUM_TIME) return MINIMUM_TIME;// if the result is less than the minimum time return the minimum time
     else return result;// else return the result
   }
