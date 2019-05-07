@@ -41,7 +41,9 @@ function init_model() {
     const tasks_num = parseInt(document.getElementById('how-many-task').value);
     const players = 0; // for now
     const model_type = get_model_type();
-    irisModel = new IrisModel(traits_list, min_wage, tasks_num, model_type);
+    const monthly_hours = parseInt(document.getElementById('monthly-hours').value);
+    console.log(monthly_hours);
+    irisModel = new IrisModel(traits_list, min_wage, tasks_num, model_type, monthly_hours);
 
     const stop_model = parseInt(document.getElementById('stop-model').value)
 

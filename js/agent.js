@@ -1,9 +1,9 @@
 class Agent {
-  constructor(id, _traits, model_type) {
+  constructor(id, _traits, model_type, monthly_hours) {
     this.ID = nf(id, 4);
 
+    this.monthly_hours = monthly_hours;
     this.spending_hours = this.get_spending_hours(model_type);
-    this.monthly_hours = this.spending_hours;
     // console.log(model_type);
     this.spending_model = model_type === 'time-spending' ? true : false;
 
@@ -149,8 +149,16 @@ class Agent {
   }
 
   get_spending_hours(model_type) {
-    if (model_type === 'time-spending') return 30
-    else return 0;
+    if (model_type === 'time-spending') return this.monthly_hours
+    else return 1;
+  }
+
+  reset_spending_time() {
+    if (this.spending_hours < 0) {
+      this.spending_hours += this.monthly_hours;
+    }else{
+      this.spending_hours = this.monthly_hours;
+    }
   }
   /**
    * 
@@ -290,7 +298,7 @@ class Agent {
   swap_2(task, agents) {
     // console.log('deciding...')
     if (this.spending_model) {
-      console.log(`agent_${this.ID} is deciding`);
+      // console.log(`agent_${this.ID} is deciding`);
       return this.behavior_exp.decide_2(task, agents, this);
     }
     else {
@@ -329,7 +337,7 @@ class Agent {
     // here we handle the time of the spending model
     if (this.spending_model) {
       this.spending_hours -= amount_of_time;
-      console.log(this.spending_hours);
+      // console.log(this.spending_hours);
     }
 
     this.working = true;
@@ -419,7 +427,8 @@ class Agent {
     this.preferenceArchive.push({
       preferences: insert,
       executed_task: task.type,
-      time_coins: this.time_coins, // this maps the value to a better scale
+      time_coins: this.time_coins, // this maps the value to a better scale¿
+      spending_hours: this.spending_hours, // this maps the value to a better scale¿
       feel_like_doing: this.FLD,
       stress_level: this.stress,
       amount_of_time: this.mappedAmountOfTime,

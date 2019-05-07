@@ -113,6 +113,13 @@ class Behavior {
     // first we handle the case of resting therefore if endurance is lower than 0.3
     // if the agents endurance reaches a treshold
     if (this.computed_traits.endurance < 0.3) {
+      // first we handle the case of the spending model
+      if(agent.spending_model){
+        console.log('agent resting...');
+        agent.rest(task);
+        result = true;
+      }
+
       // in here we handle the coins aspect
       // does the agent have enough money?
       if (agent.time_coins >= task.aot) {
@@ -122,8 +129,7 @@ class Behavior {
         result = true;
       } else {
         // here we update the stress value
-        agent.stress += agent.stress_increase_val;
-        agent.stress = clamp(agent.stress, MINIMUM, MAXIMUM);
+        agent.increase_stress()
         // we don't return anything we just go on with the swapping
       }
     }

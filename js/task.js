@@ -143,11 +143,13 @@ class Task {
 
     this.agentsPool = [];
     this.swapping_agents = 0;
-    let skill = 0;
     shuffleArray(agents);// we shuffle the agents 
     // here we filter out all the agents who already have done the task for the day
-    const available_agents = agents.filter(result => result.done_for_the_day === false);
+    const available_agents = agents.filter(result => (result.done_for_the_day === false && result.spending_hours > 0));
     // console.log(available_agents);
+    if(available_agents.length <= 0){
+      console.log('no agents available');
+    }
     // here we check if the agent has traded before if yes he executes the task
     for (const agent of available_agents) {
       // skill = agent.getPreferences(this.type).skill_level;

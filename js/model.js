@@ -1,5 +1,5 @@
 class IrisModel {
-  constructor(traits, min_wage, num_task, model_type) {
+  constructor(traits, min_wage, num_task, model_type, monthly_hours) {
     // this.plot = new Plot();
     this.batch = false;
     this.agents = [];
@@ -13,7 +13,7 @@ class IrisModel {
     this.max_time_coins = 0;
     let idx = 0;
     for (const trait of this.traits) {
-      this.agents.push(new Agent(idx, trait, model_type))
+      this.agents.push(new Agent(idx, trait, model_type, monthly_hours))
       idx++;
     }
     // make the info for all of the agents
@@ -58,7 +58,8 @@ class IrisModel {
       stress: '#ff0',
       aot: '#2d69f5',//color(45, 105, 245)
       swapped: '#00ff6496', //color(0, 255, 100, 150)
-      brute_force: '#ff7d0096'//color(255, 125, 0, 150)
+      brute_force: '#ff7d0096',//color(255, 125, 0, 150)
+      spending_hours: '#fff'
     };
 
     this.to_emoji = {
@@ -70,7 +71,8 @@ class IrisModel {
       stress: '😰',
       aot: '⏳',//color(45, 105, 245)
       swapped: '🔄', //color(0, 255, 100, 150)
-      brute_force: '💪🏻'//color(255, 125, 0, 150)
+      brute_force: '💪🏻',//color(255, 125, 0, 150)
+      spending_hours: '💰'
 
     }
 
@@ -86,7 +88,7 @@ class IrisModel {
     this.dataCollected = 0;
   }
 
-  
+
   /**
    * calculates the global amount of time the agents have for resting
    * it doubles the amount of time needed to finish all the tasks by an agent
@@ -106,14 +108,10 @@ class IrisModel {
   update() {
     // for(let i = 0; i < 10; i++){
     for (const agent of this.agents) {
-      // let agent = this.agents[i];
       agent.update();
-      // drawInfos(agent);
-      // agent.setInfo();
     }
 
     for (const task of this.tasks) {
-      // task.show();
       task.updateUrgency(this.agents);
     }
 
@@ -139,12 +137,7 @@ class IrisModel {
     }
   }
 
-  show() { // show isn't the most correct name for this method
-    /**
-     * here we sort the agents array that was shuffled 
-     * during the choose agent process of task.js
-     */
-    background(51);
+  get_median_values_by_behavior() {
     const medianValuesByBehavior = {};
     for (const behavior of this.traits_list) {
       const median = {};
@@ -165,7 +158,8 @@ class IrisModel {
         stress: [],
         aot: [],
         swapped: [],
-        brute_force: []
+        brute_force: [],
+        spending_hours: []
       }
       // here we extract all the preferences values 
       for (const agent of extractedAgents) {
@@ -176,14 +170,10 @@ class IrisModel {
             this.max_time_coins = el.time_coins;//here we update the max value for time coins 
           }
           let result = el.time_coins;
-          // if (el.time_coins > 100) {
-          // console.log(el.time_coins, max_time_coins);
           result = (el.time_coins / this.max_time_coins) * 100;
-          // console.log(result); 
-          // }
-          // let val = (el.time_coins / (this.GLOBAL_RESTING_TIME / extractedAgents.length)) * 100;
           return result;
         });
+        const sh = agent.preferenceArchive.map(result => (result.spending_hours / 30) * 100);
         const stress = agent.preferenceArchive.map(result => result.stress_level);
         const aot = agent.preferenceArchive.map(result => result.amount_of_time);
         const swapped = agent.preferenceArchive.map(result => result.swapped);
@@ -195,19 +185,16 @@ class IrisModel {
         agentsData.aot.push(aot);
         agentsData.swapped.push(swapped);
         agentsData.brute_force.push(bruteForce);
+        agentsData.spending_hours.push(sh);
       }
-      // const median = {};
       // and calculate the median
       Object.keys(agentsData).forEach(key => {
         // console.log(result.fld);
         // here we get the array with the lowest amount of elements
         // to calculate the median we need all the arrays to be the same length
         // threfore we compute the minimum length of all the arrays
-        // console.log(agentsData);
         const minLen = Math.min(...agentsData[key].map(result => result.length));
-        // console.log(minLen);
         let sum = Array(minLen).fill(0);
-        // console.log(sum);
         for (let i = 0; i < agentsData[key].length; i++) {
           for (let j = 0; j < minLen; j++) {
             // console.log(i, j, agentsData.fld[i], agentsData.fld[0][j])
@@ -219,20 +206,26 @@ class IrisModel {
             }
           }
         }
-        // console.log(result.fld);
         // get the median
         if (key === 'swapped' || key === 'brute_force') { } else {
           for (let i = 0; i < sum.length; i++)sum[i] /= len;
         }
         median[key] = sum;
       });
-      // median.number_of_agents = len;
-      // median['agents'] = len;
-      // console.log(median, behavior);
       medianValuesByBehavior[behavior] = median;
     }
+    return medianValuesByBehavior;
+  }
+
+  show() { // show isn't the most correct name for this method
+    /**
+     * here we sort the agents array that was shuffled 
+     * during the choose agent process of task.js
+     */
+    background(51);
+
     // console.log(medianValuesByBehavior);
-    this.infographic(medianValuesByBehavior);
+    this.infographic(this.get_median_values_by_behavior());
     // this.plot.draw(medianValuesByBehavior, { h: this.hours, d: this.days, m: this.months, y: this.years })
     // console.log(medianValuesByBehavior);
     // this.plot.show(median, this.pointIndex);
@@ -400,7 +393,7 @@ class IrisModel {
    */
   setModelTime() {
     // if (this.timeUnit > 0 && this.timeUnit % TS_FRACTION == 0) {
-      this.hours++;
+    this.hours++;
     // }
     if (this.hours > 0 && this.hours % 24 == 0) {
       // here we update the agent status rest and availability to work
@@ -413,6 +406,11 @@ class IrisModel {
       this.distribute_time_coins();
     }
     if (this.days > 0 && this.days % 30 == 0) {
+
+      // here we need to reset the spent time of the agents
+      for (const agent of this.agents) {
+        agent.reset_spending_time();
+      }
       this.months++;
       this.days = 0;
 
@@ -420,16 +418,16 @@ class IrisModel {
       if (this.batch) {
         // save images every 3 months
         // if(this.months % 2 === 0)this.show();
-        if(this.months % 12 === 0){
+        if (this.months % 12 === 0) {
           this.show();
           const d = new Date();
           const milliseconds = Date.parse(d) / 1000;
-          let save_txt = milliseconds + '_'+ batch_save_txt +  '_model';
+          let save_txt = milliseconds + '_' + batch_save_txt + '_model';
           console.log(save_txt);
           // saveCanvas(save_txt, 'png');
         }
 
-        if(this.termination_counter >= this.termination){
+        if (this.termination_counter >= this.termination) {
           this.terminated = true;
         }
       } else {
@@ -438,7 +436,7 @@ class IrisModel {
           start_stop_model();
           const d = new Date();
           const milliseconds = Date.parse(d) / 1000;
-          let save_txt = batch_save_txt + '_'+ milliseconds +'_model';
+          let save_txt = batch_save_txt + '_' + milliseconds + '_model';
           // save_txt = save_txt.replace('.', '_');
           console.log(save_txt);
           // saveCanvas(save_txt, 'png');
