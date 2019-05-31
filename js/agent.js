@@ -50,6 +50,8 @@ class Agent {
 
     this.done_for_the_day = false;
 
+    this.inner_clock = {}
+
     this.currentTask = '';
     this.FLD = MAXIMUM; //this.behavior === 'capitalist' ? 100 : randomMinMAx();// feel like doing
     this.solidarity = randomMinMAx();
@@ -61,12 +63,15 @@ class Agent {
     // working attributes
     this.working = false;
     this.workingTimer = 0;// how long is the agent at work
+
+    this.decision_archive = [];
+
     this.mappedAmountOfTime = 0;
     this.colors = {
-      working: color(255, 0, 0),
-      available: color(0, 255, 0),
-      unable: color(125),
-      lazy: color(255, 255, 0)
+      work: color(255, 0, 0),
+      rest: color(255, 255, 0),
+      swap: color(0, 255, 0),
+      unable: color(125)
     };
     this.showStatistics = false;
     this.preferenceColors = {
@@ -81,8 +86,6 @@ class Agent {
     };
 
     this.recordData = false;
-    // this.makeInfo();
-    // this.setInfo();
   }
   /**
    * 
@@ -148,17 +151,42 @@ class Agent {
     return str1 + str11 + str12 + str2 + str21 + str22 + str3 + str31 + str4 + str5 + str6;
   }
 
+  set_time(time_obj){
+    this.inner_clock = time_obj;
+  }
+  get_inner_clock(){
+    return JSON.parse(JSON.stringify(this.inner_clock));
+  }
+  push_to_decision_archive(_decision){
+    // TO DO check if the object is correct!
+    // obj should be made by a: whether agent has worked, swapped or rested
+    // a time reference
+    const obj = {
+      decision: _decision,
+      time: this.get_inner_clock()
+    }
+    this.decision_archive.push(obj)
+  }
+  get_decision_archive(){
+    return JSON.parse(JSON.stringify(this.decision_archive));
+  }
   get_spending_hours(model_type) {
     if (model_type === 'time-spending') return this.monthly_hours
     else return 1;
   }
 
   reset_spending_time() {
-    if (this.spending_hours < 0) {
+    console.log(this.spending_hours);
+    if (this.spending_hours <= 0) {
       this.spending_hours += this.monthly_hours;
     }else{
-      this.spending_hours = this.monthly_hours;
+      this.spending_hours = this.monthly_hours + this.spending_hours;
     }
+    // let update_hours = 0;
+    // if(this.spending_hours > 0){
+    //   update_hours = this.spending_hours;
+    // }
+    // this.spending_hours = this.monthly_hours + update_hours;
   }
   /**
    * 
@@ -264,6 +292,10 @@ class Agent {
    * here the agent works
    */
   update() {
+    // make the task archive constarined within a max value
+    if(this.decision_archive.length > DATA_POINTS){
+      this.decision_archive.splice(0, 1);
+    }
     /**
      * here we need to add the resting 
      * similar to working. resting should also get a timer
@@ -297,13 +329,13 @@ class Agent {
   }
   swap_2(task, agents) {
     // console.log('deciding...')
-    if (this.spending_model) {
-      // console.log(`agent_${this.ID} is deciding`);
-      return this.behavior_exp.decide_2(task, agents, this);
-    }
-    else {
+    // if (this.spending_model) {
+    //   // console.log(`agent_${this.ID} is deciding`);
+    //   return this.behavior_exp.decide_2(task, agents, this);
+    // }
+    // else {
       return this.behavior_exp.decide(task, agents, this);
-    }
+    // }
   }
 
   increase_stress() {
@@ -331,6 +363,9 @@ class Agent {
    * @param {Number} amount_of_time 
    */
   work(task, agents, brute_forced) {
+    // console.log('work...');
+
+    this.push_to_decision_archive('work');
     const skill = this.getPreferences(task.type).skill_level;
     const amount_of_time = this.spending_model == true ? task.aot : task.amountOfTimeBasedOnSkill(skill);
 
@@ -366,7 +401,7 @@ class Agent {
   }
 
   assign_swapped_task(task_name) {
-    // console.log(task_name)
+    // console.log('swap...')
     this.has_swapped = true;
     this.swap_task = task_name;
     this.setInfo();
@@ -428,12 +463,12 @@ class Agent {
       preferences: insert,
       executed_task: task.type,
       time_coins: this.time_coins, // this maps the value to a better scale¿
-      spending_hours: this.spending_hours, // this maps the value to a better scale¿
-      feel_like_doing: this.FLD,
+      spending_hours: this.spending_hours,
       stress_level: this.stress,
       amount_of_time: this.mappedAmountOfTime,
       swapped: this.has_swapped,// === true ? this.swap_task : '',
-      brute_force: this.wasBruteForced
+      brute_force: this.wasBruteForced,
+      inner_clock: this.inner_clock
     });
 
     if (this.recordData) {

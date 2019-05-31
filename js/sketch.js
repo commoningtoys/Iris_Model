@@ -33,8 +33,12 @@ function windowResized() {
 
 
 function init_model() {
+
+  clearInterval(tick);
+  start_stop = false;
+
   console.log('start')
-  if (check_values) {// if the input given in the menu are correct than start the model
+  // if (check_values) {// if the input given in the menu are correct than start the model
 
     const traits_list = extract_traits();
     const min_wage = parseInt(document.getElementById('min-wage').value);
@@ -51,15 +55,15 @@ function init_model() {
 
     $('.menu').toggle('fast');
 
-    $('#info-window').toggle('fast', () => {
+    $('#info-window').show('fast', () => {
       // whe the window is closed resize the sketch
       resizeCanvas(WIDTH(), HEIGHT());
     });
     tick = setInterval(single_execution, 0.1);
-  }
+  // } 
 }
 
-function single_execution(){
+function single_execution() {
   if (irisModel != null) {
     for (let i = 0; i < loops; i++) {
       irisModel.update();
@@ -68,12 +72,12 @@ function single_execution(){
   }
 }
 
-function get_model_type(){
+function get_model_type() {
   let inputs = document.getElementById('model-type');
   inputs = $(inputs).find('input')
   let result;
-  for(const input of inputs){
-    if(input.checked){
+  for (const input of inputs) {
+    if (input.checked) {
       console.log(input.value);
       result = input.value;
     }
@@ -85,7 +89,7 @@ function extract_traits() {
   // here we need to extract the values of the menu
   const result = [];
   const traits_input = document.getElementsByClassName('traits-input');
-
+  let index = 0;
   for (const elt of traits_input[0].children) {
     // here we extract the values we neeed
     const amount = parseInt(elt.children['amount'].value);
@@ -94,9 +98,13 @@ function extract_traits() {
     const perf_val = parseFloat(elt.children['perfectionism'].value);
     const endu_val = parseFloat(elt.children['endurance'].value);
     const good_val = parseFloat(elt.children['goodwill'].value);
+    // console.log(elt.children);
+    const planning = get_values_hidden_menu(index);
+    // lets make the amount a global variable
+    AGENT_NUM = amount;
     // and we push them inside the array
-    for (let i = 0; i < amount; i++)result.push(make_trait(trait_name, cur_val, perf_val, endu_val, good_val));
-
+    for (let i = 0; i < amount; i++)result.push(make_trait(trait_name, cur_val, perf_val, endu_val, good_val, planning));
+    index++;
   }
   return result;
 }

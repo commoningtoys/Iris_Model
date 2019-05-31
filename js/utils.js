@@ -22,7 +22,7 @@ function makeTask(time_needed, how_often, name) {
  * @param {Number} good_val 
  * @return an object with the traits
  */
-function make_trait(name, cur_val, perf_val, endu_val, good_val) {
+function make_trait(name, cur_val, perf_val, endu_val, good_val, planning) {
   const sum = cur_val + perf_val + good_val;
   // console.log(cur_val / sum, perf_val / sum , endu_val, good_val / sum, name)
   return {
@@ -30,7 +30,8 @@ function make_trait(name, cur_val, perf_val, endu_val, good_val) {
     curiosity: cur_val / sum,
     perfectionism: perf_val / sum,
     endurance: endu_val,
-    goodwill: good_val / sum
+    goodwill: good_val / sum,
+    planning: planning
   }
 }
 function extract_unique_keys(arr, key) {
@@ -76,6 +77,10 @@ function shuffleArray(array) {
     array[i] = array[j];
     array[j] = temp;
   }
+}
+
+function sort_agents(agents){
+  return agents.sort((a, b)=> a.ID - b.ID);
 }
 
 function sumArray(arr1, arr2) {

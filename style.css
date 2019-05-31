@@ -160,6 +160,13 @@ input{
 
     border-bottom: solid 2px #ff0;
 }
+.hide{
+    display: block;
+    grid-column: 1 / span 2;
+    color: #f00;
+    background-color: #0ff;
+    /* padding: 0.5rem; */
+}
 button#close-menu {
     position: fixed;
     top: 0px;

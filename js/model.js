@@ -36,8 +36,10 @@ class IrisModel {
 
     this.timeUnit = 0;
 
+    this.model_date = {}
+
     this.hours = 0;
-    this.days = 0;
+    this.days = 1;
     this.weeks = 0;
     this.months = 0;
     this.years = 0;
@@ -108,6 +110,7 @@ class IrisModel {
   update() {
     // for(let i = 0; i < 10; i++){
     for (const agent of this.agents) {
+      agent.set_time(this.model_date);
       agent.update();
     }
 
@@ -223,7 +226,7 @@ class IrisModel {
      * during the choose agent process of task.js
      */
     background(51);
-
+    this.show_task_archives()
     // console.log(medianValuesByBehavior);
     this.infographic(this.get_median_values_by_behavior());
     // this.plot.draw(medianValuesByBehavior, { h: this.hours, d: this.days, m: this.months, y: this.years })
@@ -388,6 +391,24 @@ class IrisModel {
       pop();
     }
   }
+
+  show_task_archives(){
+    const sorted_agents = sort_agents(this.agents);
+    noStroke();
+    const w = width / DATA_POINTS;
+    const h = height / this.agents.length;
+    let idx_h = 0;
+    for (const agent of sorted_agents) {
+      const decisions = agent.get_decision_archive().map(result => result.decision);
+      let idx_w = 0;
+      for (const decision of decisions) {
+        fill(agent.colors[decision]);
+        rect(idx_w * w, idx_h * h, w, h);
+        idx_w++;
+      }
+      idx_h++;
+    }
+  }
   /**
    * sets the time passed in the form of hours | days | months | yeara
    */
@@ -405,14 +426,14 @@ class IrisModel {
       this.hours = 0;
       this.distribute_time_coins();
     }
-    if (this.days > 0 && this.days % 30 == 0) {
+    if (this.days > 1 && this.days % 30 == 0) {
 
       // here we need to reset the spent time of the agents
       for (const agent of this.agents) {
         agent.reset_spending_time();
       }
       this.months++;
-      this.days = 0;
+      this.days = 1;
 
       this.termination_counter++;
       if (this.batch) {
@@ -448,6 +469,14 @@ class IrisModel {
       this.months = 0;
       this.weeks = 0;
     }
+
+    this.model_date = {
+      h: this.hours,
+      d: this.days,
+      m: this.months,
+      y: this.years
+    }
+
     let currentDate = `years: ${this.years}<br>months: ${this.months}<br>days: ${this.days}<br>hours: ${this.hours}`;
     // console.log(currentDate);
     document.getElementById('display-date').innerHTML = currentDate;

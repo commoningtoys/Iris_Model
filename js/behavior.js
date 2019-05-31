@@ -10,7 +10,8 @@ class Behavior {
    *       curiosity:     [0, 1],
    *       perfectionism: [0, 1], // 
    *       endurance:    [0, 1], // endurance
-   *       goodwill:    [0, 1]  // accumulate                 
+   *       goodwill:    [0, 1]  // accumulate  
+   *       planning: {Object}               
    *   }
    * @param {JSON} _traits is an object containing two values: tendency to rest over work and tendency to repeat same task over curiosity
    * @param {*} _agent 
@@ -30,6 +31,11 @@ class Behavior {
       endurance: null,
       goodwill: null
     }
+    this.planning = {
+      plan: _traits.planning[0],
+      distribution: _traits.planning[1]
+    }
+    console.log(this.planning);
     // Object.keys(this.traits).forEach(key => {
     //   if(key !== 'trait'){
     //     this.computed_traits[key] = null;
@@ -38,14 +44,14 @@ class Behavior {
     // console.log(this.traits);
     let mx = 0;
     Object.keys(this.traits).forEach(key => {
-      if (key !== 'trait' && key !== 'endurance') {
+      if (key !== 'trait' && key !== 'endurance' && key !== 'planning') {
         if (this.traits[key] >= mx) mx = this.traits[key];
       }
     });
     // console.log(mx)
     this.dominant_traits = [];
     Object.keys(this.traits).forEach(key => {
-      if (key !== 'trait' && key !== 'endurance') {
+      if (key !== 'trait' && key !== 'endurance' && key !== 'planning') {
         if (this.traits[key] >= mx) this.dominant_traits.push(key);
       }
     });
@@ -65,17 +71,8 @@ class Behavior {
     const task_name = task.type;
     const agent_archive = agent.preferenceArchive;
 
-    this.compute_traits(agent_archive, task_name, agent, task, agents);
-    return this.compute_decision(agent, task);
-  }
-
-  decide_2(task, agents, agent) {
-    const task_name = task.type;
-    const agent_archive = agent.preferenceArchive;
-
-    this.compute_traits(agent_archive, task_name, agent, task, agents);
-    // we will need to compute the additional traits
-    return this.compute_decision(agent, task);
+    this.compute_traits(agent_archive, task_name, agent, task, agents);;
+    return this.compute_decision(agent, task);;
   }
 
   compute_traits(agent_archive, task_name, agent, task, agents) {
@@ -95,6 +92,7 @@ class Behavior {
   }
 
   compute_decision(agent, task) {
+    // console.log('compute decision...');
     let result = false;
     let swap_value = 0;
     if (agent.spending_model) {
@@ -110,34 +108,15 @@ class Behavior {
         }
       });
     }
-    // first we handle the case of resting therefore if endurance is lower than 0.3
-    // if the agents endurance reaches a treshold
-    if (this.computed_traits.endurance < 0.3) {
-      // first we handle the case of the spending model
-      if(agent.spending_model){
-        console.log('agent resting...');
-        agent.rest(task);
-        result = true;
-      }
-
-      // in here we handle the coins aspect
-      // does the agent have enough money?
-      if (agent.time_coins >= task.aot) {
-        //if the agent has enough time coins he rests and tells the task that he rests
-        console.log('agent resting...');
-        agent.rest(task);
-        result = true;
-      } else {
-        // here we update the stress value
-        agent.increase_stress()
-        // we don't return anything we just go on with the swapping
-      }
-    }
+    if(this.compute_resting(agent, task)) return false;
     // here the swapping happens
     if (swap_value > 0.5) { // make it a slider between 0.3 – 0.7
       // console.log('WORK')
+      // add rest to the agent task archive
       result = false
     } else {
+      // add rest to the agent task archive
+      agent.push_to_decision_archive('swap');
       const swap_trait = random_arr_element(this.dominant_traits);
       // console.log('SWAP', swap_trait);
       // console.log(this, this.computed_traits[swap_trait])
@@ -149,6 +128,129 @@ class Behavior {
     return result;
   }
 
+  compute_resting(agent, task) {
+    // console.log(agent);
+    let result = false;
+    // first we handle the case of resting therefore if endurance is lower than 0.3
+    // if the agents endurance reaches a treshold
+    // first we handle the case of the spending model
+    if (agent.spending_model) {
+      // first we need to get the archive of the decidsions
+      const decision_archive = agent.get_decision_archive()
+      result = this.compute_decision_resting(decision_archive)
+      if (result) {
+        // if the agent is resting than he rests
+        agent.push_to_decision_archive('rest');
+        console.log('agent resting...');
+        agent.rest(task);
+      }
+      return result;
+    } else if (this.computed_traits.endurance < 0.3) {
+
+
+      // in here we handle the coins aspect
+      // does the agent have enough money?
+      if (agent.time_coins >= task.aot) {
+        // add rest to the agent task archive
+        agent.push_to_decision_archive('rest');
+        //if the agent has enough time coins he rests and tells the task that he rests
+        // console.log('agent resting...');
+        agent.rest(task);
+        result = true;
+        return result;
+      } else {
+        // here we update the stress value
+        agent.increase_stress()
+        // the agent can't rest
+        return false
+      }
+    } else {
+      return false
+    }
+  }
+  compute_decision_resting(decision_archive) {
+    let result = false;
+    const work_archive = decision_archive.filter(result => result.decision === 'work');
+    let last_decision = null;
+    let curr_month = 0;
+    if(work_archive.length > 0){
+      last_decision = work_archive[work_archive.length - 1];
+      curr_month = work_archive.filter(result => result.time.m === last_decision.time.m);
+    }
+    if(curr_month === undefined)console.log(curr_month);
+    if (this.planning.plan === 'distributed') {
+      // if the plan is distributed the agent should look at the past executions 
+      // the tendency to rest will decrease by the distance
+      if(last_decision === null){result = false;}
+      else if(last_decision.time.m !== this.agent.get_inner_clock().m){result = false}
+      else{
+        const last_day = last_decision.time.d;
+        const current_day = this.agent.get_inner_clock().d;
+        const difference = current_day - last_day;
+        const mult = Math.pow(2, difference)
+        const probability = (100 - (difference * mult)) * 0.01;
+        const test = Math.random();
+        result = test > probability ? true : false;
+        // console.log(test, probability, result);
+      }
+    } else {
+      result = this.compute_compact_resting(decision_archive)
+    }
+    return result
+  }
+
+  compute_compact_resting(decision_archive){
+    let result = false;
+    // let period_of_month = undefined;
+    const current_day = this.agent.get_inner_clock().d;
+    const agent_compact_plan = this.planning.distribution;
+    if(current_day >= 1 && current_day <=10){
+      // begin
+      result = (agent_compact_plan === 'begin')
+    }else if(current_day >= 11 && current_day <= 20){
+      // middle
+      result = (agent_compact_plan === 'middle')
+    }else if(current_day >= 21 && current_day <= 30){
+      // end
+      result = (agent_compact_plan === 'end')
+      
+    }else{
+      // error handling
+      console.error(`error: a month has less than ${current_day} days!!`);
+    }
+    // console.log({current_day, agent_compact_plan, result});
+    return result;
+  }
+  /**
+   * change choose agent to call for all of the agents who
+   * are available and after pick them.  
+   */
+
+
+  // compute_decision() {
+  //   let result = false;
+  //   // console.log(this.planning);
+  //   if (this.planning.plan === 'distributed') {
+
+  //   } else {
+  //     switch (this.planning.distribution) {
+  //       case 'begin':
+
+  //         break;
+  //       case 'middle':
+
+  //         break;
+  //       case 'end':
+
+  //         break;
+
+  //       default:
+  //         result = false
+  //         break;
+  //     }
+  //   }
+  //   return result;
+  // }
 
   /**
    * this methods computes the curiosity of the agent

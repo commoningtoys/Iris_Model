@@ -171,3 +171,31 @@ function get_decimal_value(val) {
     return result
   }
 }
+
+function update_behavior_setting_menu(elt) {
+  console.log(elt.value);
+  const hidden = document.getElementsByClassName('hide')
+  if (elt.value === 'time-spending') {
+    // show hidden menu
+    for (const el of hidden) {
+      el.style.display = 'block';
+    }
+  } else {
+    // hide it!
+    for (const el of hidden) {
+      el.style.display = 'none';
+    }
+  }
+}
+
+function get_values_hidden_menu(index) {
+  const hidden = document.getElementsByClassName('hide')[index].children;
+  const result = [];
+  for (const child of hidden) {
+    if(child.checked){
+      console.log(child.value);
+      result.push(child.value);
+    }
+  }
+  return result
+}
