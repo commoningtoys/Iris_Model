@@ -204,6 +204,7 @@ class Behavior {
     // let period_of_month = undefined;
     const current_day = this.agent.get_inner_clock().d;
     const agent_compact_plan = this.planning.distribution;
+    // console.log(agent_compact_plan);
     if(current_day >= 1 && current_day <=10){
       // begin
       result = (agent_compact_plan === 'begin')

@@ -157,7 +157,7 @@ class Task {
 
     // what if there is no available agents? brute force
     if(this.agentsPool.length <= 0){
-      console.log('no agents available... brute forcing...');
+      // console.log('no agents available... brute forcing...');
       this.bruteForceTask(agents);
     }
 
@@ -239,7 +239,7 @@ class Task {
         this.bruteForceTask(agents);
         // flush the pool
         this.agentsPool = [];
-        console.log(`NO AGENT FOUND FOR ${this.type}!`);
+        // console.log(`NO AGENT FOUND FOR ${this.type}!`);
         // noLoop();
         break;
       } else {

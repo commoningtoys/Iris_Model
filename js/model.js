@@ -70,11 +70,11 @@ class IrisModel {
       fld: '🙇🏻‍♀️',
       time_coins: '💵',
       time_coins_real: '💰',
+      spending_hours: '💸',
       stress: '😰',
       aot: '⏳',//color(45, 105, 245)
       swapped: '🔄', //color(0, 255, 100, 150)
       brute_force: '💪🏻',//color(255, 125, 0, 150)
-      spending_hours: '💰'
 
     }
 
@@ -176,7 +176,8 @@ class IrisModel {
           result = (el.time_coins / this.max_time_coins) * 100;
           return result;
         });
-        const sh = agent.preferenceArchive.map(result => (result.spending_hours / 30) * 100);
+        // const sh = agent.preferenceArchive.map(result => (result.spending_hours / 30) * 100);
+        const sh = agent.preferenceArchive.map(result => (result.spending_hours));
         const stress = agent.preferenceArchive.map(result => result.stress_level);
         const aot = agent.preferenceArchive.map(result => result.amount_of_time);
         const swapped = agent.preferenceArchive.map(result => result.swapped);
@@ -289,10 +290,15 @@ class IrisModel {
       if (i > 1) {
         infoY = 2 * PADDING + INFO_HEIGHT;
       }
+      // here we draw the background fotr the text
+      fill('#0007');
+      noStroke()
+      rect(infoX - LEFT_GUTTER, infoY, LEFT_GUTTER, INFO_HEIGHT);
+      // outline fo the box containing the viz
       fill(0);
       stroke(100);
+      strokeWeight(2);
       rect(infoX, infoY, INFO_WIDTH, INFO_HEIGHT);
-
       noStroke();
       fill(255);
       textAlign(CENTER, CENTER)
@@ -348,7 +354,10 @@ class IrisModel {
       beginShape();
       for (const val of arr) {
         let currX = map(i, 0, arr.length, 0, INFO_WIDTH);//posX(i, arr.length, colNumber, totCol);
-        let currY = INFO_HEIGHT - map(val, 0, MAXIMUM, 0, INFO_HEIGHT);//posY(val, row_number);
+        const clamped_val = clamp(map(val, 0, MAXIMUM, 0, INFO_HEIGHT), 0, INFO_HEIGHT)
+        // let currY = INFO_HEIGHT - map(val, 0, MAXIMUM, 0, INFO_HEIGHT);//posY(val, row_number);
+        let currY = INFO_HEIGHT - clamped_val;//posY(val, row_number);
+        // currY = clamp(currY, MINIMUM - y, MAXIMUM - y);
         vertex(currX, currY);
         i++;
       }

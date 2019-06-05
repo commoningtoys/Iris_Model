@@ -176,10 +176,12 @@ class Agent {
   }
 
   reset_spending_time() {
-    console.log(this.spending_hours);
+    // console.log(this.spending_hours);
     if (this.spending_hours <= 0) {
       this.spending_hours += this.monthly_hours;
     }else{
+      // this agent has not used up all his monthly hours
+      // what to do?
       this.spending_hours = this.monthly_hours + this.spending_hours;
     }
     // let update_hours = 0;
@@ -463,6 +465,7 @@ class Agent {
       preferences: insert,
       executed_task: task.type,
       time_coins: this.time_coins, // this maps the value to a better scale¿
+      feel_like_doing: this.FLD,
       spending_hours: this.spending_hours,
       stress_level: this.stress,
       amount_of_time: this.mappedAmountOfTime,
@@ -586,7 +589,7 @@ class Agent {
       this.FLD -= result;
 
     }
-
+    console.log(this.FLD);
     this.FLD = clamp(this.FLD, MINIMUM, MAXIMUM);
   }
 
