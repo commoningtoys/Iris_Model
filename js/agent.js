@@ -589,7 +589,6 @@ class Agent {
       this.FLD -= result;
 
     }
-    console.log(this.FLD);
     this.FLD = clamp(this.FLD, MINIMUM, MAXIMUM);
   }
 
