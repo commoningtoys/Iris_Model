@@ -287,7 +287,7 @@ class Task {
         // check resting timer!!!
         agent.has_swapped = false;
         agent.swap_task = '';
-        agent.increase_stress();
+        agent.increase_stress(1);
         agent.work(this, agents, true);
         // agent.FLD /= 2;
         // add this to the html text

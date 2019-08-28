@@ -178,7 +178,8 @@ class Agent {
   reset_spending_time() {
     // console.log(this.spending_hours);
     if (this.spending_hours <= 0) {
-      this.spending_hours += this.monthly_hours;
+      // this.spending_hours += this.monthly_hours;
+      this.spending_hours = this.monthly_hours;
     }else{
       // this agent has not used up all his monthly hours
       // what to do?
@@ -340,8 +341,9 @@ class Agent {
     // }
   }
 
-  increase_stress() {
-    this.stress += this.stress_increase_val;
+  increase_stress(mult) {
+    const multiplier = mult || 1;
+    this.stress += this.stress_increase_val * multiplier;
     this.stress = clamp(this.stress, MINIMUM, MAXIMUM);
   }
 
@@ -387,7 +389,7 @@ class Agent {
 
   rest(task) {
     if (!this.spending_model) {
-      this.time_coins -= task.aot; // we could also doubble this amount
+      this.time_coins -= task.aot; // we could also double this amount
       task.updateGRT(task.aot);
     }
     // this.time_coins /= 2;// here add slider that chenges how much resting time is decreased

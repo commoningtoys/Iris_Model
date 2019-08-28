@@ -135,13 +135,13 @@ class Behavior {
     // if the agents endurance reaches a treshold
     // first we handle the case of the spending model
     if (agent.spending_model) {
-      // first we need to get the archive of the decidsions
+      // first we need to get the archive of the decisions
       const decision_archive = agent.get_decision_archive()
       result = this.compute_decision_resting(decision_archive)
-      if (result) {
+      if (result) {       
         // if the agent is resting than he rests
         agent.push_to_decision_archive('rest');
-        console.log('agent resting...');
+        // console.log('agent resting...');
         agent.rest(task);
       }
       return result;
@@ -190,7 +190,7 @@ class Behavior {
         const mult = Math.pow(2, difference)
         const probability = (100 - (difference * mult)) * 0.01;
         const test = Math.random();
-        result = test > probability ? true : false;
+        result = mult > probability ? true : false;
         // console.log(test, probability, result);
       }
     } else {
