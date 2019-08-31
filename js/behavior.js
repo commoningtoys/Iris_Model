@@ -207,6 +207,7 @@ class Behavior {
     // console.log(agent_compact_plan);
     if(current_day >= 1 && current_day <=10){
       // begin
+      
       result = (agent_compact_plan === 'begin')
     }else if(current_day >= 11 && current_day <= 20){
       // middle
@@ -220,7 +221,9 @@ class Behavior {
       console.error(`error: a month has less than ${current_day} days!!`);
     }
     // console.log({current_day, agent_compact_plan, result});
-    return result;
+    // wwe need to return the inverse of the result 
+    // so that the agent say no when the compact plan matches and yes when it does not match
+    return !result;
   }
   /**
    * change choose agent to call for all of the agents who
