@@ -68,15 +68,15 @@ class Plot {
     // d3 line path generator
     this.line = d3.line()
       .x((d, i, n) => {
-        console.log(d);
-        // return this.x(d.date[i])
+        // console.log(d);
+        return this.x(d.date)
       })
       .y(d => {
-        console.log(d);
-        // return this.y(d.distance);
+        // console.log(d);
+        return this.y(d.value);
       });
 
-    this.path = this.graph.append('path');
+
   }
 
   update(data) {
@@ -84,51 +84,48 @@ class Plot {
 
 
     this.data = this.get_median_values(data);
-    // this.x.domain(d3.extent(this.data.date, (d, i) => {
-    //   return d
+    // console.log(this.data);
+    // this.x.domain(d3.extent(this.data, (d, i) => {
+    //   console.log(d.parsed_clock);
+    //   return d.parsed_clock
     // })) // extent return min and max of an array
-    // this.y.domain([0, MAXIMUM]);
-
-    // Object.keys(this.data).forEach(key => {
+    // console.log(d3.extent(this.data.map(value => value.parsed_clock)));
+    this.x.domain(d3.extent(this.data.map(value => value.parsed_clock))) // extent return min and max of an array
+    this.y.domain([0, MAXIMUM]);
     //   if (key !== 'date') {
     // const datapoint = { values: [...this.data.stress_level], date: this.data.date };
-    // const circles = this.graph.selectAll('circle')
-    //   .data(datapoint);
+    const circles = this.graph.selectAll('circle')
+      .data(this.data);
 
-    // //remove unwanted dots
-    // circles.exit().remove();
+    //remove unwanted dots
+    circles.exit().remove();
 
-    // // update current point
-    // circles
-    //   .attr('cx', d => {
-    //     console.log(d.date);
-    //     x(d.date)
-    //   })
-    //   .attr('cy', d => {
-    //     console.log(d);
-    //     y(d.values)
-    //   })
+    // update current point
+    circles
+      .attr('cx', d => {
+        return this.x(d.parsed_clock)
+      })
+      .attr('cy', d => {
+        return this.y(d.social_work_skill_level)
+      })
 
-    // // add new points
+    // add new points
 
-    // circles.enter()
-    //   .append('circle')
-    //   .attr('r', 4)
-    //   .attr('cx', d => {
-    //     console.log(d.date);
-    //     x(d.date)
-    //   })
-    //   .attr('cy', d => {
-    //     console.log(d);
-    //     y(d.values)
-    //   })
-    //   .attr('fill', '#ccc');
+    circles.enter()
+      .append('circle')
+      .attr('r', 4)
+      .attr('cx', d => {
+        return this.x(d.parsed_clock)
+      })
+      .attr('cy', d => {
+        return this.y(d.social_work_skill_level)
+      })
+      .attr('fill', '#ccc');
     // console.log(key, datapoint);
-    // this.path.data([datapoint])
-    //   .attr('fill', 'none')
-    //   .attr('stroke', '#0bf')
-    //   .attr('stroke-width', 2)
-    //   .attr('d', d => this.line(d))
+
+
+
+    // .attr('d', d => this.line(d))
     // .attr('d', d => {
     //   console.log(d);
     //   return this.line
@@ -151,17 +148,73 @@ class Plot {
     this.x_axis_group.selectAll('text')
       .attr('transform', 'rotate(-40)')
       .attr('text-anchor', 'end');
+
+    const keys = Object.keys(this.data[0]);
+    for (const key of keys) {
+      let datapoint;
+      if (key !== 'parsed_clock') {
+        datapoint = this.data.map(value => {
+          return {
+            value: value[key],
+            date: value.parsed_clock
+          }
+        });
+      }else{continue}
+      
+      const path = this.graph.selectAll('path.chart' + key).data([datapoint]);
+      // remove older paths
+      path.exit().remove();
+
+      path.attr('class', 'chart' + key)
+        .attr('fill', 'none')
+        .attr('stroke', '#0bf')
+        .attr('stroke-width', 2)
+        // .attr('d', d => {
+        //   return d3.line(d)
+        //     .x((d, i, n) => {
+        //       console.log(d);
+        //       return this.x(d.date)
+        //     })
+        //     .y(d => {
+        //       console.log(d);
+        //       return this.y(d.values);
+        //     });
+        // });
+        .attr('d',
+
+          d3.line()
+            .x((d, i, n) => {
+              // console.log(d);
+              return this.x(d.date)
+            })
+            .y(d => {
+              // console.log(d);
+              return this.y(d.value);
+            })
+          // }
+        );
+
+      path.enter()
+        .append('path')
+        .attr('class', 'chart' + key)
+        .attr('fill', 'none')
+        .attr('stroke', '#0bf')
+        .attr('stroke-width', 2)
+        .attr('d', d => {
+          // console.log(d);
+          this.line(d)
+        });
+    }
   }
 
   get_median_values(arr) {
-    console.log(arr);
     // const 
     // const median = { date: arr[0].memories.parsed_clock };
-    const tmp_1 = {};
     const divider = arr.length;
     const attrs = Object.keys(arr[0].memories[0]);
-    const tmp_2 = []
+    const tmp_2 = [];
     for (let j = 0; j < arr[0].memories.length; j++) {
+      const tmp_1 = {};
       for (const attr of attrs) {
         let sum;
         for (let i = 0; i < arr.length - 1; i++) {
@@ -172,16 +225,16 @@ class Plot {
           if (typeof sum === 'number') { sum += next; }
           else if (typeof sum === 'boolean') {
             sum = this.bool_to_number(sum) + this.bool_to_number(next)
-          }else if(attr === 'parsed_clock'){
-            
+          } else if (attr === 'parsed_clock') {
             sum = memory
           }
         }
-        if(!isNaN(sum)&& attr !== 'parsed_clock')tmp_1[attr] = sum / divider;
-        else if(attr === 'parsed_clock')tmp_1[attr] = sum
+        if (!isNaN(sum) && attr !== 'parsed_clock') tmp_1[attr] = sum / divider;
+        else if (attr === 'parsed_clock') tmp_1[attr] = sum
       }
       tmp_2.push(tmp_1);
     }
+    // console.log(tmp_2);
     return tmp_2
   }
   bool_to_number(bool) {
