@@ -1,139 +1,205 @@
 class Plot {
-  constructor() {
-
-
-    // this.data = [
-    //   { Name: 'Mr A', Spent: 40, Year: 2011 },
-    //   { Name: 'Mr B', Spent: 10, Year: 2011 },
-    //   { Name: 'Mr C', Spent: 40, Year: 2011 },
-    //   { Name: 'Mr A', Spent: 70, Year: 2012 },
-    //   { Name: 'Mr B', Spent: 20, Year: 2012 },
-    //   { Name: 'Mr B', Spent: 50, Year: 2013 },
-    //   { Name: 'Mr C', Spent: 30, Year: 2013 }
-    // ];
-
-    this.data = [
-      { aot: 9, brute_force: 2, date: new Date('2018-01-03T21:00:00.000Z'), fld: 1, stress: 5, swapped: 1, time_coins: 10 },
-      { aot: 50, brute_force: 7, date: new Date('2018-01-03T23:00:00.000Z'), fld: 50, stress: 10, swapped: 5, time_coins: 20 },
-      { aot: 66, brute_force: 9, date: new Date('2018-01-04T02:00:00.000Z'), fld: 20, stress: 15, swapped: 7, time_coins: 30 },
-      { aot: 8, brute_force: 7, date: new Date('2018-01-04T04:00:00.000Z'), fld: 3, stress: 20, swapped: 3, time_coins: 40 },
-      { aot: 84.1111111111111, brute_force: 0, date: new Date('2018-01-04T07:00:00.000Z'), fld: 98.33333333333333, stress: 0, swapped: 0, time_coins: 2.631578947368421 }
-    ];
-    this.date = {};
-    // dc.config.defaultColors(newScheme);
-    this.plot = dc.lineChart('#line-chart');
-
-    this.ndx = crossfilter(this.data)
-    // console.log(this.ndx)
-    this.year_dim = this.ndx.dimension(function (d) {
-      // console.log(d.date.getHours())
-      return +d.date.getHours();
-    })
-    // let fld_dim = this.ndx.dimension(function (d) { return d.Name; })
-    // let coin_dim = this.ndx.dimension(function (d) { return d.time_coins; })
-    this.fld_year = this.year_dim.group().reduceSum(function (d) {
-      // console.log(d.fld);
-      return +d.fld;
-    })
-    // let spendPerName = coin_dim.group().reduceSum(function (d) { return +d.Spent; })
-    // let fld_stress = fld_dim.group().reduceCount();
-    // console.log(year_dim, fld_dim, coin_dim)
-
-    this.plot.width(750)
-      .height(400)
-      .x(d3.scaleBand())
-      .xUnits(dc.units.ordinal)
-      .brushOn(false)
-      .xAxisLabel('fld')
-      .yAxisLabel('stress')
-      .dimension(this.year_dim)
-      .group(this.fld_year)
-    this.plot.render();
-    // console.log(this.plot)
-    // this.data = [];
-  }
-  draw(data, date) {
-    // this.data = [];
-    this.date = this.parse_time(date);
-    // console.log(data['curious']);
-    // const arr = this.data['curious'].fld;
-    const tmp_obj = {}
-    Object.keys(data['curious']).forEach(key => {
-      tmp_obj[key] = data['curious'][key][data['curious'][key].length - 1] || 0;
-    })
-    tmp_obj['date'] = this.date;
-    this.data.push(tmp_obj)
-    // console.log(this.data);
-    this.reset_data(this.ndx);
-    this.ndx.add(this.data);
-    // console.log(this.plot.filters());
-    // console.log(this.ndx)
-    // this.ndx = crossfilter(this.data)
-    // this.year_dim = this.ndx.dimension(function (d) {
-    //   // console.log(d.date)
-    //   return d.date;
+  constructor(datapoint) {
+    console.log(datapoint);
+    /**
+     * because of how the data is structured in the model we need here a way to 
+     * transform in dtatpoints that are better readable for d3js
+     * therefore we extract all the attributes of the object and we transform
+     * it into an dummy object with arrays that can be used within d3js
+     */
+    // this.empty_object = {};
+    // Object.keys(datapoint).forEach(key => {
+    //   const data = datapoint[key];
+    //   if (typeof data === 'number' || typeof data === 'boolean') {
+    //     this.empty_object[key] = [];
+    //   } else if (key === 'preferences') {
+    //     const tmp_obj = {};
+    //     Object.keys(data).forEach(task => {
+    //       const preferences = data[task];
+    //       const tmp_inner_obj = {}
+    //       Object.keys(preferences).forEach(inner_key => {
+    //         const inner_el = preferences[inner_key];
+    //         if (typeof inner_el === 'number') {
+    //           tmp_inner_obj[inner_key] = [];
+    //         } else if (typeof inner_el === 'string') {
+    //           tmp_inner_obj[inner_key] = [];
+    //         }
+    //         tmp_obj[task] = tmp_inner_obj;
+    //       })
+    //     })
+    //     this.empty_object[key] = tmp_obj
+    //   } else {
+    //     this.empty_object[key] = [];
+    //   }
     // })
-    // this.fld_year = this.year_dim.group().reduceSum(function (d) { 
-    //   // console.log(d.fld);
-    //   return d.fld; 
+    // console.log(this.empty_object);
+    this.global_median = {};//{...this.empty_object}
+    this.init();
+    this.data = [];
+  }
+
+  init() {
+    console.log('init!');
+    this.margin = { top: 40, right: 20, bottom: 50, left: 100 }
+    this.graph_w = this.canvas_w() - this.margin.right - this.margin.left;
+    this.graph_h = this.canvas_h() - this.margin.top - this.margin.bottom;
+
+    this.svg = this.create_d3_obj('.line-chart', this.graph_w + this.margin.right + this.margin.left, this.graph_h + this.margin.top + this.margin.bottom);
+
+    this.graph = this.svg.append('g')
+      .attr('width', this.graph_w)
+      .attr('height', this.graph_h)
+      .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`);
+
+    // scales
+
+    this.x = d3.scaleTime().range([0, this.graph_w]);
+    this.y = d3.scaleLinear().range([this.graph_h, 0]);
+
+    // axis groups
+
+    this.x_axis_group = this.graph.append('g')
+      .attr('class', 'x-axis')
+      .attr('transform', 'translate(0, ' + this.graph_h + ')');
+
+    this.y_axis_group = this.graph.append('g')
+      .attr('class', 'y-axis');
+
+    // d3 line path generator
+    this.line = d3.line()
+      .x((d, i, n) => {
+        console.log(d);
+        // return this.x(d.date[i])
+      })
+      .y(d => {
+        console.log(d);
+        // return this.y(d.distance);
+      });
+
+    this.path = this.graph.append('path');
+  }
+
+  update(data) {
+    // this.data = data;
+
+
+    this.data = this.get_median_values(data);
+    // this.x.domain(d3.extent(this.data.date, (d, i) => {
+    //   return d
+    // })) // extent return min and max of an array
+    // this.y.domain([0, MAXIMUM]);
+
+    // Object.keys(this.data).forEach(key => {
+    //   if (key !== 'date') {
+    // const datapoint = { values: [...this.data.stress_level], date: this.data.date };
+    // const circles = this.graph.selectAll('circle')
+    //   .data(datapoint);
+
+    // //remove unwanted dots
+    // circles.exit().remove();
+
+    // // update current point
+    // circles
+    //   .attr('cx', d => {
+    //     console.log(d.date);
+    //     x(d.date)
+    //   })
+    //   .attr('cy', d => {
+    //     console.log(d);
+    //     y(d.values)
+    //   })
+
+    // // add new points
+
+    // circles.enter()
+    //   .append('circle')
+    //   .attr('r', 4)
+    //   .attr('cx', d => {
+    //     console.log(d.date);
+    //     x(d.date)
+    //   })
+    //   .attr('cy', d => {
+    //     console.log(d);
+    //     y(d.values)
+    //   })
+    //   .attr('fill', '#ccc');
+    // console.log(key, datapoint);
+    // this.path.data([datapoint])
+    //   .attr('fill', 'none')
+    //   .attr('stroke', '#0bf')
+    //   .attr('stroke-width', 2)
+    //   .attr('d', d => this.line(d))
+    // .attr('d', d => {
+    //   console.log(d);
+    //   return this.line
+    // })// add the line generator
+    // }
     // })
 
-    // this.plot
-    //   .dimension(this.year_dim)
-    //   .group(this.fld_year)
-    this.plot.redraw();
-    // noLoop();
-    // this.plot.render();
-    // dc.redrawAll();
-    // this.line = d3.line()
-    //     .x((d, i) => this.x_axis(i))
-    //     .y((d, i) => this.y_axis(d));
+    // create axis
+    const x_axis = d3.axisBottom(this.x)
+      .ticks(4)
+      .tickFormat(d3.timeFormat('%b %d'));
+    const y_axis = d3.axisLeft(this.y)
+      .ticks(4)
+      .tickFormat(d => d + 'm');
 
-    // this.plot.select('#d3')
-    //     .datum(arr)
-    //     .append("path")
-    //     .attr("class", "line")
-    //     .attr("d", this.line);
-    // // .attr('fill', 'none')
-    // console.log(this.plot)
-
+    // call axis inside the group
+    this.x_axis_group.call(x_axis)
+    this.y_axis_group.call(y_axis)
+    // rotate x-axis text
+    this.x_axis_group.selectAll('text')
+      .attr('transform', 'rotate(-40)')
+      .attr('text-anchor', 'end');
   }
 
-  // "Grab the filters from the charts, set the filters on the charts to null,
-  // do your Crossfilter data removal, then add the filters back to the charts.
-  // The exact filter format is kind of screwy, and the fact that you have to put
-  // the output of .filters() in an array to make it work with .filter() is a bit strange."
-  reset_data(ndx) {
-    let plt_filters = this.plot.filters();
-    // var spenderChartFilters = spenderRowChart.filters();
-    this.plot.filter(null);
-    // spenderRowChart.filter(null);
-    ndx.remove();
-    this.plot.filter([plt_filters]);
-    // spenderRowChart.filter([spenderChartFilters]);
+  get_median_values(arr) {
+    console.log(arr);
+    // const 
+    // const median = { date: arr[0].memories.parsed_clock };
+    const tmp_1 = {};
+    const divider = arr.length;
+    const attrs = Object.keys(arr[0].memories[0]);
+    const tmp_2 = []
+    for (let j = 0; j < arr[0].memories.length; j++) {
+      for (const attr of attrs) {
+        let sum;
+        for (let i = 0; i < arr.length - 1; i++) {
+          // console.log(arr[i]);
+          const memory = arr[i].memories[j][attr];
+          if (i === 0) sum = memory;
+          const next = arr[i + 1].memories[j][attr];
+          if (typeof sum === 'number') { sum += next; }
+          else if (typeof sum === 'boolean') {
+            sum = this.bool_to_number(sum) + this.bool_to_number(next)
+          }else if(attr === 'parsed_clock'){
+            
+            sum = memory
+          }
+        }
+        if(!isNaN(sum)&& attr !== 'parsed_clock')tmp_1[attr] = sum / divider;
+        else if(attr === 'parsed_clock')tmp_1[attr] = sum
+      }
+      tmp_2.push(tmp_1);
+    }
+    return tmp_2
+  }
+  bool_to_number(bool) {
+    return bool ? 1 : 0;
+  }
+  create_d3_obj(pointer, w, h) {
+    return d3.select(pointer).append('svg').attr('width', w).attr('height', h)
   }
 
-  set_w_h(w, h) {
-    this.plot
-      .attr("width", w + this.margin.left + this.margin.right)
-      .attr("height", h + this.margin.top + this.margin.bottom)
+  canvas_w() {
+    const info = document.getElementById('info-window');
+    const w = info.getBoundingClientRect().width;
+    return innerWidth - w;
+  };
+
+  canvas_h() {
+    const footer = document.getElementById('footer');
+    const h = footer.getBoundingClientRect().height;
+    return innerHeight - h;
   }
-
-  //allows to parse time. not used.
-parse_time(date){
-	//we need to modify the date slightly to get a proper string..
-	const y = date["y"] + 2018;
-	const m = date["m"] + 1;
-	const d = date["d"]+1;
-	const h = date["h"]
-	const string = y+"-"+m+"-"+d+"-"+h;
-	const parser = d3.timeParse("%Y-%m-%d-%H")
-
-	return parser(string);
-
 }
-}
-
-
-// const date = new Date('2018-01-04T04:00:00.000Z');
-// console.log(date.getHours())

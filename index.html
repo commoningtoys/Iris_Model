@@ -8,18 +8,18 @@
   <script src="js/libraries/jquery-3.3.1.min.js"></script>
   <script src="js/libraries/p5.min.js"></script>
   <script src="js/libraries/p5.dom.min.js"></script>
-  <script src="js/libraries/d3.min.js"></script>
-  <script src="js/libraries/crossfilter.min.js"></script>
-  <script src="js/libraries/dc.min.js"></script>
+  <script src="js/libraries/d3.js"></script>
+  <!-- <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.min.js"></script> -->
   <script src="js/utils.js"></script>
   <script src="js/global.js"></script>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="dc.min.css">
 </head>
 
 <body>
   <div id="p5Sketch"></div>
-  <div id="line-chart"></div>
+  <div class="line-chart"></div>
   <!-- <div id="display-date"></div> -->
   <div class="info" id="info-window">
     <div id="whatFrameRate"></div>
@@ -89,19 +89,20 @@
             name="perfectionism">
           <div class="traits-elt">endurance:</div> <input type="number" value="0.5" autocomplete="off" name="endurance">
           <div class="traits-elt">goodwill:</div> <input type="number" value="0" autocomplete="off" name="goodwill">
-          <div class="traits-elt">how many?</div> <input type="number" value="4" autocomplete="off" name="amount">
+          <div class="traits-elt">how many?</div> <input type="number" value="1" autocomplete="off" name="amount">
           <!-- here we put the hidden menu -->
           <div class="hide">
-            <div class="traits-elt">planning:</div><input class="hidden-input" type="radio" name="planning_1" value="distributed"
-              autocomplete="off" ><label for="distributed">distributed</label>
+            <div class="traits-elt">planning:</div><input class="hidden-input" type="radio" name="planning_1"
+              value="distributed" autocomplete="off"><label for="distributed">distributed</label>
             <input class="hidden-input" type="radio" name="planning_1" value="compact" autocomplete="off" checked><label
               for="compact">compact</label> <br>
-            
-              <input class="hidden-input" type="radio" name="period_1" value="begin" autocomplete="off" checked><label for="begin">begin</label>
-              <input class="hidden-input" type="radio" name="period_1" value="middle" autocomplete="off"><label
-                for="middle">middle</label>
-              <input class="hidden-input" type="radio" name="period_1" value="end" autocomplete="off"><label
-                for="end">end</label>
+
+            <input class="hidden-input" type="radio" name="period_1" value="begin" autocomplete="off" checked><label
+              for="begin">begin</label>
+            <input class="hidden-input" type="radio" name="period_1" value="middle" autocomplete="off"><label
+              for="middle">middle</label>
+            <input class="hidden-input" type="radio" name="period_1" value="end" autocomplete="off"><label
+              for="end">end</label>
           </div>
           <!-- end of hidden menu -->
         </div>
@@ -112,19 +113,20 @@
             name="perfectionism">
           <div class="traits-elt">endurance:</div> <input type="number" value="0.7" autocomplete="off" name="endurance">
           <div class="traits-elt">goodwill:</div> <input type="number" value="0" autocomplete="off" name="goodwill">
-          <div class="traits-elt">how many?</div> <input type="number" value="4" autocomplete="off" name="amount">
+          <div class="traits-elt">how many?</div> <input type="number" value="1" autocomplete="off" name="amount">
           <!-- here we put the hidden menu -->
           <div class="hide">
-            <div class="traits-elt">planning:</div><input class="hidden-input" type="radio" name="planning_2" value="distributed"
-              autocomplete="off" ><label for="distributed">distributed</label>
+            <div class="traits-elt">planning:</div><input class="hidden-input" type="radio" name="planning_2"
+              value="distributed" autocomplete="off"><label for="distributed">distributed</label>
             <input class="hidden-input" type="radio" name="planning_2" value="compact" autocomplete="off" checked><label
               for="compact">compact</label> <br>
-            
-              <input class="hidden-input" type="radio" name="period_2" value="begin" autocomplete="off" checked><label for="begin">begin</label>
-              <input class="hidden-input" type="radio" name="period_2" value="middle" autocomplete="off"><label
-                for="middle">middle</label>
-              <input class="hidden-input" type="radio" name="period_2" value="end" autocomplete="off"><label
-                for="end">end</label>
+
+            <input class="hidden-input" type="radio" name="period_2" value="begin" autocomplete="off" checked><label
+              for="begin">begin</label>
+            <input class="hidden-input" type="radio" name="period_2" value="middle" autocomplete="off"><label
+              for="middle">middle</label>
+            <input class="hidden-input" type="radio" name="period_2" value="end" autocomplete="off"><label
+              for="end">end</label>
           </div>
           <!-- end of hidden menu -->
         </div>
@@ -135,19 +137,20 @@
             name="perfectionism">
           <div class="traits-elt">endurance:</div> <input type="number" value="0.2" autocomplete="off" name="endurance">
           <div class="traits-elt">goodwill:</div> <input type="number" value="0" autocomplete="off" name="goodwill">
-          <div class="traits-elt">how many?</div> <input type="number" value="4" autocomplete="off" name="amount">
+          <div class="traits-elt">how many?</div> <input type="number" value="1" autocomplete="off" name="amount">
           <!-- here we put the hidden menu -->
           <div class="hide">
-            <div class="traits-elt">planning:</div><input class="hidden-input" type="radio" name="planning_3" value="distributed"
-              autocomplete="off" ><label for="distributed">distributed</label>
+            <div class="traits-elt">planning:</div><input class="hidden-input" type="radio" name="planning_3"
+              value="distributed" autocomplete="off"><label for="distributed">distributed</label>
             <input class="hidden-input" type="radio" name="planning_3" value="compact" autocomplete="off" checked><label
               for="compact">compact</label> <br>
-            
-              <input class="hidden-input" type="radio" name="period_3" value="begin" autocomplete="off" checked><label for="begin">begin</label>
-              <input class="hidden-input" type="radio" name="period_3" value="middle" autocomplete="off"><label
-                for="middle">middle</label>
-              <input class="hidden-input" type="radio" name="period_3" value="end" autocomplete="off"><label
-                for="end">end</label>
+
+            <input class="hidden-input" type="radio" name="period_3" value="begin" autocomplete="off" checked><label
+              for="begin">begin</label>
+            <input class="hidden-input" type="radio" name="period_3" value="middle" autocomplete="off"><label
+              for="middle">middle</label>
+            <input class="hidden-input" type="radio" name="period_3" value="end" autocomplete="off"><label
+              for="end">end</label>
           </div>
           <!-- end of hidden menu -->
         </div>
@@ -158,19 +161,20 @@
             name="perfectionism">
           <div class="traits-elt">endurance:</div> <input type="number" value="0.8" autocomplete="off" name="endurance">
           <div class="traits-elt">goodwill:</div> <input type="number" value="1" autocomplete="off" name="goodwill">
-          <div class="traits-elt">how many?</div> <input type="number" value="4" autocomplete="off" name="amount">
+          <div class="traits-elt">how many?</div> <input type="number" value="1" autocomplete="off" name="amount">
           <!-- here we put the hidden menu -->
           <div class="hide">
-            <div class="traits-elt">planning:</div><input class="hidden-input" type="radio" name="planning_4" value="distributed"
-              autocomplete="off" ><label for="distributed">distributed</label>
+            <div class="traits-elt">planning:</div><input class="hidden-input" type="radio" name="planning_4"
+              value="distributed" autocomplete="off"><label for="distributed">distributed</label>
             <input class="hidden-input" type="radio" name="planning_4" value="compact" autocomplete="off" checked><label
               for="compact">compact</label> <br>
-            
-              <input class="hidden-input" type="radio" name="period_4" value="begin" autocomplete="off" checked><label for="begin">begin</label>
-              <input class="hidden-input" type="radio" name="period_4" value="middle" autocomplete="off"><label
-                for="middle">middle</label>
-              <input class="hidden-input" type="radio" name="period_4" value="end" autocomplete="off"><label
-                for="end">end</label>
+
+            <input class="hidden-input" type="radio" name="period_4" value="begin" autocomplete="off" checked><label
+              for="begin">begin</label>
+            <input class="hidden-input" type="radio" name="period_4" value="middle" autocomplete="off"><label
+              for="middle">middle</label>
+            <input class="hidden-input" type="radio" name="period_4" value="end" autocomplete="off"><label
+              for="end">end</label>
           </div>
           <!-- end of hidden menu -->
         </div>
@@ -191,11 +195,11 @@
       <div class="model-settings">
         <div class="model-settings-item" id="model-type">
           <i>what kind of model should the community run?</i> <br>
-          <input type="radio" name="model-type" value="time-accumulate" autocomplete="off" 
+          <input type="radio" name="model-type" value="time-accumulate" autocomplete="off"
             onchange="update_behavior_setting_menu(this)"><label for="time-accumulate">time-accumulate</label> <br>
           <input type="radio" name="model-type" value="time-spending" autocomplete="off"
-            onchange="update_behavior_setting_menu(this)" checked><label for="time-spending">time-spending</label> <input
-            type="number" value="30" id="monthly-hours" autocomplete="off" style="width:30px;"><label> hours per
+            onchange="update_behavior_setting_menu(this)" checked><label for="time-spending">time-spending</label>
+          <input type="number" value="30" id="monthly-hours" autocomplete="off" style="width:30px;"><label> hours per
             month</label>
         </div>
         <div class="model-settings-item">
@@ -215,7 +219,7 @@
         </div>
 
         <div class="model-settings-item">
-          stop model after: <input type="number" value="24" autocomplete="off" id="stop-model"> months
+          stop model after: <input type="number" value="2" autocomplete="off" id="stop-model"> months
         </div>
 
       </div>
@@ -253,6 +257,7 @@
     </div>
   </div>
   <script src="js/behavior.js"></script>
+  <script src="js/memory.js"></script>
   <script src="js/agent.js"></script>
   <script src="js/task.js"></script>
   <script src="js/model.js"></script>

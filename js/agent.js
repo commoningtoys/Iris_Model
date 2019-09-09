@@ -17,8 +17,6 @@ class Agent {
     this.forget_rate = val;
     this.step = 10;
     // console.log(this.forget_rate)
-    this.preferenceArchive = [];
-    this.data = [];
     /**
      * if the agent is perfectionist we need to define
      * the task he wants to master
@@ -49,7 +47,8 @@ class Agent {
     this.totalTaskCompletedByAgents = 0;
 
     this.done_for_the_day = false;
-
+    this.initial_date = new Date();
+    this.parsed_clock = this.initial_date;
     this.inner_clock = {}
 
     this.currentTask = '';
@@ -85,6 +84,25 @@ class Agent {
       brute_force: color(255, 125, 0, 100)
     };
 
+    this.preferenceArchive = [];
+    this.data = [];
+    this.data_point = {
+      preferences: this.preferences,
+      executed_task: null,
+      time_coins: this.time_coins, // this maps the value to a better scale¿
+      feel_like_doing: this.FLD,
+      spending_hours: this.spending_hours,
+      stress_level: this.stress,
+      amount_of_time: this.mappedAmountOfTime,
+      swapped: this.has_swapped,// === true ? this.swap_task : '',
+      brute_force: this.wasBruteForced,
+      // inner_clock: this.inner_clock,
+      parsed_clock: this.parsed_clock
+    };
+
+    this.memory = new Memory(this.data_point)
+
+    
     this.recordData = false;
   }
   /**
@@ -151,13 +169,30 @@ class Agent {
     return str1 + str11 + str12 + str2 + str21 + str22 + str3 + str31 + str4 + str5 + str6;
   }
 
-  set_time(time_obj){
+  set_time(time_obj) {
+    const h = this.initial_date.getHours();
+    const d = this.initial_date.getDate();
+    const m = this.initial_date.getMonth() + 1;
+    const y = this.initial_date.getFullYear() + time_obj.y;
+
+    // console.log(`h: ${h} || d: ${d} || m: ${m} || y: ${y}`);
+    const str = `${time_obj.m + 1}/${time_obj.d}/${y}  ${time_obj.h}:00`
+    // // console.log(str);
+    // const model_date = new Date(str);
+    // console.log(model_date);
+    this.parsed_clock = new Date(str)
     this.inner_clock = time_obj;
   }
-  get_inner_clock(){
+  /**
+   * @returns agent innerclock in date format
+   */
+  get_date(){
+    return this.parsed_clock;
+  }
+  get_inner_clock() {
     return JSON.parse(JSON.stringify(this.inner_clock));
   }
-  push_to_decision_archive(_decision){
+  push_to_decision_archive(_decision) {
     // TO DO check if the object is correct!
     // obj should be made by a: whether agent has worked, swapped or rested
     // a time reference
@@ -167,7 +202,7 @@ class Agent {
     }
     this.decision_archive.push(obj)
   }
-  get_decision_archive(){
+  get_decision_archive() {
     return JSON.parse(JSON.stringify(this.decision_archive));
   }
   get_spending_hours(model_type) {
@@ -180,7 +215,7 @@ class Agent {
     if (this.spending_hours <= 0) {
       // this.spending_hours += this.monthly_hours;
       this.spending_hours = this.monthly_hours;
-    }else{
+    } else {
       // this agent has not used up all his monthly hours
       // what to do?
       this.spending_hours = this.monthly_hours + this.spending_hours;
@@ -296,7 +331,7 @@ class Agent {
    */
   update() {
     // make the task archive constarined within a max value
-    if(this.decision_archive.length > DATA_POINTS){
+    if (this.decision_archive.length > DATA_POINTS) {
       this.decision_archive.splice(0, 1);
     }
     /**
@@ -337,7 +372,7 @@ class Agent {
     //   return this.behavior_exp.decide_2(task, agents, this);
     // }
     // else {
-      return this.behavior_exp.decide(task, agents, this);
+    return this.behavior_exp.decide(task, agents, this);
     // }
   }
 
@@ -458,12 +493,16 @@ class Agent {
     const max = Math.max(...arr);
     this.mappedAmountOfTime = map(_amount_of_time, 0, max + (max / 2), MINIMUM, MAXIMUM);
     this.wasBruteForced = brute_forced || false;
+
+
+    
+    this.updatePreferences(task, agents);
     /**
      * the magic trick below let us to push the preferences
      * without copying the reference to the original array 
      */
     const insert = JSON.parse(JSON.stringify(this.preferences));// the trick
-    this.preferenceArchive.push({
+    this.data_point = {
       preferences: insert,
       executed_task: task.type,
       time_coins: this.time_coins, // this maps the value to a better scale¿
@@ -473,25 +512,21 @@ class Agent {
       amount_of_time: this.mappedAmountOfTime,
       swapped: this.has_swapped,// === true ? this.swap_task : '',
       brute_force: this.wasBruteForced,
-      inner_clock: this.inner_clock
-    });
+      // inner_clock: this.inner_clock,
+      parsed_clock: this.parsed_clock
+    }
+    this.setInfo();
+  }
 
+  add_data_to_archive() {
+
+    this.preferenceArchive.push(this.data_point);
+    this.memory.add_memory(this.data_point);
+    if (this.preferenceArchive.length > DATA_POINTS) this.preferenceArchive.splice(0, 1);
     if (this.recordData) {
-      this.data.push({
-        preferences: insert,
-        executed_task: task.type,
-        time_coins: this.time_coins,
-        feel_like_doing: this.FLD,
-        stress_level: this.stress,
-        amount_of_time: this.mappedAmountOfTime,
-        swapped: this.has_swapped,
-        brute_force: this.wasBruteForced
-      });
+      this.data.push(this.data_point);
     }
 
-    if (this.preferenceArchive.length > DATA_POINTS) this.preferenceArchive.splice(0, 1);
-    this.updatePreferences(task, agents);
-    this.setInfo();
   }
 
   updatePreferences(_task, agents) {
@@ -504,13 +539,13 @@ class Agent {
      * tasks that have not been executed  also get inversely updated 
      * a.k.a. you forget how to do a task
      */
-    let lastPreferences = this.preferenceArchive[this.preferenceArchive.length - 1].preferences;
-    let tasksCompleted = {};
-    let result = {};
-    let executedTask = this.preferenceArchive.map(result => result.executed_task);
+    let lastPreferences = this.data_point.preferences;
+    // let tasksCompleted = {};
+    // let result = {};
+    // let executedTask = this.preferenceArchive.map(result => result.executed_task);
     // console.log(executedTask); 
     /**
-     * here we compoute the skill of each single agent.
+     * here we compute the skill of each single agent.
      * The skill in our model is a quantitative measure,
      * it looks how often the skill has been executed and compares it
      * with how often the other have executed the same task.
@@ -535,7 +570,7 @@ class Agent {
 
       if (task.type === _task.type) {
         // here we update the skill for the task the agent has executed
-        let completed = this.preferenceArchive[this.preferenceArchive.length - 1].preferences;
+        let completed = this.data_point.preferences;
         let sum = max == 0 ? 0 : (completed[task.type].completed / max);
         // console.log(sum, this.forget_rate, sum - this.forget_rate);
         // we can include something else here on how to update the skill

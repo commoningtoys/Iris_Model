@@ -35,7 +35,7 @@ class Behavior {
       plan: _traits.planning[0],
       distribution: _traits.planning[1]
     }
-    console.log(this.planning);
+    // console.log(this.planning);
     // Object.keys(this.traits).forEach(key => {
     //   if(key !== 'trait'){
     //     this.computed_traits[key] = null;

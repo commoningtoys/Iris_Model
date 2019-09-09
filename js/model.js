@@ -1,6 +1,5 @@
 class IrisModel {
   constructor(traits, min_wage, num_task, model_type, monthly_hours) {
-    // this.plot = new Plot();
     this.batch = false;
     this.agents = [];
     this.tasks = [];
@@ -11,15 +10,25 @@ class IrisModel {
     this.traits_list = extract_unique_keys(this.traits, 'trait');
 
     this.max_time_coins = 0;
+
+    this.model_date = {}
+
+    this.hours = 0;
+    this.days = 1;
+    this.weeks = 0;
+    this.months = 0;
+    this.years = 0;
+    this.setModelTime(); // THIS MAY YELD SOME BUGS IN THE FUTURE!!!
     let idx = 0;
     for (const trait of this.traits) {
       this.agents.push(new Agent(idx, trait, model_type, monthly_hours))
       idx++;
     }
-    // make the info for all of the agents
+    // make the info for all of the agents and set their initial time
     for (const agent of this.agents) {
       agent.makeInfo(this.agents);
       agent.setInfo();
+      agent.set_time(this.model_date);
     }
     // add tasks
     // let restingTimePerTask = Math.floor(this.GLOBAL_RESTING_TIME / (TASK_LIST.length * num_task))
@@ -36,13 +45,6 @@ class IrisModel {
 
     this.timeUnit = 0;
 
-    this.model_date = {}
-
-    this.hours = 0;
-    this.days = 1;
-    this.weeks = 0;
-    this.months = 0;
-    this.years = 0;
 
     this.termination = 0;
     this.termination_counter = 0;
@@ -78,6 +80,10 @@ class IrisModel {
 
     }
 
+    // the plot will need an empty datapoint to construct it's structure
+    const datapoint = this.agents[0].data_point;
+    this.plot = new Plot(datapoint);
+
     // this.plot = new Plot(parent, 20, 20, this.colors);
     this.pointIndex = 0;
 
@@ -108,6 +114,7 @@ class IrisModel {
     return sum;
   }
   update() {
+    this.setModelTime();
     // for(let i = 0; i < 10; i++){
     for (const agent of this.agents) {
       agent.set_time(this.model_date);
@@ -128,7 +135,6 @@ class IrisModel {
 
       // this.setModelTime();
     }
-    this.setModelTime();
     this.counter++;
     // console.log(this.counter, this.timeUnit);
     // if we are recording the data, we show how much has been collected
@@ -221,48 +227,63 @@ class IrisModel {
     return medianValuesByBehavior;
   }
 
+  plot_data(){
+    const data = this.agents.map(agent => {
+      return {
+        id: agent.ID,
+        behavior: agent.behavior,
+        date: agent.parsed_clock,
+        memories: agent.memory.get_memories()}
+    })
+    // console.log(data);
+    this.plot.update(data);
+  }
+
   show() { // show isn't the most correct name for this method
+    
+  this.plot.update(this.get_median_values_by_behavior());
+
     /**
      * here we sort the agents array that was shuffled 
      * during the choose agent process of task.js
      */
-    background(51);
-    this.show_task_archives()
+    // background(51);
+    // this.show_task_archives()
     // console.log(medianValuesByBehavior);
-    this.infographic(this.get_median_values_by_behavior());
+    // this.infographic(this.get_median_values_by_behavior());
     // this.plot.draw(medianValuesByBehavior, { h: this.hours, d: this.days, m: this.months, y: this.years })
     // console.log(medianValuesByBehavior);
     // this.plot.show(median, this.pointIndex);
-    this.pointIndex++;
-    this.agents.sort((a, b) => a.ID - b.ID);
+    // this.pointIndex++;
+    // this.agents.sort((a, b) => a.ID - b.ID);
 
-    // preference debug view only 4 agents
-    // for (const agent of this.agents) {
-    //   agent.infographic();
-    // }
+    // // preference debug view only 4 agents
+    // // for (const agent of this.agents) {
+    // //   agent.infographic();
+    // // }
 
-    // here we alter the bar informing how many agents are working resting etc.
-    // console.log(this.agents);
-    const working = this.agents.filter(result => result.working === true).length;
-    const swapping = this.agents.filter(result => result.has_swapped === true).length;
-    const resting = this.agents.filter(result => result.resting === true).length;
-    const available = this.agents.length - (working + swapping + resting)
-    // console.log(working, swapping, resting, available);
+    // // here we alter the bar informing how many agents are working resting etc.
+    // // console.log(this.agents);
+    // const working = this.agents.filter(result => result.working === true).length;
+    // const swapping = this.agents.filter(result => result.has_swapped === true).length;
+    // const resting = this.agents.filter(result => result.resting === true).length;
+    // const available = this.agents.length - (working + swapping + resting)
+    // // console.log(working, swapping, resting, available);
 
-    const w_elt = document.getElementById('working');
-    w_elt.style.width = (working / this.agents.length) * 100 + '%'
-    const sw_elt = document.getElementById('swapping');
-    sw_elt.style.width = (swapping / this.agents.length) * 100 + '%'
-    const r_elt = document.getElementById('resting');
-    r_elt.style.width = (resting / this.agents.length) * 100 + '%'
-    const av_elt = document.getElementById('available')
-    av_elt.style.width = (available / this.agents.length) * 100 + '%'
+    // const w_elt = document.getElementById('working');
+    // w_elt.style.width = (working / this.agents.length) * 100 + '%'
+    // const sw_elt = document.getElementById('swapping');
+    // sw_elt.style.width = (swapping / this.agents.length) * 100 + '%'
+    // const r_elt = document.getElementById('resting');
+    // r_elt.style.width = (resting / this.agents.length) * 100 + '%'
+    // const av_elt = document.getElementById('available')
+    // av_elt.style.width = (available / this.agents.length) * 100 + '%'
 
-    w_elt.previousElementSibling.innerText = '🏋🏻‍♂️' + working;
-    sw_elt.previousElementSibling.innerText = '🤷🏻‍♂️' + swapping;
-    r_elt.previousElementSibling.innerText = '💆🏻‍♂️' + resting;
-    av_elt.previousElementSibling.innerText = '🙋🏻‍♂️' + available;
-    // console.log(w_elt.previousElementSibling)
+    // w_elt.previousElementSibling.innerText = '🏋🏻‍♂️' + working;
+    // sw_elt.previousElementSibling.innerText = '🤷🏻‍♂️' + swapping;
+    // r_elt.previousElementSibling.innerText = '💆🏻‍♂️' + resting;
+    // av_elt.previousElementSibling.innerText = '🙋🏻‍♂️' + available;
+    // // console.log(w_elt.previousElementSibling)
   }
   /**
    * displays the median values of the agents
@@ -401,7 +422,7 @@ class IrisModel {
     }
   }
 
-  show_task_archives(){
+  show_task_archives() {
     const sorted_agents = sort_agents(this.agents);
     noStroke();
     const w = width / DATA_POINTS;
@@ -427,15 +448,24 @@ class IrisModel {
     // }
     if (this.hours > 0 && this.hours % 24 == 0) {
       // here we update the agent status rest and availability to work
-      for (const agent of this.agents) {
+      // for (const agent of this.agents) {
+      // for (let i = 0; i < this.agents.length; i++) {
+      //   const agent = this.agents[i];
+      //   agent.resting = false;
+      //   agent.done_for_the_day = false;
+      //   agent.add_data_to_archive();
+      // }
+      this.agents.forEach(agent => {
+
         agent.resting = false;
         agent.done_for_the_day = false;
-      }
+        agent.add_data_to_archive();
+      })
       this.days++;
       this.hours = 0;
       this.distribute_time_coins();
     }
-    if (this.days > 1 && this.days % 30 == 0) {
+    if ((this.days > 1 && this.days % 31 == 0) || (this.days > 1 && (this.days % 29 == 0 && this.months === 1))) {// shorter month on february
 
       // here we need to reset the spent time of the agents
       for (const agent of this.agents) {
@@ -485,7 +515,6 @@ class IrisModel {
       m: this.months,
       y: this.years
     }
-
     let currentDate = `years: ${this.years}<br>months: ${this.months}<br>days: ${this.days}<br>hours: ${this.hours}`;
     // console.log(currentDate);
     document.getElementById('display-date').innerHTML = currentDate;

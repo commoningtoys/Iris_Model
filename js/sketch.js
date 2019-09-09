@@ -61,14 +61,14 @@ function init_model() {
     });
     tick = setInterval(single_execution, 0.1);
   // } 
-}
+} 
 
 function single_execution() {
   if (irisModel != null) {
     for (let i = 0; i < loops; i++) {
       irisModel.update();
     }
-    if (frameCount % 15 == 0) irisModel.show();
+    if (frameCount % 15 == 0) irisModel.plot_data();
   }
 }
 
