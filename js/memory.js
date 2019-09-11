@@ -34,7 +34,7 @@ class Memory {
           const preferences = data[task];
           Object.keys(preferences).forEach(inner_key => {
             const inner_el = preferences[inner_key];
-            if (typeof inner_el === 'number') {
+            if (typeof inner_el === 'number' && inner_key !== 'completed') { // we don't need to know how often a atsk has been completed here
               tmp[task + '_' + inner_key] = inner_el;
             } else if (typeof inner_el === 'string') {
               tmp[task + '_' + inner_key] = inner_el;

@@ -77,13 +77,39 @@ class Plot {
       });
 
 
+    // set color scheme
+    this.color = d3.scaleOrdinal(d3['schemeSet3']);
+
+    // legend setup
+
+    this.legend_group = this.svg.append('g')
+      .attr('transform', `translate(0, ${this.graph_h})`);
+
+    this.legend = d3.legendColor()
+      .shape('circle')
+      .shapePadding(10)
+      .scale(this.color)
+
+    // tooltip setup
+    this.tip = d3.tip()
+      .attr('class', 'tip card')
+      .html((d, i, n) => {
+        let content = `<div class="name">${d.data_name}: ${d.value}</div>`
+        content += `<div class="cost">${d.date.toString()}</div>`
+        return content;
+      })
+    // add it to the graph
+    this.graph.call(this.tip);
   }
 
   update(data) {
     // this.data = data;
 
-
     this.data = this.get_median_values(data);
+
+    this.color.domain(Object.keys(this.data[0]));
+    this.legend_group.call(this.legend);
+    this.legend_group.selectAll('text').attr('fill', '#f50');
     // console.log(this.data);
     // this.x.domain(d3.extent(this.data, (d, i) => {
     //   console.log(d.parsed_clock);
@@ -94,33 +120,33 @@ class Plot {
     this.y.domain([0, MAXIMUM]);
     //   if (key !== 'date') {
     // const datapoint = { values: [...this.data.stress_level], date: this.data.date };
-    const circles = this.graph.selectAll('circle')
-      .data(this.data);
+    // const circles = this.graph.selectAll('circle')
+    //   .data(this.data);
 
-    //remove unwanted dots
-    circles.exit().remove();
+    // //remove unwanted dots
+    // circles.exit().remove();
 
-    // update current point
-    circles
-      .attr('cx', d => {
-        return this.x(d.parsed_clock)
-      })
-      .attr('cy', d => {
-        return this.y(d.social_work_skill_level)
-      })
+    // // update current point
+    // circles
+    //   .attr('cx', d => {
+    //     return this.x(d.parsed_clock)
+    //   })
+    //   .attr('cy', d => {
+    //     return this.y(d.social_work_skill_level)
+    //   })
 
-    // add new points
+    // // add new points
 
-    circles.enter()
-      .append('circle')
-      .attr('r', 4)
-      .attr('cx', d => {
-        return this.x(d.parsed_clock)
-      })
-      .attr('cy', d => {
-        return this.y(d.social_work_skill_level)
-      })
-      .attr('fill', '#ccc');
+    // circles.enter()
+    //   .append('circle')
+    //   .attr('r', 4)
+    //   .attr('cx', d => {
+    //     return this.x(d.parsed_clock)
+    //   })
+    //   .attr('cy', d => {
+    //     return this.y(d.social_work_skill_level)
+    //   })
+    //   .attr('fill', '#ccc');
     // console.log(key, datapoint);
 
 
@@ -156,55 +182,46 @@ class Plot {
         datapoint = this.data.map(value => {
           return {
             value: value[key],
-            date: value.parsed_clock
+            date: value.parsed_clock,
+            data_name: key
           }
         });
-      }else{continue}
-      
+      } else { continue }
+
       const path = this.graph.selectAll('path.chart' + key).data([datapoint]);
       // remove older paths
       path.exit().remove();
 
       path.attr('class', 'chart' + key)
         .attr('fill', 'none')
-        .attr('stroke', '#0bf')
+        .attr('stroke', this.color(key))
         .attr('stroke-width', 2)
-        // .attr('d', d => {
-        //   return d3.line(d)
-        //     .x((d, i, n) => {
-        //       console.log(d);
-        //       return this.x(d.date)
-        //     })
-        //     .y(d => {
-        //       console.log(d);
-        //       return this.y(d.values);
-        //     });
-        // });
-        .attr('d',
-
-          d3.line()
-            .x((d, i, n) => {
-              // console.log(d);
-              return this.x(d.date)
-            })
-            .y(d => {
-              // console.log(d);
-              return this.y(d.value);
-            })
-          // }
-        );
+        .attr('d', d => this.line(d));
 
       path.enter()
         .append('path')
         .attr('class', 'chart' + key)
         .attr('fill', 'none')
-        .attr('stroke', '#0bf')
+        .attr('stroke', this.color(key))
         .attr('stroke-width', 2)
-        .attr('d', d => {
-          // console.log(d);
-          this.line(d)
-        });
+        .attr('d', d => this.line(d));
+
+
     }
+
+    this.graph.selectAll('path')
+      .on('mouseover', (d, i, n) => {
+        // show tooltip
+        const x0 = this.x.invert(d3.mouse(document.body)[0])
+        const index = d3.bisector(d => d.date).left
+        this.tip.show(d[index(d, x0, 1)], n[i]); // pass the data and the html element
+        // handle_mouse_over(d, i, n);
+      })
+      .on('mouseout', (d, i, n) => {
+        // hide tooltip
+        this.tip.hide();
+        // handle_mouse_out(d, i, n);
+      })
   }
 
   get_median_values(arr) {
