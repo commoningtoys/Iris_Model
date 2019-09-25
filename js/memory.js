@@ -21,7 +21,6 @@ class Memory {
         this.memory[key] = [];
       }
     })
-    console.log(this.memory);
   }
 
   add_memory(memory) {
