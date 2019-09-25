@@ -265,8 +265,8 @@ class Task {
   }
 
   bruteForceTask(agents) {
-    //assigns the task to someone as next task to do.
-    // console.log('BRUTE FORCE!!!')
+    // //assigns the task to someone as next task to do.
+    // console.log('BRUTE FORCE!!!');
     let i = 0;
     let controlState = true;
     while (controlState) {

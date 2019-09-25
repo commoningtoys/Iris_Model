@@ -28,8 +28,12 @@ class Plot {
         left: 75
       },
       data: {
-        x: 'x',
-        columns: []
+        x: 'date',
+        columns: [],
+        axes: {
+          swapped: 'y2',
+          brute_force: 'y2'
+        }
       },
       axis: {
         x: {
@@ -37,13 +41,32 @@ class Plot {
           tick: {
             format: this.date_format
           }
+        },
+        y2: {
+          show: true,
+          label: {
+            text: 'Y2 Label',
+            position: 'outer-middle'
+          },
+          padding: {
+            top: 100,
+            bottom: 100
+          }
         }
       },
       tooltip: {
-        position : (data, w, h, el) => {return {top: 0, left: 0}}
+        position: (data, w, h, el) => { return { top: 0, left: 0 } }
       },
       subchart: {
         show: true
+      },
+      point: {
+        r: 1,
+        focus: {
+          expand: {
+            r: 3
+          }
+        }
       }
     })
   }
@@ -101,11 +124,10 @@ class Plot {
         values.push(arr);
       } else {
         let arr = [...obj[key]];
-        arr.unshift('x');
+        arr.unshift('date');
         values.push(arr);
       }
     })
-    console.log(values);
     return values
   }
   bool_to_number(bool) {

@@ -212,6 +212,7 @@ class Agent {
 
   reset_spending_time() {
     // console.log(this.spending_hours);
+      // this.spending_hours = this.monthly_hours;
     if (this.spending_hours <= 0) {
       // this.spending_hours += this.monthly_hours;
       this.spending_hours = this.monthly_hours;
@@ -409,9 +410,8 @@ class Agent {
     const amount_of_time = this.spending_model == true ? task.aot : task.amountOfTimeBasedOnSkill(skill);
 
     // here we handle the time of the spending model
-    if (this.spending_model) {
+    if (this.spending_model && brute_forced === false) {
       this.spending_hours -= amount_of_time;
-      // console.log(this.spending_hours);
     }
 
     this.working = true;
