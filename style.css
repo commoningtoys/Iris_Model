@@ -5,6 +5,9 @@
     font-family: 'mono';
     src: url('font/SourceCodePro-Medium.otf') format('opentype');
 }
+*{
+    box-sizing: border-box;
+}
 /* this helps removing the spin box from the input field */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -23,6 +26,7 @@ body{
     font-family: monospace;
     font-size: 100%;
     hyphens: auto;
+    background-color: #000;
 }
 
 button{
@@ -246,7 +250,7 @@ button#close-menu {
 }
 
 #info-window{
-    display: none;
+    /* display: none; */
 }
 .info{
     position: fixed;
@@ -277,6 +281,19 @@ button#close-menu {
     background-color: #0f0;
 }
 
+/* d3js styling */
+
+.y-axis, .x-axis{
+    color: #F5F5F5;
+}
+
+.tip{
+    /* max-width: 150px; */
+    background-color: #000000aa;
+    color: #F5F5F5;
+    border: solid 2px #F5F5F5;
+    padding: 0.25rem;
+}
 
 /* PLAYER STYLING */
 

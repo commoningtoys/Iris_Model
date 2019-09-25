@@ -7,32 +7,6 @@ class Plot {
      * therefore we extract all the attributes of the object and we transform
      * it into an dummy object with arrays that can be used within d3js
      */
-    // this.empty_object = {};
-    // Object.keys(datapoint).forEach(key => {
-    //   const data = datapoint[key];
-    //   if (typeof data === 'number' || typeof data === 'boolean') {
-    //     this.empty_object[key] = [];
-    //   } else if (key === 'preferences') {
-    //     const tmp_obj = {};
-    //     Object.keys(data).forEach(task => {
-    //       const preferences = data[task];
-    //       const tmp_inner_obj = {}
-    //       Object.keys(preferences).forEach(inner_key => {
-    //         const inner_el = preferences[inner_key];
-    //         if (typeof inner_el === 'number') {
-    //           tmp_inner_obj[inner_key] = [];
-    //         } else if (typeof inner_el === 'string') {
-    //           tmp_inner_obj[inner_key] = [];
-    //         }
-    //         tmp_obj[task] = tmp_inner_obj;
-    //       })
-    //     })
-    //     this.empty_object[key] = tmp_obj
-    //   } else {
-    //     this.empty_object[key] = [];
-    //   }
-    // })
-    // console.log(this.empty_object);
     this.global_median = {};//{...this.empty_object}
     this.init();
     this.data = [];
@@ -205,8 +179,6 @@ class Plot {
         .attr('stroke', this.color(key))
         .attr('stroke-width', 2)
         .attr('d', d => this.line(d));
-
-
     }
 
     this.graph.selectAll('path')
@@ -264,6 +236,7 @@ class Plot {
   canvas_w() {
     const info = document.getElementById('info-window');
     const w = info.getBoundingClientRect().width;
+    console.log(w);
     return innerWidth - w;
   };
 

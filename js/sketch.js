@@ -55,10 +55,10 @@ function init_model() {
 
     $('.menu').toggle('fast');
 
-    $('#info-window').show('fast', () => {
-      // whe the window is closed resize the sketch
-      resizeCanvas(WIDTH(), HEIGHT());
-    });
+    // $('#info-window').show('fast', () => {
+    //   // whe the window is closed resize the sketch
+    //   resizeCanvas(WIDTH(), HEIGHT());
+    // });
     tick = setInterval(single_execution, 0.1);
   // } 
 } 
