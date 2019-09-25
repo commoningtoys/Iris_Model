@@ -1,53 +1,58 @@
 class Memory {
   constructor(memory) {
-    this.memory = [];
-    // Object.keys(memory).forEach(key => {
-    //   const data = memory[key];
-    //   if (typeof data === 'number' || typeof data === 'boolean') {
-    //     this.memory[key] = data;
-    //   } else if (key === 'preferences') {
-    //     Object.keys(data).forEach(task => {
-    //       const preferences = data[task];
-    //       Object.keys(preferences).forEach(inner_key => {
-    //         const inner_el = preferences[inner_key];
-    //         if (typeof inner_el === 'number') {
-    //           this.memory[task + '_' + inner_key] = data;
-    //         } else if (typeof inner_el === 'string') {
-    //           this.memory[task + '_' + inner_key] = data;
-    //         }
-    //       })
-    //     })
-    //   } else {
-    //     this.memory[key] = data;
-    //   }
-    // })
-  }
-
-  add_memory(memory) {
-    const tmp = {}
+    // console.log(memory);
+    this.memory = {};
+    // make memory blueprint
     Object.keys(memory).forEach(key => {
       const data = memory[key];
       if (typeof data === 'number' || typeof data === 'boolean') {
-        tmp[key] = data;
+        this.memory[key] = [];
       } else if (key === 'preferences') {
         Object.keys(data).forEach(task => {
           const preferences = data[task];
           Object.keys(preferences).forEach(inner_key => {
             const inner_el = preferences[inner_key];
-            if (typeof inner_el === 'number' && inner_key !== 'completed') { // we don't need to know how often a atsk has been completed here
-              tmp[task + '_' + inner_key] = inner_el;
-            } else if (typeof inner_el === 'string') {
-              tmp[task + '_' + inner_key] = inner_el;
+            if (typeof inner_el === 'number' && inner_key !== 'completed' && inner_key !== 'forget_rate') {
+              this.memory[task + '_' + inner_key] = [];
             }
           })
         })
       } else {
-        tmp[key] = data;
+        this.memory[key] = [];
       }
     })
-    this.memory.push(tmp);
+    console.log(this.memory);
   }
-  get_memories(){
+
+  add_memory(memory) {
+    Object.keys(memory).forEach(key => {
+      const data = memory[key];
+      if (key === 'preferences') {
+        Object.keys(data).forEach(task => {
+          const preferences = data[task];
+          Object.keys(preferences).forEach(inner_key => {
+            const index = this.get_index(task + '_' + inner_key);
+            const inner_el = preferences[inner_key];
+            if(index !== null)this.memory[index].push(inner_el)
+          })
+        })
+      } else {
+        const index = this.get_index(key);
+        if(index !== null)this.memory[index].push(data);
+
+      }
+    })
+  }
+  get_index(key) {
+    let index = null;
+    Object.keys(this.memory).forEach(item =>{
+      if (item === key) {
+        index = key;
+      }
+    })
+    return index;
+  }
+  get_memories() {
     return this.memory;
   }
 }

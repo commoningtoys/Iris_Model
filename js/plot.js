@@ -78,122 +78,122 @@ class Plot {
 
   update(data) {
     // this.data = data;
+    console.log(data);
+    // this.data = this.get_median_values(data);
 
-    this.data = this.get_median_values(data);
+    // this.color.domain(Object.keys(this.data[0]));
+    // this.legend_group.call(this.legend);
+    // this.legend_group.selectAll('text').attr('fill', '#f50');
+    // // console.log(this.data);
+    // // this.x.domain(d3.extent(this.data, (d, i) => {
+    // //   console.log(d.parsed_clock);
+    // //   return d.parsed_clock
+    // // })) // extent return min and max of an array
+    // // console.log(d3.extent(this.data.map(value => value.parsed_clock)));
+    // this.x.domain(d3.extent(this.data.map(value => value.parsed_clock))) // extent return min and max of an array
+    // this.y.domain([0, MAXIMUM]);
+    // //   if (key !== 'date') {
+    // // const datapoint = { values: [...this.data.stress_level], date: this.data.date };
+    // // const circles = this.graph.selectAll('circle')
+    // //   .data(this.data);
 
-    this.color.domain(Object.keys(this.data[0]));
-    this.legend_group.call(this.legend);
-    this.legend_group.selectAll('text').attr('fill', '#f50');
-    // console.log(this.data);
-    // this.x.domain(d3.extent(this.data, (d, i) => {
-    //   console.log(d.parsed_clock);
-    //   return d.parsed_clock
-    // })) // extent return min and max of an array
-    // console.log(d3.extent(this.data.map(value => value.parsed_clock)));
-    this.x.domain(d3.extent(this.data.map(value => value.parsed_clock))) // extent return min and max of an array
-    this.y.domain([0, MAXIMUM]);
-    //   if (key !== 'date') {
-    // const datapoint = { values: [...this.data.stress_level], date: this.data.date };
-    // const circles = this.graph.selectAll('circle')
-    //   .data(this.data);
+    // // //remove unwanted dots
+    // // circles.exit().remove();
 
-    // //remove unwanted dots
-    // circles.exit().remove();
+    // // // update current point
+    // // circles
+    // //   .attr('cx', d => {
+    // //     return this.x(d.parsed_clock)
+    // //   })
+    // //   .attr('cy', d => {
+    // //     return this.y(d.social_work_skill_level)
+    // //   })
 
-    // // update current point
-    // circles
-    //   .attr('cx', d => {
-    //     return this.x(d.parsed_clock)
-    //   })
-    //   .attr('cy', d => {
-    //     return this.y(d.social_work_skill_level)
-    //   })
+    // // // add new points
 
-    // // add new points
-
-    // circles.enter()
-    //   .append('circle')
-    //   .attr('r', 4)
-    //   .attr('cx', d => {
-    //     return this.x(d.parsed_clock)
-    //   })
-    //   .attr('cy', d => {
-    //     return this.y(d.social_work_skill_level)
-    //   })
-    //   .attr('fill', '#ccc');
-    // console.log(key, datapoint);
+    // // circles.enter()
+    // //   .append('circle')
+    // //   .attr('r', 4)
+    // //   .attr('cx', d => {
+    // //     return this.x(d.parsed_clock)
+    // //   })
+    // //   .attr('cy', d => {
+    // //     return this.y(d.social_work_skill_level)
+    // //   })
+    // //   .attr('fill', '#ccc');
+    // // console.log(key, datapoint);
 
 
 
-    // .attr('d', d => this.line(d))
-    // .attr('d', d => {
-    //   console.log(d);
-    //   return this.line
-    // })// add the line generator
+    // // .attr('d', d => this.line(d))
+    // // .attr('d', d => {
+    // //   console.log(d);
+    // //   return this.line
+    // // })// add the line generator
+    // // }
+    // // })
+
+    // // create axis
+    // const x_axis = d3.axisBottom(this.x)
+    //   .ticks(4)
+    //   .tickFormat(d3.timeFormat('%b %d'));
+    // const y_axis = d3.axisLeft(this.y)
+    //   .ticks(4)
+    //   .tickFormat(d => d + 'm');
+
+    // // call axis inside the group
+    // this.x_axis_group.call(x_axis)
+    // this.y_axis_group.call(y_axis)
+    // // rotate x-axis text
+    // this.x_axis_group.selectAll('text')
+    //   .attr('transform', 'rotate(-40)')
+    //   .attr('text-anchor', 'end');
+
+    // const keys = Object.keys(this.data[0]);
+    // for (const key of keys) {
+    //   let datapoint;
+    //   if (key !== 'parsed_clock') {
+    //     datapoint = this.data.map(value => {
+    //       return {
+    //         value: value[key],
+    //         date: value.parsed_clock,
+    //         data_name: key
+    //       }
+    //     });
+    //   } else { continue }
+
+    //   const path = this.graph.selectAll('path.chart' + key).data([datapoint]);
+    //   // remove older paths
+    //   path.exit().remove();
+
+    //   path.attr('class', 'chart' + key)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', this.color(key))
+    //     .attr('stroke-width', 2)
+    //     .attr('d', d => this.line(d));
+
+    //   path.enter()
+    //     .append('path')
+    //     .attr('class', 'chart' + key)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', this.color(key))
+    //     .attr('stroke-width', 2)
+    //     .attr('d', d => this.line(d));
     // }
-    // })
 
-    // create axis
-    const x_axis = d3.axisBottom(this.x)
-      .ticks(4)
-      .tickFormat(d3.timeFormat('%b %d'));
-    const y_axis = d3.axisLeft(this.y)
-      .ticks(4)
-      .tickFormat(d => d + 'm');
-
-    // call axis inside the group
-    this.x_axis_group.call(x_axis)
-    this.y_axis_group.call(y_axis)
-    // rotate x-axis text
-    this.x_axis_group.selectAll('text')
-      .attr('transform', 'rotate(-40)')
-      .attr('text-anchor', 'end');
-
-    const keys = Object.keys(this.data[0]);
-    for (const key of keys) {
-      let datapoint;
-      if (key !== 'parsed_clock') {
-        datapoint = this.data.map(value => {
-          return {
-            value: value[key],
-            date: value.parsed_clock,
-            data_name: key
-          }
-        });
-      } else { continue }
-
-      const path = this.graph.selectAll('path.chart' + key).data([datapoint]);
-      // remove older paths
-      path.exit().remove();
-
-      path.attr('class', 'chart' + key)
-        .attr('fill', 'none')
-        .attr('stroke', this.color(key))
-        .attr('stroke-width', 2)
-        .attr('d', d => this.line(d));
-
-      path.enter()
-        .append('path')
-        .attr('class', 'chart' + key)
-        .attr('fill', 'none')
-        .attr('stroke', this.color(key))
-        .attr('stroke-width', 2)
-        .attr('d', d => this.line(d));
-    }
-
-    this.graph.selectAll('path')
-      .on('mouseover', (d, i, n) => {
-        // show tooltip
-        const x0 = this.x.invert(d3.mouse(document.body)[0])
-        const index = d3.bisector(d => d.date).left
-        this.tip.show(d[index(d, x0, 1)], n[i]); // pass the data and the html element
-        // handle_mouse_over(d, i, n);
-      })
-      .on('mouseout', (d, i, n) => {
-        // hide tooltip
-        this.tip.hide();
-        // handle_mouse_out(d, i, n);
-      })
+    // this.graph.selectAll('path')
+    //   .on('mouseover', (d, i, n) => {
+    //     // show tooltip
+    //     const x0 = this.x.invert(d3.mouse(document.body)[0])
+    //     const index = d3.bisector(d => d.date).left
+    //     this.tip.show(d[index(d, x0, 1)], n[i]); // pass the data and the html element
+    //     // handle_mouse_over(d, i, n);
+    //   })
+    //   .on('mouseout', (d, i, n) => {
+    //     // hide tooltip
+    //     this.tip.hide();
+    //     // handle_mouse_out(d, i, n);
+    //   })
   }
 
   get_median_values(arr) {
