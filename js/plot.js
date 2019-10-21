@@ -43,10 +43,10 @@ class Plot {
           swapped: 'y2',
           brute_force: 'y2'
         },
-        // types: {
-        //   swapped: 'stanford',
-        //   brute_force: 'stanford'
-        // }
+        types: {
+          swapped: 'scatter',
+          brute_force: 'scatter'
+        }
       },
       // legend: {
       //   item: {
@@ -92,10 +92,10 @@ class Plot {
         show: true
       },
       point: {
-        r: 1,
+        r: 2,
         focus: {
           expand: {
-            r: 3
+            r: 5
           }
         }
       },
