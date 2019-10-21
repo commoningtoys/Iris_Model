@@ -2,6 +2,13 @@ class Agent {
   constructor(id, _traits, model_type, monthly_hours) {
     this.ID = nf(id, 4);
 
+    // here we should also populate the select element in the menu
+    const select = document.getElementById('agents-list');
+    const option = document.createElement('option');
+    option.setAttribute('class', 'btn');
+    option.value = this.ID;
+    option.innerText = this.ID + ' ' + _traits.trait;
+    select.appendChild(option)
     this.monthly_hours = monthly_hours;
     this.spending_hours = this.get_spending_hours(model_type);
     // console.log(model_type);
@@ -103,7 +110,7 @@ class Agent {
 
     this.memory = new Memory(this.data_point)
 
-    
+
     this.recordData = false;
   }
   /**
@@ -187,7 +194,7 @@ class Agent {
   /**
    * @returns agent innerclock in date format
    */
-  get_date(){
+  get_date() {
     return this.parsed_clock;
   }
   get_inner_clock() {
@@ -213,7 +220,7 @@ class Agent {
 
   reset_spending_time() {
     // console.log(this.spending_hours);
-      // this.spending_hours = this.monthly_hours;
+    // this.spending_hours = this.monthly_hours;
     if (this.spending_hours <= 0) {
       // this.spending_hours += this.monthly_hours;
       this.spending_hours = this.monthly_hours;
@@ -496,7 +503,7 @@ class Agent {
     this.wasBruteForced = brute_forced || false;
 
 
-    
+
     this.updatePreferences(task, agents);
     /**
      * the magic trick below let us to push the preferences

@@ -20,6 +20,7 @@ class IrisModel {
     this.years = 0;
     this.setModelTime(); // THIS MAY YELD SOME BUGS IN THE FUTURE!!!
     let idx = 0;
+
     for (const trait of this.traits) {
       this.agents.push(new Agent(idx, trait, model_type, monthly_hours))
       idx++;
@@ -83,7 +84,8 @@ class IrisModel {
     // the plot will need an empty datapoint to construct it's structure
     const datapoint = this.agents[0].data_point;
     this.plot = new Plot(datapoint);
-
+    this.filter = [];
+    this.behavior = ''
     // this.plot = new Plot(parent, 20, 20, this.colors);
     this.pointIndex = 0;
 
@@ -227,10 +229,12 @@ class IrisModel {
     return medianValuesByBehavior;
   }
 
-  plot_data(behavior) {
-    const agents = behavior == undefined ? this.agents : this.agents.filter(agent => agent.behavior === behavior);
-    console.log(agents);
-    const data = agents.map(agent => {
+  plot_data() {
+    // possibility to filter by behavior
+    // more granular filtering is done in plot.js
+    const agents = this.behavior == '' ? this.agents : this.agents.filter(agent => agent.behavior === this.behavior);
+    // console.log(agents);
+    let data = agents.map(agent => {
       return {
         id: agent.ID,
         behavior: agent.behavior,
@@ -238,17 +242,59 @@ class IrisModel {
         memories: agent.memory.get_memories()
       }
     })
-    // console.log(data);
-    this.plot.update(data);
+
+
+    // disable options that are not associated with that behavior
+    const options = document.getElementById('agents-list').options;
+    if (this.behavior !== '') {
+      for (const option of options) {
+        option.disabled = false;
+      }
+      for (const option of options) {
+        if (!option.innerText.includes(this.behavior)) option.disabled = true;
+      }
+    } else {
+      for (const option of options) {
+        option.disabled = false;
+      }
+    }
+
+
+    if (this.filter.length > 0) {
+      let filtered_data = [];
+      for (const item of this.filter) {
+        filtered_data = filtered_data.concat(data.filter(value => value.id === item))
+      }
+      console.log(filtered_data);
+      this.plot.update(filtered_data);
+    } else {
+      // console.log(data);
+
+
+      this.plot.update(data);
+    }
   }
 
-  toggle() {
-    this.plot.toggle();
-  }
-
-  show_behavior(el){
+  show_behavior(el) {
     console.log(el.innerText);
-    this.plot_data(el.innerText)
+    this.behavior = el.innerText;
+    this.plot_data()
+  }
+
+  filter_agents(elt) {
+    console.log(elt.selectedOptions);
+    this.filter = []
+    for (const el of elt.selectedOptions) {
+      this.filter.push(el.value);
+    }
+    console.log(this.filter);
+    this.plot_data();
+  }
+
+  reset_filters() {
+    this.behavior = '';
+    this.filter = [];
+    this.plot_data();
   }
 
   show() { // show isn't the most correct name for this method

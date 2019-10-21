@@ -29,13 +29,18 @@
       <div class="info" id="info-window">
         <div id="whatFrameRate"></div>
         <div id="display-date"></div>
-        <button onclick="irisModel.toggle()">toggle all</button>
         <div class="btns">
+          <div class="btn" onclick="irisModel.plot.toggle()">toggle all</div>
           <div class="btn" id="bev-1" onclick="irisModel.show_behavior(this)"></div>
           <div class="btn" id="bev-2" onclick="irisModel.show_behavior(this)"></div>
           <div class="btn" id="bev-3" onclick="irisModel.show_behavior(this)"></div>
           <div class="btn" id="bev-4" onclick="irisModel.show_behavior(this)"></div>
-          <div class="btn" onclick="irisModel.plot_data()">ALL!</div>
+          <div class="btn" onclick="irisModel.reset_filters()">ALL!</div>
+          <select multiple name="agents-list" id="agents-list" onchange="irisModel.filter_agents(this)">
+            <!-- 
+              this gets populated in line 6 of agent.js
+             -->
+          </select>
         </div>
         <!-- <div class="model-settings-item">
           set model speed:<br>

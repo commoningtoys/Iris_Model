@@ -12,6 +12,7 @@ class Plot {
     this.chart;
     this.init();
     this.data = [];
+    this.filter = [];
   }
 
 
@@ -103,7 +104,11 @@ class Plot {
       }
     })
   }
-
+/**
+ * 
+ * @param {Array} data Agent's data
+ * @param {Array} filter list of ID to filter agents
+ */
   update(data) {
     // this.data = data;
     // console.log(data);
@@ -171,6 +176,8 @@ class Plot {
     console.log('toggle');
     this.chart.toggle();
   }
+
+
 
   create_d3_obj(pointer, w, h) {
     return d3.select(pointer).append('svg').attr('width', w).attr('height', h)
