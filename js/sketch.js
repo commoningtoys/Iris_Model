@@ -11,7 +11,8 @@ let tick;
 init_menu();
 let cnv;
 function setup() {
-  cnv = createCanvas(WIDTH(), HEIGHT());
+  // cnv = createCanvas(WIDTH(), HEIGHT());
+  noCanvas();
   // frameRate(200);
 }
 

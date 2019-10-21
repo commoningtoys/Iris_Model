@@ -74,10 +74,10 @@ $('#select-behavior').click(el => {
   }
 })
 
-const setSpeed = document.getElementById('model-speed');
-setSpeed.addEventListener('change', event => {
-  loops = setSpeed.value;
-})
+// const setSpeed = document.getElementById('model-speed');
+// setSpeed.addEventListener('change', event => {
+//   loops = setSpeed.value;
+// })
 
 const minWage = document.getElementById('min-wage');
 minWage.addEventListener('change', event => {
@@ -199,3 +199,14 @@ function get_values_hidden_menu(index) {
   }
   return result
 }
+
+function update_buttons(){
+  // console.log(el.value);
+  const inputs = document.getElementsByClassName('traits-txt-input');
+  for(let i = 0; i < inputs.length; i++){
+    const btn = document.getElementById('bev-' + (i + 1));
+    btn.innerText = inputs[i].value;
+    // btn = inputs[i].value;
+  }
+}
+update_buttons();

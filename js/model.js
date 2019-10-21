@@ -26,8 +26,8 @@ class IrisModel {
     }
     // make the info for all of the agents and set their initial time
     for (const agent of this.agents) {
-      agent.makeInfo(this.agents);
-      agent.setInfo();
+      // agent.makeInfo(this.agents);
+      // agent.setInfo();
       agent.set_time(this.model_date);
     }
     // add tasks
@@ -227,21 +227,33 @@ class IrisModel {
     return medianValuesByBehavior;
   }
 
-  plot_data(){
-    const data = this.agents.map(agent => {
+  plot_data(behavior) {
+    const agents = behavior == undefined ? this.agents : this.agents.filter(agent => agent.behavior === behavior);
+    console.log(agents);
+    const data = agents.map(agent => {
       return {
         id: agent.ID,
         behavior: agent.behavior,
         date: agent.parsed_clock,
-        memories: agent.memory.get_memories()}
+        memories: agent.memory.get_memories()
+      }
     })
     // console.log(data);
     this.plot.update(data);
   }
 
+  toggle() {
+    this.plot.toggle();
+  }
+
+  show_behavior(el){
+    console.log(el.innerText);
+    this.plot_data(el.innerText)
+  }
+
   show() { // show isn't the most correct name for this method
-    
-  this.plot.update(this.get_median_values_by_behavior());
+
+    this.plot.update(this.get_median_values_by_behavior());
 
     /**
      * here we sort the agents array that was shuffled 

@@ -47,7 +47,8 @@ class Agent {
     this.totalTaskCompletedByAgents = 0;
 
     this.done_for_the_day = false;
-    this.initial_date = new Date();
+    const year = new Date().getFullYear();
+    this.initial_date = new Date(year, 0, 1);
     this.parsed_clock = this.initial_date;
     this.inner_clock = {}
 
@@ -108,66 +109,66 @@ class Agent {
   /**
    * 
    */
-  makeInfo(agents) {
-    let myDiv = document.createElement('div');
-    $(myDiv).html(this.htmlText())
-      .addClass('content')
-      .attr('id', this.ID)
-      .click(() => {
-        this.showStatistics = true;
-        for (const agent of agents) {// this needs to be refactored
-          if (this !== agent) agent.showStatistics = false;
-        }
-      });// here we set the agent to be shown in show function
-    $('.info').append(myDiv);
-  }
+  // makeInfo(agents) {
+  //   let myDiv = document.createElement('div');
+  //   $(myDiv).html(this.htmlText())
+  //     .addClass('content')
+  //     .attr('id', this.ID)
+  //     .click(() => {
+  //       this.showStatistics = true;
+  //       for (const agent of agents) {// this needs to be refactored
+  //         if (this !== agent) agent.showStatistics = false;
+  //       }
+  //     });// here we set the agent to be shown in show function
+  //   $('.info').append(myDiv);
+  // }
   /**
    * 
    */
-  setInfo() {
-    // to update the infos
-    document.getElementById(this.ID).innerHTML = this.htmlText();
-  }
+  // setInfo() {
+  //   // to update the infos
+  //   document.getElementById(this.ID).innerHTML = this.htmlText();
+  // }
   /**
    * 
    */
-  htmlText() {
-    const BR = '<br>';
-    let str1 = '<b>AGENT: ' + this.ID + '</b>' + BR;
-    let str11 = '<b>behavior: ' + this.behavior_exp.traits.trait + '</b>' + BR;
-    let str12 = '<b>behavior traits:</b>' + BR;
-    str12 += "<div class = 'preference'>";
-    Object.keys(this.behavior_exp.result_traits).forEach(key => {
-      str12 += "<strong>" + key + "</strong>: " + roundPrecision(this.behavior_exp.result_traits[key], 3) + "<br>";
-    })
-    str12 += "</div><br>";
-    let str2 = (this.working == true ? 'doing this task: ' + BR + this.currentTask : 'is not working' + BR) + BR;
-    let str21 = 'working timer: ' + BR + this.workingTimer + BR;
-    let str22 = (this.done_for_the_day == true ? 'agent is done for today' : 'agent is available to work') + BR;
-    let str3 = (this.has_swapped === true ? 'has swapped for: ' + BR + this.swap_task : 'has not swapped' + BR) + BR;
-    let str31 = (this.resting === true ? `is resting` : 'not resting') + BR;
-    let str4 = 'feel like doing: ' + this.FLD + BR;
-    let str5 = 'time coins: ' + this.time_coins + BR;
-    let str6 = '<div class="toggle">preferences:';
-    //iterating through all the item one by one.
-    Object.keys(this.preferences).forEach(val => {
-      //getting all the keys in val (current array item)
-      let keys = Object.keys(this.preferences[val]);
-      let objAttribute = this.preferences[val];
-      //assigning HTML string to the variable html
-      str6 += "<div class = 'preference'>";
-      //iterating through all the keys presented in val (current array item)
-      keys.forEach(key => {
-        //appending more HTML string with key and value aginst that key;
-        // str6 += "<strong>preferences</strong> <br>"
-        if (!key.startsWith('forget')) str6 += "<strong>" + key + "</strong>: " + roundPrecision(objAttribute[key], 2) + "<br>";
-      });
-      //final HTML sting is appending to close the DIV element.
-      str6 += "</div><br>";
-    });
-    str6 += '</div>';
-    return str1 + str11 + str12 + str2 + str21 + str22 + str3 + str31 + str4 + str5 + str6;
-  }
+  // htmlText() {
+  //   const BR = '<br>';
+  //   let str1 = '<b>AGENT: ' + this.ID + '</b>' + BR;
+  //   let str11 = '<b>behavior: ' + this.behavior_exp.traits.trait + '</b>' + BR;
+  //   let str12 = '<b>behavior traits:</b>' + BR;
+  //   str12 += "<div class = 'preference'>";
+  //   Object.keys(this.behavior_exp.result_traits).forEach(key => {
+  //     str12 += "<strong>" + key + "</strong>: " + roundPrecision(this.behavior_exp.result_traits[key], 3) + "<br>";
+  //   })
+  //   str12 += "</div><br>";
+  //   let str2 = (this.working == true ? 'doing this task: ' + BR + this.currentTask : 'is not working' + BR) + BR;
+  //   let str21 = 'working timer: ' + BR + this.workingTimer + BR;
+  //   let str22 = (this.done_for_the_day == true ? 'agent is done for today' : 'agent is available to work') + BR;
+  //   let str3 = (this.has_swapped === true ? 'has swapped for: ' + BR + this.swap_task : 'has not swapped' + BR) + BR;
+  //   let str31 = (this.resting === true ? `is resting` : 'not resting') + BR;
+  //   let str4 = 'feel like doing: ' + this.FLD + BR;
+  //   let str5 = 'time coins: ' + this.time_coins + BR;
+  //   let str6 = '<div class="toggle">preferences:';
+  //   //iterating through all the item one by one.
+  //   Object.keys(this.preferences).forEach(val => {
+  //     //getting all the keys in val (current array item)
+  //     let keys = Object.keys(this.preferences[val]);
+  //     let objAttribute = this.preferences[val];
+  //     //assigning HTML string to the variable html
+  //     str6 += "<div class = 'preference'>";
+  //     //iterating through all the keys presented in val (current array item)
+  //     keys.forEach(key => {
+  //       //appending more HTML string with key and value aginst that key;
+  //       // str6 += "<strong>preferences</strong> <br>"
+  //       if (!key.startsWith('forget')) str6 += "<strong>" + key + "</strong>: " + roundPrecision(objAttribute[key], 2) + "<br>";
+  //     });
+  //     //final HTML sting is appending to close the DIV element.
+  //     str6 += "</div><br>";
+  //   });
+  //   str6 += '</div>';
+  //   return str1 + str11 + str12 + str2 + str21 + str22 + str3 + str31 + str4 + str5 + str6;
+  // }
 
   set_time(time_obj) {
     const h = this.initial_date.getHours();
@@ -348,14 +349,14 @@ class Agent {
     if (this.working && !this.isPlayer) {
 
       this.workingTimer -= timeUpdate();
-      this.setInfo();
+      // this.setInfo();
       if (this.workingTimer <= 0) {
         this.has_swapped = false;// reset to false, very IMPORTANT otherwise the agent will always be called to do a swapped task
         this.swap_task = '';
         this.working = false;
         this.currentTask = '';
         this.done_for_the_day = true;
-        this.setInfo();
+        // this.setInfo();
       }
     }
   }
@@ -418,7 +419,7 @@ class Agent {
     this.workingTimer = amount_of_time;
     this.updateAttributes(task, agents, amount_of_time, brute_forced);
     this.currentTask = task.type;// we set the current task according to the task the agent is currently working on
-    this.setInfo();
+    // this.setInfo();
     // this.makeInfo(`AGENT: ${this.ID} is executing ${task.type}. It will take ${amount_of_time} ticks`);
   }
 
@@ -436,14 +437,14 @@ class Agent {
     // when the agent has rested he also is less stressed
     this.stress /= this.stress_decrease_val;
     // this.updateAttributes(task, true);
-    this.setInfo();
+    // this.setInfo();
   }
 
   assign_swapped_task(task_name) {
     // console.log('swap...')
     this.has_swapped = true;
     this.swap_task = task_name;
-    this.setInfo();
+    // this.setInfo();
   }
 
   /**
@@ -515,7 +516,7 @@ class Agent {
       // inner_clock: this.inner_clock,
       parsed_clock: this.parsed_clock
     }
-    this.setInfo();
+    // this.setInfo();
   }
 
   add_data_to_archive() {

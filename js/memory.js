@@ -52,6 +52,7 @@ class Memory {
     return index;
   }
   get_memories() {
+    // console.log(this.memory);
     return this.memory;
   }
 }

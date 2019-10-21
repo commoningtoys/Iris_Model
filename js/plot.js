@@ -6,7 +6,7 @@ class Plot {
      * therefore we extract all the attributes of the object and we transform
      * it into an dummy object with arrays that can be used within d3js
      */
-    this.date_format = '%Y-%m-%d-%H';
+    this.date_format = '%Y-%m-%d %H:00';
     this.date_to_string = d3.timeFormat(this.date_format);
     this.global_median = {};//{...this.empty_object}
     this.chart;
@@ -14,12 +14,20 @@ class Plot {
     this.data = [];
   }
 
+
+  get_dims() {
+    return {
+      w: document.getElementById('chart').getBoundingClientRect().width,
+      h: innerHeight - 100
+    }
+  }
+
   init() {
     this.chart = c3.generate({
       bindto: '#chart',
       size: {
-        width: innerWidth,
-        height: innerHeight
+        width: this.get_dims().w,
+        height: this.get_dims().h
       },
       padding: {
         top: 20,
@@ -33,19 +41,38 @@ class Plot {
         axes: {
           swapped: 'y2',
           brute_force: 'y2'
-        }
+        },
+        // types: {
+        //   swapped: 'stanford',
+        //   brute_force: 'stanford'
+        // }
+      },
+      // legend: {
+      //   item: {
+      //     onclick: function (id) { this.chart.toggle(id) }
+      //   }
+      // },
+      color: {
+        pattern: [
+          '#f00', '#0f0', '#0ff', '#ff0', '#f0f',
+          '#bada55', '#ff80ed', '#5ac18e', '#ccff00', '#00ff7f',
+          '#daa520', '#afeeee', '#f6546a', '#e6e6fa', '#d3ffce'
+
+        ]
       },
       axis: {
         x: {
           type: 'timeseries',
           tick: {
-            format: this.date_format
-          }
+            format: this.date_format,
+            multiline: true,
+            count: 10
+          },
         },
         y2: {
           show: true,
           label: {
-            text: 'Y2 Label',
+            text: 'swapped || brute force',
             position: 'outer-middle'
           },
           padding: {
@@ -57,6 +84,9 @@ class Plot {
       tooltip: {
         position: (data, w, h, el) => { return { top: 0, left: 0 } }
       },
+      onresize: function () {
+
+      },
       subchart: {
         show: true
       },
@@ -67,6 +97,9 @@ class Plot {
             r: 3
           }
         }
+      },
+      transition: {
+        duration: 100
       }
     })
   }
@@ -133,6 +166,12 @@ class Plot {
   bool_to_number(bool) {
     return bool ? 1 : 0;
   }
+
+  toggle(){
+    console.log('toggle');
+    this.chart.toggle();
+  }
+
   create_d3_obj(pointer, w, h) {
     return d3.select(pointer).append('svg').attr('width', w).attr('height', h)
   }
