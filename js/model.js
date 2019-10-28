@@ -85,7 +85,10 @@ class IrisModel {
     const datapoint = this.agents[0].data_point;
     this.plot = new Plot(datapoint);
     this.filter = [];
-    this.behavior = ''
+    this.behavior = '';
+    const sel_1 = document.getElementById('agents-param-1').value;
+    const sel_2 = document.getElementById('agents-param-2').value;
+    this.params = [sel_1, sel_2];
     // this.plot = new Plot(parent, 20, 20, this.colors);
     this.pointIndex = 0;
 
@@ -228,7 +231,18 @@ class IrisModel {
     }
     return medianValuesByBehavior;
   }
+  plot_bar_chart(){
+    console.log(this.params);
+    const param_1 = this.agents.map(agent => -(agent.data_point[this.params[0]]))
+    const param_2 = this.agents.map(agent => agent.data_point[this.params[1]]).sort()
+    
+    const data = [[this.params[0]].concat(param_1), [this.params[1]].concat(param_2)]
+    this.plot.update_bar_chart(data);
 
+  }
+  plot_pies() {
+    this.plot.update_pies(this.agents, this.tasks);
+  }
   plot_data() {
     // possibility to filter by behavior
     // more granular filtering is done in plot.js
@@ -266,12 +280,12 @@ class IrisModel {
         filtered_data = filtered_data.concat(data.filter(value => value.id === item))
       }
       console.log(filtered_data);
-      this.plot.update(filtered_data);
+      this.plot.update_chart(filtered_data);
     } else {
       // console.log(data);
 
 
-      this.plot.update(data);
+      this.plot.update_chart(data);
     }
   }
 
@@ -287,8 +301,19 @@ class IrisModel {
     for (const el of elt.selectedOptions) {
       this.filter.push(el.value);
     }
-    console.log(this.filter);
+    // console.log(this.filter);
     this.plot_data();
+  }
+
+  filter_params() {
+
+    const sel_1 = document.getElementById('agents-param-1').value;
+    const sel_2 = document.getElementById('agents-param-2').value;
+    this.params[0] = sel_1;
+    this.params[1] = sel_2;
+
+    this.plot_bar_chart();
+
   }
 
   reset_filters() {

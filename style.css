@@ -39,6 +39,7 @@ input{
     /* padding: 0.3rem; */
     font-weight: bolder;
     font-size: 1rem;
+    width: 100px;
 }
 
 #p5Sketch{
@@ -123,6 +124,10 @@ input{
     background-color: #f00;
     width: 25%;
     height: 10px;
+}
+
+.traits-txt-input{
+    width: 100px;
 }
 
 .menu{

@@ -28,12 +28,29 @@ let AGENT_NUM = 10;
  * the names can be changed again
  */
 
+ const AGENT_PARAMS = [
+    'time_coins',
+    'feel_like_doing',
+    'spending_hours',
+    'stress_level',
+    'amount_of_time',
+    'swapped',
+    'brute_force'
+ ]
+
+ const TASK_NAMES = [
+    'food_dept_mngmt',
+    'kitchen_maintenance',
+    'social_work',
+    'facility_duties',
+ ]
+
 // and a list out of them
 let TASK_LIST = [
-    makeTask(2 * TIME_SCALE, 3, 'food_dept_mngmt'),
-    makeTask(2 * TIME_SCALE, 4, 'kitchen_maintenance'),
-    makeTask(3 * TIME_SCALE, 1, 'social_work'),
-    makeTask(2 * TIME_SCALE, 2, 'facility_duties'),
+    makeTask(2 * TIME_SCALE, 3, TASK_NAMES[0]),
+    makeTask(2 * TIME_SCALE, 4, TASK_NAMES[1]),
+    makeTask(3 * TIME_SCALE, 1, TASK_NAMES[2]),
+    makeTask(2 * TIME_SCALE, 2, TASK_NAMES[3]),
 ];
 // agent states 
 const AGENT_BEHAVIORS = [

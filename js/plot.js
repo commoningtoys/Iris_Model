@@ -10,9 +10,17 @@ class Plot {
     this.date_to_string = d3.timeFormat(this.date_format);
     this.global_median = {};//{...this.empty_object}
     this.chart;
-    this.init();
     this.data = [];
     this.filter = [];
+
+    this.pies_1;
+    this.pies_2;
+
+    this.bar_chart;
+    this.previous_data = []
+    this.init_chart();
+    this.init_pies();
+    this.init_bar_chart();
   }
 
 
@@ -23,7 +31,80 @@ class Plot {
     }
   }
 
-  init() {
+  init_bar_chart(){
+    this.bar_chart = c3.generate({
+      bindto: '#bar-chart',
+      size:{
+        width: this.get_dims().w,
+        height: this.get_dims().h
+      },
+      padding: {
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20
+      },
+      data:{
+        columns: [],
+        type : 'bar',
+        order: null
+      },
+      axis:{
+        rotated: true,
+        x: {
+          show: false
+        }
+      },
+      tooltip: {
+        format:{
+          title: d => 'agent ' + d
+        }
+      },
+      grid: {
+        y: {
+            lines: [{value:0}]
+        }
+    }
+    })
+  }
+
+  init_pies() {
+    this.pies_1 = c3.generate({
+      bindto: '#pie-1',
+      size:{
+        width: this.get_dims().w / 2,
+        height: this.get_dims().w / 2
+      },
+      padding: {
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20
+      },
+      data:{
+        columns: [],
+        type : 'pie'
+      }
+    })
+    this.pies_2 = c3.generate({
+      bindto: '#pie-2',
+      size:{
+        width: this.get_dims().w / 2,
+        height: this.get_dims().w / 2
+      },
+      padding: {
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20
+      },
+      data:{
+        columns: [],
+        type : 'pie'
+      }
+    })
+  }
+  init_chart() {
     this.chart = c3.generate({
       bindto: '#chart',
       size: {
@@ -104,12 +185,12 @@ class Plot {
       }
     })
   }
-/**
- * 
- * @param {Array} data Agent's data
- * @param {Array} filter list of ID to filter agents
- */
-  update(data) {
+  /**
+   * 
+   * @param {Array} data Agent's data
+   * @param {Array} filter list of ID to filter agents
+   */
+  update_chart(data) {
     // this.data = data;
     // console.log(data);
     this.data = this.get_median_values(data);
@@ -117,6 +198,33 @@ class Plot {
     this.chart.load({
       columns: this.parse_data(this.data)
     });
+  }
+
+  update_pies(agents, tasks){
+     // // here we alter the bar informing how many agents are working resting etc.
+    // // console.log(this.agents);
+    const working = agents.filter(result => result.working === true).length;
+    const swapping = agents.filter(result => result.has_swapped === true).length;
+    const resting = agents.filter(result => result.resting === true).length;
+    const available = agents.length - (working + swapping + resting)
+    const agents_situation = [
+      ['working'].concat(working),
+      ['swapping'].concat(swapping),
+      ['resting'].concat(resting),
+      ['available'].concat(available)
+    ];
+    this.pies_1.load({
+      columns: agents_situation
+    })
+  }
+
+  update_bar_chart(data){
+    this.bar_chart.load({
+      columns: data,
+      unload: this.previous_data
+    })
+
+    this.previous_data = [data[0][0], data[1][0]];
   }
 
   get_median_values(arr) {
@@ -172,7 +280,7 @@ class Plot {
     return bool ? 1 : 0;
   }
 
-  toggle(){
+  toggle() {
     console.log('toggle');
     this.chart.toggle();
   }

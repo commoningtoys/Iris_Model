@@ -41,28 +41,28 @@ function init_model() {
   console.log('start')
   // if (check_values) {// if the input given in the menu are correct than start the model
 
-    const traits_list = extract_traits();
-    const min_wage = parseInt(document.getElementById('min-wage').value);
-    const tasks_num = parseInt(document.getElementById('how-many-task').value);
-    const players = 0; // for now
-    const model_type = get_model_type();
-    const monthly_hours = parseInt(document.getElementById('monthly-hours').value);
-    console.log(monthly_hours);
-    irisModel = new IrisModel(traits_list, min_wage, tasks_num, model_type, monthly_hours);
+  const traits_list = extract_traits();
+  const min_wage = parseInt(document.getElementById('min-wage').value);
+  const tasks_num = parseInt(document.getElementById('how-many-task').value);
+  const players = 0; // for now
+  const model_type = get_model_type();
+  const monthly_hours = parseInt(document.getElementById('monthly-hours').value);
+  console.log(monthly_hours);
+  irisModel = new IrisModel(traits_list, min_wage, tasks_num, model_type, monthly_hours);
 
-    const stop_model = parseInt(document.getElementById('stop-model').value)
+  const stop_model = parseInt(document.getElementById('stop-model').value)
 
-    irisModel.end_after(stop_model);
+  irisModel.end_after(stop_model);
 
-    $('.menu').toggle('fast');
+  $('.menu').toggle('fast');
 
-    // $('#info-window').show('fast', () => {
-    //   // whe the window is closed resize the sketch
-    //   resizeCanvas(WIDTH(), HEIGHT());
-    // });
-    tick = setInterval(single_execution, 0.1);
+  // $('#info-window').show('fast', () => {
+  //   // whe the window is closed resize the sketch
+  //   resizeCanvas(WIDTH(), HEIGHT());
+  // });
+  tick = setInterval(single_execution, 0.1);
   // } 
-} 
+}
 
 function single_execution() {
   if (irisModel != null) {
@@ -70,6 +70,11 @@ function single_execution() {
       irisModel.update();
     }
     if (frameCount % 15 == 0) irisModel.plot_data();
+    if (frameCount % 15 == 0) {
+      irisModel.plot_pies();
+      irisModel.plot_bar_chart();
+    }
+
   }
 }
 

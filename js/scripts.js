@@ -192,7 +192,7 @@ function get_values_hidden_menu(index) {
   const hidden = document.getElementsByClassName('hide')[index].children;
   const result = [];
   for (const child of hidden) {
-    if(child.checked){
+    if (child.checked) {
       console.log(child.value);
       result.push(child.value);
     }
@@ -200,13 +200,35 @@ function get_values_hidden_menu(index) {
   return result
 }
 
-function update_buttons(){
+function update_buttons() {
   // console.log(el.value);
   const inputs = document.getElementsByClassName('traits-txt-input');
-  for(let i = 0; i < inputs.length; i++){
+  for (let i = 0; i < inputs.length; i++) {
     const btn = document.getElementById('bev-' + (i + 1));
     btn.innerText = inputs[i].value;
     // btn = inputs[i].value;
   }
 }
 update_buttons();
+
+function set_selects() {
+  const sel_1 = document.getElementById('agents-param-1');
+  const sel_2 = document.getElementById('agents-param-2');
+  for (const param of AGENT_PARAMS) {
+
+    const option_1 = document.createElement('option');
+    // option.setAttribute('class', 'btn');
+    option_1.value = param;
+    option_1.innerText = param;
+    sel_1.appendChild(option_1);
+
+    const option_2 = document.createElement('option');
+    // option.setAttribute('class', 'btn');
+    option_2.value = param;
+    option_2.innerText = param;
+    sel_2.appendChild(option_2);
+  }
+  console.log(sel_1);
+}
+
+set_selects();
