@@ -8,11 +8,12 @@ class Agent {
     option.setAttribute('class', 'btn');
     option.value = this.ID;
     option.innerText = this.ID + ' ' + _traits.trait;
-    select.appendChild(option)
-    this.monthly_hours = monthly_hours;
+    select.appendChild(option);
+
+    this.spending_model = model_type === 'time-spending' ? true : false;
+    this.monthly_hours = model_type === 'time-spending' ? monthly_hours : 0;
     this.spending_hours = this.get_spending_hours(model_type);
     // console.log(model_type);
-    this.spending_model = model_type === 'time-spending' ? true : false;
 
     this.behavior = _traits.trait;//_behavior;
     this.behavior_exp = new Behavior(_traits, this);

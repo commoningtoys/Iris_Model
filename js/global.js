@@ -36,7 +36,19 @@ let AGENT_NUM = 10;
     'amount_of_time',
     'swapped',
     'brute_force'
- ]
+ ];
+
+ const PARAMS_COLORS = {
+    skill: '#0f0',
+    preference: '#f0f',
+    time_coins: '#f00',
+    feel_like_doing: '#0ff',
+    spending_hours: '#fc0',
+    stress_level: '#ff0',
+    amount_of_time:'#0bf',
+    swapped: '#0f6',
+    brute_force: '#f60'
+ };
 
  const TASK_NAMES = [
     'food_dept_mngmt',

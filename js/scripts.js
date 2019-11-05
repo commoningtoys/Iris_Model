@@ -228,7 +228,6 @@ function set_selects() {
     option_2.innerText = param;
     sel_2.appendChild(option_2);
   }
-  console.log(sel_1);
 }
 
 set_selects();

@@ -231,13 +231,47 @@ class IrisModel {
     }
     return medianValuesByBehavior;
   }
-  plot_bar_chart(){
-    console.log(this.params);
+  plot_bar_chart() {
+
+    // const param_1 = this.agents.map(agent => {
+    //   return {
+    //     value: -(agent.data_point[this.params[0]]),
+    //     id: agent.ID
+    //   }
+    // })
+    // const param_2 = this.agents.map(agent => {
+    //   return {
+    //     value: agent.data_point[this.params[1]],
+    //     id: agent.ID
+    //   }
+    // })
+
+    let param = this.agents.map(agent => {
+      return {
+        value_1: -(agent.data_point[this.params[0]]),
+        value_2: (agent.data_point[this.params[1]]),
+        id: agent.ID
+      }
+    });
+    // console.log(param);
+    param = param.sort((a, b) => a.value_1 - b.value_1);
+    // console.log(param);
+    // const param_22 = this.agents.map(agent => {
+    //   return {
+    //     value: (agent.data_point[this.params[1]]),
+    //     id: agent.ID
+    //   }
+    // })
+
+    // console.log({json: param_11.concat(param_22)});
+
+
     const param_1 = this.agents.map(agent => -(agent.data_point[this.params[0]]))
-    const param_2 = this.agents.map(agent => agent.data_point[this.params[1]]).sort()
-    
-    const data = [[this.params[0]].concat(param_1), [this.params[1]].concat(param_2)]
-    this.plot.update_bar_chart(data);
+    const param_2 = this.agents.map(agent => agent.data_point[this.params[1]])
+
+    const data = [[this.params[0]].concat(param_1), [this.params[1]].concat(param_2)];
+    // console.log(data);
+    this.plot.update_bar_chart(param);
 
   }
   plot_pies() {
@@ -550,9 +584,11 @@ class IrisModel {
     }
     if ((this.days > 1 && this.days % 31 == 0) || (this.days > 1 && (this.days % 29 == 0 && this.months === 1))) {// shorter month on february
 
-      // here we need to reset the spent time of the agents
-      for (const agent of this.agents) {
-        agent.reset_spending_time();
+      // here we need to reset the spent time of the agents if its the spending model
+      if (this.model_type === 'time-accumulate') {
+        for (const agent of this.agents) {
+          agent.reset_spending_time();
+        }
       }
       this.months++;
       this.days = 1;

@@ -50,8 +50,8 @@
     </div>
     <div class="visualizations">
       <div class="chart_1" id="chart"></div>
-      <div class="chart_1" id="pie-1"></div>
-      <div class="chart_1" id="pie-2"></div>
+      <div class="chart_1" id="pie-1" style="width: 50%; float: left;"></div>
+      <div class="chart_1" id="pie-2" style="width: 50%; float: left;"></div>
       <div class="btns">
         <select name="agents-param-1" id="agents-param-1" onchange="irisModel.filter_params()">
           <!-- 
@@ -211,7 +211,8 @@
           <div class="traits-elt">how many?</div> <input type="number" value="4" autocomplete="off" name="amount">
           <!-- here we put the hidden menu -->
           <div class="hide">
-            <div class="traits-elt">planning:</div><input class="hidden-input" type="radio" name="planning_4"
+            <div class="traits-elt">planning:</div>
+            <input class="hidden-input" type="radio" name="planning_4"
               value="distributed" autocomplete="off"><label for="distributed">distributed</label>
             <input class="hidden-input" type="radio" name="planning_4" value="compact" autocomplete="off" checked><label
               for="compact">compact</label> <br>

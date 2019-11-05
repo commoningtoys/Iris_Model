@@ -31,49 +31,76 @@ class Plot {
     }
   }
 
-  init_bar_chart(){
+  init_bar_chart() {
     this.bar_chart = c3.generate({
       bindto: '#bar-chart',
-      size:{
+      size: {
         width: this.get_dims().w,
         height: this.get_dims().h
       },
       padding: {
-        top: 20,
-        right: 20,
-        bottom: 20,
-        left: 20
+        top: 75,
+        right: 75,
+        bottom: 75,
+        left: 75
       },
-      data:{
-        columns: [],
-        type : 'bar',
+      data: {
+        json: {},
+        // keys: {
+        //   // x: 'id',
+        // },
+        type: 'bar',
         order: null
       },
-      axis:{
+      axis: {
         rotated: true,
         x: {
-          show: false
+          type: 'category',
+          // show: false
+        },
+        y: {
+          tick: {
+            format: d => { return Math.abs(d) }
+          }
         }
       },
       tooltip: {
-        format:{
-          title: d => 'agent ' + d
-        }
+        format: {
+          title: (x, index) => {
+            return 'agent ' + this.previous_data[index].id
+          },
+          value: (value, ratio, id, index) => {
+
+
+
+            // console.log(value, ratio, id, index);
+            // const last_memory = this.data.memories[value];
+            return Math.abs(value)
+          }
+        },
+        // contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
+        //   // console.log(d, defaultTitleFormat(d), defaultValueFormat(d), color(d));
+        //   // return ... // formatted html as you want
+        // }
+
+      },
+      legend: {
+        show: false
       },
       grid: {
         y: {
-            lines: [{value:0}]
+          lines: [{ value: 0 }]
         }
-    }
+      }
     })
   }
 
   init_pies() {
     this.pies_1 = c3.generate({
       bindto: '#pie-1',
-      size:{
-        width: this.get_dims().w / 2,
-        height: this.get_dims().w / 2
+      size: {
+        width: this.get_dims().w / 2.3,
+        height: this.get_dims().w / 2.3
       },
       padding: {
         top: 20,
@@ -81,14 +108,14 @@ class Plot {
         bottom: 20,
         left: 20
       },
-      data:{
+      data: {
         columns: [],
-        type : 'pie'
+        type: 'pie'
       }
     })
     this.pies_2 = c3.generate({
       bindto: '#pie-2',
-      size:{
+      size: {
         width: this.get_dims().w / 2,
         height: this.get_dims().w / 2
       },
@@ -98,9 +125,9 @@ class Plot {
         bottom: 20,
         left: 20
       },
-      data:{
+      data: {
         columns: [],
-        type : 'pie'
+        type: 'pie'
       }
     })
   }
@@ -131,17 +158,15 @@ class Plot {
       },
       // legend: {
       //   item: {
-      //     onclick: function (id) { this.chart.toggle(id) }
+      //     onclick: (id)=> {
+      //       console.log(id);
+      //       this.chart.toggle(id)
+      //     }
       //   }
       // },
-      color: {
-        pattern: [
-          '#f00', '#0f0', '#0ff', '#ff0', '#f0f',
-          '#bada55', '#ff80ed', '#5ac18e', '#ccff00', '#00ff7f',
-          '#daa520', '#afeeee', '#f6546a', '#e6e6fa', '#d3ffce'
-
-        ]
-      },
+      // color: (color, d) => {
+      //   console.log(d.id);
+      // },
       axis: {
         x: {
           type: 'timeseries',
@@ -191,17 +216,17 @@ class Plot {
    * @param {Array} filter list of ID to filter agents
    */
   update_chart(data) {
-    // this.data = data;
+    this.data = data;
     // console.log(data);
-    this.data = this.get_median_values(data);
+    const median = this.get_median_values(data);
     // console.log(this.data);
     this.chart.load({
-      columns: this.parse_data(this.data)
+      columns: this.parse_data(median)
     });
   }
 
-  update_pies(agents, tasks){
-     // // here we alter the bar informing how many agents are working resting etc.
+  update_pies(agents, tasks) {
+    // // here we alter the bar informing how many agents are working resting etc.
     // // console.log(this.agents);
     const working = agents.filter(result => result.working === true).length;
     const swapping = agents.filter(result => result.has_swapped === true).length;
@@ -216,15 +241,38 @@ class Plot {
     this.pies_1.load({
       columns: agents_situation
     })
+
+    const task_situation = [];
+    for (const name of TASK_NAMES) {
+      let value = 0;
+      for (const task of tasks) {
+        if (task.type === name) value += task.executed;
+      }
+      const datapoint = [name, value];
+      // console.log(datapoint);
+      task_situation.push(datapoint)
+    }
+    // for (const task of tasks) {
+    //   const datapoint = [task.type, task.executed]
+    //   task_situation.push(datapoint)
+    // }
+    // console.log(task_situation);
+    this.pies_2.load({
+      columns: task_situation
+    })
   }
 
-  update_bar_chart(data){
+  update_bar_chart(data) {
     this.bar_chart.load({
-      columns: data,
+      json: data,
+      keys: {
+        x: 'id', // it's possible to specify 'x' when category axis
+        value: ['value_1', 'value_2'],
+      },
       unload: this.previous_data
     })
 
-    this.previous_data = [data[0][0], data[1][0]];
+    this.previous_data = data;
   }
 
   get_median_values(arr) {
