@@ -38,6 +38,13 @@ let AGENT_NUM = 10;
     'brute_force'
  ];
 
+ const DECISIONS = [
+     'work',
+     'swap',
+     'rest',
+     'brute-forced'
+ ]
+
  const PARAMS_COLORS = {
     skill: '#0f0',
     preference: '#f0f',

@@ -41,6 +41,12 @@ class Memory {
 
       }
     })
+
+    // we need to update the slider in the index.html
+    const array_name = Object.keys(this.memory)[0];
+    const array_length = this.memory[array_name].length;
+    const time_slider = document.getElementById('time-slider')
+    time_slider.setAttribute('max', array_length);
   }
   get_index(key) {
     let index = null;
@@ -51,8 +57,18 @@ class Memory {
     })
     return index;
   }
-  get_memories() {
-    // console.log(this.memory);
-    return this.memory;
+  get_memories(filter) {
+    if(typeof filter === 'string')return this.memory;
+    else return this.filter_memories(filter)
+  }
+
+  filter_memories(filter){
+    const result = {};
+
+    Object.keys(this.memory).forEach(key => {
+      result[key] = this.memory[key].slice(0, filter);
+    })
+
+    return result
   }
 }

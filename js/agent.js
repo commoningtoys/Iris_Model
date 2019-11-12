@@ -73,6 +73,7 @@ class Agent {
     this.workingTimer = 0;// how long is the agent at work
 
     this.decision_archive = [];
+    this.decision = '';
 
     this.mappedAmountOfTime = 0;
     this.colors = {
@@ -106,7 +107,8 @@ class Agent {
       swapped: this.has_swapped,// === true ? this.swap_task : '',
       brute_force: this.wasBruteForced,
       // inner_clock: this.inner_clock,
-      parsed_clock: this.parsed_clock
+      parsed_clock: this.parsed_clock,
+      decision: this.decision
     };
 
     this.memory = new Memory(this.data_point)
@@ -209,7 +211,8 @@ class Agent {
       decision: _decision,
       time: this.get_inner_clock()
     }
-    this.decision_archive.push(obj)
+    this.decision_archive.push(obj);
+    this.decision = _decision;
   }
   get_decision_archive() {
     return JSON.parse(JSON.stringify(this.decision_archive));
@@ -220,7 +223,6 @@ class Agent {
   }
 
   reset_spending_time() {
-    // console.log(this.spending_hours);
     // this.spending_hours = this.monthly_hours;
     if (this.spending_hours <= 0) {
       // this.spending_hours += this.monthly_hours;
@@ -362,6 +364,7 @@ class Agent {
         this.has_swapped = false;// reset to false, very IMPORTANT otherwise the agent will always be called to do a swapped task
         this.swap_task = '';
         this.working = false;
+        this.data_point.executed_task = this.currentTask;
         this.currentTask = '';
         this.done_for_the_day = true;
         // this.setInfo();
@@ -412,9 +415,9 @@ class Agent {
    * @param {Number} amount_of_time 
    */
   work(task, agents, brute_forced) {
-    // console.log('work...');
-
-    this.push_to_decision_archive('work');
+    // console.log('work...', this.ID);
+    const decision = brute_forced === true ? 'brute-forced' : 'work'
+    this.push_to_decision_archive(decision);
     const skill = this.getPreferences(task.type).skill_level;
     const amount_of_time = this.spending_model == true ? task.aot : task.amountOfTimeBasedOnSkill(skill);
 
@@ -506,29 +509,32 @@ class Agent {
 
 
     this.updatePreferences(task, agents);
-    /**
-     * the magic trick below let us to push the preferences
-     * without copying the reference to the original array 
-     */
-    const insert = JSON.parse(JSON.stringify(this.preferences));// the trick
-    this.data_point = {
-      preferences: insert,
-      executed_task: task.type,
-      time_coins: this.time_coins, // this maps the value to a better scale¿
-      feel_like_doing: this.FLD,
-      spending_hours: this.spending_hours,
-      stress_level: this.stress,
-      amount_of_time: this.mappedAmountOfTime,
-      swapped: this.has_swapped,// === true ? this.swap_task : '',
-      brute_force: this.wasBruteForced,
-      // inner_clock: this.inner_clock,
-      parsed_clock: this.parsed_clock
-    }
+
     // this.setInfo();
   }
 
   add_data_to_archive() {
 
+    /**
+     * the magic trick below let us to push the preferences
+     * without copying the reference to the original array 
+     */
+    const insert = JSON.parse(JSON.stringify(this.preferences));// the trick
+    this.data_point.preferences = insert;
+    // this.data_point.executed_task = this.currentTask;
+    this.data_point.time_coins = this.time_coins; // this maps the value to a better scale¿
+    this.data_point.feel_like_doing = this.FLD;
+    this.data_point.spending_hours = this.spending_hours;
+    this.data_point.stress_level = this.stress;
+    this.data_point.amount_of_time = this.mappedAmountOfTime;
+    this.data_point.swapped = this.has_swapped;// === true ? this.swap_task  = '';
+    this.data_point.brute_force = this.wasBruteForced;
+    // inner_clock = this.inner_clock;
+    this.data_point.parsed_clock = this.parsed_clock;
+    this.data_point.decision = this.decision;
+
+
+    // console.log(this.decision);
     this.preferenceArchive.push(this.data_point);
     this.memory.add_memory(this.data_point);
     if (this.preferenceArchive.length > DATA_POINTS) this.preferenceArchive.splice(0, 1);

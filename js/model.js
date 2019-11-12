@@ -92,6 +92,8 @@ class IrisModel {
     // this.plot = new Plot(parent, 20, 20, this.colors);
     this.pointIndex = 0;
 
+    this.data;
+
     this.numShowAgents = 5;
     this.showFrom = 0;
     this.showTo = this.numShowAgents;
@@ -231,65 +233,54 @@ class IrisModel {
     }
     return medianValuesByBehavior;
   }
-  plot_bar_chart() {
 
-    // const param_1 = this.agents.map(agent => {
-    //   return {
-    //     value: -(agent.data_point[this.params[0]]),
-    //     id: agent.ID
-    //   }
-    // })
-    // const param_2 = this.agents.map(agent => {
-    //   return {
-    //     value: agent.data_point[this.params[1]],
-    //     id: agent.ID
-    //   }
-    // })
-
-    let param = this.agents.map(agent => {
-      return {
-        value_1: -(agent.data_point[this.params[0]]),
-        value_2: (agent.data_point[this.params[1]]),
-        id: agent.ID
-      }
-    });
-    // console.log(param);
-    param = param.sort((a, b) => a.value_1 - b.value_1);
-    // console.log(param);
-    // const param_22 = this.agents.map(agent => {
-    //   return {
-    //     value: (agent.data_point[this.params[1]]),
-    //     id: agent.ID
-    //   }
-    // })
-
-    // console.log({json: param_11.concat(param_22)});
-
-
-    const param_1 = this.agents.map(agent => -(agent.data_point[this.params[0]]))
-    const param_2 = this.agents.map(agent => agent.data_point[this.params[1]])
-
-    const data = [[this.params[0]].concat(param_1), [this.params[1]].concat(param_2)];
-    // console.log(data);
-    this.plot.update_bar_chart(param);
-
-  }
-  plot_pies() {
-    this.plot.update_pies(this.agents, this.tasks);
-  }
-  plot_data() {
-    // possibility to filter by behavior
-    // more granular filtering is done in plot.js
-    const agents = this.behavior == '' ? this.agents : this.agents.filter(agent => agent.behavior === this.behavior);
-    // console.log(agents);
-    let data = agents.map(agent => {
+  update_data(elt) {
+    let time_filter = 'last';
+    if (elt !== undefined) {
+      // console.log(elt.value);
+      time_filter = parseInt(elt.value);
+    }
+    this.data = this.agents.map(agent => {
       return {
         id: agent.ID,
         behavior: agent.behavior,
         date: agent.parsed_clock,
-        memories: agent.memory.get_memories()
+        memories: agent.memory.get_memories(time_filter)
       }
     })
+    this.plot_data();
+    this.plot_pies();
+    this.plot_bar_chart();
+  }
+  plot_bar_chart() {
+
+    let param = this.data.map(datapoint => {
+      const val_1_arr = datapoint.memories[this.params[0]]
+      const val_2_arr = datapoint.memories[this.params[1]]
+      return {
+        value_1: -(val_1_arr[val_1_arr.length -1]),
+        value_2: (val_2_arr[val_2_arr.length - 1]),
+        id: datapoint.id
+      }
+    });
+    param = param.sort((a, b) => a.value_1 - b.value_1);
+    this.plot.update_bar_chart(param);
+
+  }
+  plot_pies() {
+    const pie_data = this.data.map(datapoint => {
+      return {
+        id: datapoint.id,
+        decision: datapoint.memories.decision[datapoint.memories.decision.length -1],
+        task: datapoint.memories.executed_task[datapoint.memories.executed_task.length -1]
+      }
+    });
+    this.plot.update_pies(pie_data);
+  }
+  plot_data() {
+    // possibility to filter by behavior
+    // more granular filtering is done in plot.js
+    const data = this.behavior == '' ? this.data : this.data.filter(datapoint => datapoint.behavior === this.behavior);
 
 
     // disable options that are not associated with that behavior
@@ -313,7 +304,7 @@ class IrisModel {
       for (const item of this.filter) {
         filtered_data = filtered_data.concat(data.filter(value => value.id === item))
       }
-      console.log(filtered_data);
+      // console.log(filtered_data);
       this.plot.update_chart(filtered_data);
     } else {
       // console.log(data);
@@ -574,18 +565,17 @@ class IrisModel {
       // }
       this.agents.forEach(agent => {
 
+        agent.add_data_to_archive();
         agent.resting = false;
         agent.done_for_the_day = false;
-        agent.add_data_to_archive();
       })
       this.days++;
       this.hours = 0;
       this.distribute_time_coins();
     }
     if ((this.days > 1 && this.days % 31 == 0) || (this.days > 1 && (this.days % 29 == 0 && this.months === 1))) {// shorter month on february
-
       // here we need to reset the spent time of the agents if its the spending model
-      if (this.model_type === 'time-accumulate') {
+      if (this.model_type === 'time-spending') {
         for (const agent of this.agents) {
           agent.reset_spending_time();
         }

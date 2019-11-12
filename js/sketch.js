@@ -69,10 +69,9 @@ function single_execution() {
     for (let i = 0; i < loops; i++) {
       irisModel.update();
     }
-    if (frameCount % 15 == 0) irisModel.plot_data();
     if (frameCount % 15 == 0) {
-      irisModel.plot_pies();
-      irisModel.plot_bar_chart();
+      irisModel.update_data();
+      // irisModel.plot_data();
     }
 
   }

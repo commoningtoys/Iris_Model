@@ -108,7 +108,7 @@ class Behavior {
         }
       });
     }
-    if(this.compute_resting(agent, task)) return false;
+    if(this.compute_resting(agent, task)) return true;
     // here the swapping happens
     if (swap_value > 0.5) { // make it a slider between 0.3 – 0.7
       // console.log('WORK')
@@ -141,7 +141,7 @@ class Behavior {
       if (result) {       
         // if the agent is resting than he rests
         agent.push_to_decision_archive('rest');
-        // console.log('agent resting...');
+        // console.log('agent resting...', agent.ID);
         agent.rest(task);
       }
       return result;

@@ -35,8 +35,8 @@ class Plot {
     this.bar_chart = c3.generate({
       bindto: '#bar-chart',
       size: {
-        width: this.get_dims().w,
-        height: this.get_dims().h
+        width: this.get_dims().w * 0.95,
+        height: this.get_dims().h * 0.75
       },
       padding: {
         top: 75,
@@ -116,8 +116,8 @@ class Plot {
     this.pies_2 = c3.generate({
       bindto: '#pie-2',
       size: {
-        width: this.get_dims().w / 2,
-        height: this.get_dims().w / 2
+        width: this.get_dims().w / 2.3,
+        height: this.get_dims().w / 2.3
       },
       padding: {
         top: 20,
@@ -135,8 +135,8 @@ class Plot {
     this.chart = c3.generate({
       bindto: '#chart',
       size: {
-        width: this.get_dims().w,
-        height: this.get_dims().h
+        width: this.get_dims().w * 0.95,
+        height: this.get_dims().h * 0.95
       },
       padding: {
         top: 20,
@@ -212,8 +212,7 @@ class Plot {
   }
   /**
    * 
-   * @param {Array} data Agent's data
-   * @param {Array} filter list of ID to filter agents
+   * @param {Array} data Agents data
    */
   update_chart(data) {
     this.data = data;
@@ -225,40 +224,27 @@ class Plot {
     });
   }
 
-  update_pies(agents, tasks) {
+  update_pies(data) {
     // // here we alter the bar informing how many agents are working resting etc.
     // // console.log(this.agents);
-    const working = agents.filter(result => result.working === true).length;
-    const swapping = agents.filter(result => result.has_swapped === true).length;
-    const resting = agents.filter(result => result.resting === true).length;
-    const available = agents.length - (working + swapping + resting)
-    const agents_situation = [
-      ['working'].concat(working),
-      ['swapping'].concat(swapping),
-      ['resting'].concat(resting),
-      ['available'].concat(available)
-    ];
+
+    const agents_decisions = []
+    for (const name of DECISIONS) {
+      const result = data.filter(result => result.decision === name).length
+      agents_decisions.push([name].concat(result));
+    }
     this.pies_1.load({
-      columns: agents_situation
+      columns: agents_decisions
     })
 
-    const task_situation = [];
+
+    const agents_tasks = [];
     for (const name of TASK_NAMES) {
-      let value = 0;
-      for (const task of tasks) {
-        if (task.type === name) value += task.executed;
-      }
-      const datapoint = [name, value];
-      // console.log(datapoint);
-      task_situation.push(datapoint)
+      const result = data.filter(result => result.task === name).length;
+      agents_tasks.push([name].concat(result));
     }
-    // for (const task of tasks) {
-    //   const datapoint = [task.type, task.executed]
-    //   task_situation.push(datapoint)
-    // }
-    // console.log(task_situation);
     this.pies_2.load({
-      columns: task_situation
+      columns: agents_tasks
     })
   }
 
