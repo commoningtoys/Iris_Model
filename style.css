@@ -1,5 +1,12 @@
 /* custom scrollbars */
 
+::-webkit-scrollbar {
+    display: block;
+}
+
+#element {
+    scrollbar-width: none;
+}
 
 @font-face{
     font-family: 'mono';
@@ -7,6 +14,7 @@
 }
 *{
     box-sizing: border-box;
+    scrollbar-width: none;
 }
 /* this helps removing the spin box from the input field */
 input::-webkit-outer-spin-button,
