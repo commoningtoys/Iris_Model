@@ -225,36 +225,6 @@ class Behavior {
     // so that the agent say no when the compact plan matches and yes when it does not match
     return !result;
   }
-  /**
-   * change choose agent to call for all of the agents who
-   * are available and after pick them.  
-   */
-
-
-  // compute_decision() {
-  //   let result = false;
-  //   // console.log(this.planning);
-  //   if (this.planning.plan === 'distributed') {
-
-  //   } else {
-  //     switch (this.planning.distribution) {
-  //       case 'begin':
-
-  //         break;
-  //       case 'middle':
-
-  //         break;
-  //       case 'end':
-
-  //         break;
-
-  //       default:
-  //         result = false
-  //         break;
-  //     }
-  //   }
-  //   return result;
-  // }
 
   /**
    * this methods computes the curiosity of the agent
@@ -456,7 +426,7 @@ class Behavior {
   }
 
   /**
-   * to compute the preference for a task we look n how the task scored the
+   * to compute the preference for a task we look on how the task scored the
    * in the different traits areas. Than we take the one where it socred the higher
    * and we subtract the two who scored the worst  ad and we compute the sign [+, 0, -]
    * than we use the sign to add or remove value to the preference for that task.
@@ -473,15 +443,17 @@ class Behavior {
     const perfectionism = this.result_traits.perfectionism;
     const goodwill = this.result_traits.goodwill;
     const endurance = this.result_traits.endurance;
-    // console.log(curiosity, perfectionism, goodwill, endurance);
+    // console.log(curiosity, perfectionism, goodwill);
     const results = [curiosity, perfectionism, goodwill].sort();
     // console.log(results);
-    const sum = Math.sign(results[2] - (results[0] + results[1])) / 2;
-    const agent_pref = agent.preferences[task.type]
+    const agent_pref = agent.preferences[task.type];
+    const skill = agent_pref.skill_level / MAXIMUM;
+    const skill_sum = skill > 0.5 ? skill : -(skill);
+    const sum = Math.abs(results[2] - (results[0] + results[1])) > 0.5 ? 1 : -1;
     const agent_fld = (agent.FLD / MAXIMUM) - 0.5;
     // console.log(sum, agent_fld, (sum + agent_fld) * endurance * 25)
     // console.log(agent_pref)
-    agent_pref.task_preference += (sum + agent_fld) * endurance * 25;// this 25 is here to make the gain and drop in preference more marked
+    agent_pref.task_preference += sum  * endurance * skill_sum;// this 25 is here to make the gain and drop in preference more marked
     agent_pref.task_preference = clamp(agent_pref.task_preference, MINIMUM, MAXIMUM);
   }
   setType(_traits) {
