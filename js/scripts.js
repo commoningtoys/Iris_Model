@@ -23,10 +23,10 @@ function start_stop_model() {
   }
 }
 
-let recordData = document.getElementById('record-data')
-recordData.addEventListener('click', () => {
-  irisModel.recordData();
-});
+// let recordData = document.getElementById('record-data')
+// recordData.addEventListener('click', () => {
+//   irisModel.recordData();
+// });
 
 let showSideBar = true;
 $('#show-sidebar').click(() => {

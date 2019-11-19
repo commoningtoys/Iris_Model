@@ -23,20 +23,28 @@
 <body>
   <div id="p5Sketch"></div>
   <div class="viz-container">
-    <div class="header"></div>
+    <div class="header">
+
+        <div id="display-date"></div>
+    </div>
     <div class="chart-menu">
-      <div id="display-date"></div>
       <div class="info" id="info-window">
         <div id="whatFrameRate"></div>
-        <div id="display-date"></div>
         <div class="btns">
-          <div class="btn" onclick="irisModel.plot.toggle()">toggle all</div>
+          <div class="caption">
+            filter agents by behavior
+          </div>
+          <!-- <div class="btn" onclick="irisModel.plot.toggle()">toggle all</div> -->
           <div class="btn" id="bev-1" onclick="irisModel.show_behavior(this)"></div>
           <div class="btn" id="bev-2" onclick="irisModel.show_behavior(this)"></div>
           <div class="btn" id="bev-3" onclick="irisModel.show_behavior(this)"></div>
           <div class="btn" id="bev-4" onclick="irisModel.show_behavior(this)"></div>
           <div class="btn" onclick="irisModel.reset_filters()">ALL!</div>
-          <select multiple name="agents-list" id="agents-list" onchange="irisModel.filter_agents(this)">
+          <br>
+          <div class="caption">
+            filter single agents
+          </div>
+          <select  multiple name="agents-list" id="agents-list" onchange="irisModel.filter_agents(this)">
             <!-- 
               this gets populated in line 6 of agent.js
              -->
@@ -49,38 +57,39 @@
       </div>
     </div>
     <div class="visualizations">
-      <div class="chart_1" id="chart"></div>
+      <div class="chart" id="chart"></div>
       <div style="overflow: hidden;">
-        <div class="chart_1" id="pie-1" style="width: 50%; float: left;"></div>
-        <div class="chart_1" id="pie-2" style="width: 50%; float: left"></div>
+        <div class="chart" id="pie-1" style="width: 50%; float: left;"></div>
+        <div class="chart" id="pie-2" style="width: 50%; float: left"></div>
       </div>
 
 
 
+
+
+      <div class="select-btns">
+        <select class="select-el" name="agents-param-1" id="agents-param-1" onchange="irisModel.filter_params()">
+          <!-- 
+          this gets populated in scripts.js line 214
+         -->
+        </select>
+        <select class="select-el" name="agents-param-2" id="agents-param-2" onchange="irisModel.filter_params()">
+          <!-- 
+          this gets populated in scripts.js line 214
+         -->
+        </select>
+      </div>
+      <div class="chart" id="bar-chart" style="border-bottom: 0px;"></div>
+    </div>
+    <div class="footer" >
       <!-- the max value of the slider gets updated in memory.js line 45 -->
-      <br>
-      <div style="background-color: #0ff; text-align: center;">
+      <div style="text-align: center;">
         <input type="range" name="time" id="time-slider" min="1" max="100" value="0"
           onchange="irisModel.update_data(this)" style="width: 80%;">
       </div>
 
       <!-- ************************************************************* -->
-
-      <div class="btns">
-        <select name="agents-param-1" id="agents-param-1" onchange="irisModel.filter_params()">
-          <!-- 
-          this gets populated in scripts.js line 214
-         -->
-        </select>
-        <select name="agents-param-2" id="agents-param-2" onchange="irisModel.filter_params()">
-          <!-- 
-          this gets populated in scripts.js line 214
-         -->
-        </select>
-      </div>
-      <div class="chart_1" id="bar-chart"></div>
     </div>
-    <div class="footer"></div>
   </div>
 
 
@@ -291,8 +300,10 @@
 
     </div>
   </div>
-  <div class="footer-menu" id="footer">
-    <!-- <button onclick="singleView = !singleView">CHANGE VIEW</button> -->
+
+
+  <!-- <div class="footer-menu" id="footer">
+    <button onclick="singleView = !singleView">CHANGE VIEW</button>
     <div class="footer-btns">
       <button id="start-stop">STOP</button>
       <button id="record-data">RECORD DATA</button>
@@ -317,7 +328,7 @@
         <div id="available"></div>
       </div>
     </div>
-  </div>
+  </div> -->
   <script src="js/behavior.js"></script>
   <script src="js/memory.js"></script>
   <script src="js/agent.js"></script>

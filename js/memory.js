@@ -64,9 +64,15 @@ class Memory {
 
   filter_memories(filter){
     const result = {};
+    const slice = 20;
+
+    let begin = filter - slice;
+    let end = filter;
+
+    if(filter <= slice)begin = filter + slice;
 
     Object.keys(this.memory).forEach(key => {
-      result[key] = this.memory[key].slice(0, filter);
+      result[key] = this.memory[key].slice(0, end);
     })
 
     return result

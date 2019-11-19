@@ -281,8 +281,6 @@ class IrisModel {
     // possibility to filter by behavior
     // more granular filtering is done in plot.js
     const data = this.behavior == '' ? this.data : this.data.filter(datapoint => datapoint.behavior === this.behavior);
-
-
     // disable options that are not associated with that behavior
     const options = document.getElementById('agents-list').options;
     if (this.behavior !== '') {
@@ -304,7 +302,6 @@ class IrisModel {
       for (const item of this.filter) {
         filtered_data = filtered_data.concat(data.filter(value => value.id === item))
       }
-      // console.log(filtered_data);
       this.plot.update_chart(filtered_data);
     } else {
       // console.log(data);
@@ -315,13 +312,11 @@ class IrisModel {
   }
 
   show_behavior(el) {
-    console.log(el.innerText);
-    this.behavior = el.innerText;
+    this.behavior = el.innerText.toLowerCase();
     this.plot_data()
   }
 
   filter_agents(elt) {
-    console.log(elt.selectedOptions);
     this.filter = []
     for (const el of elt.selectedOptions) {
       this.filter.push(el.value);

@@ -8,40 +8,46 @@
     scrollbar-width: none;
 }
 
-@font-face{
+@font-face {
     font-family: 'mono';
     src: url('font/SourceCodePro-Medium.otf') format('opentype');
 }
-*{
+
+* {
     box-sizing: border-box;
     scrollbar-width: none;
+    /* font-family: Courier, monospace; */
 }
+
 /* this helps removing the spin box from the input field */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
+
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
     /* display: none; <- Crashes Chrome on hover */
     -webkit-appearance: none;
-    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+    margin: 0;
+    /* <-- Apparently some margin are still there even though it's hidden */
 }
 
 input[type=number] {
-    -moz-appearance:textfield; /* Firefox */
+    -moz-appearance: textfield;
+    /* Firefox */
 }
 
-body{
+body {
     padding: 0;
     margin: 0;
-    font-family: monospace;
     font-size: 100%;
     hyphens: auto;
     background-color: #000;
+    font-family: Courier, monospace;
 }
 
-button{
-    font-family: monospace;
+button {
+    font-family: Courier, monospace;
 }
-input{
-    font-family: 'Courier New', Courier, monospace;
+
+input {
+    font-family: Courier, monospace;
     background-color: #00f;
     color: #0f0;
     /* padding: 0.3rem; */
@@ -50,7 +56,7 @@ input{
     width: 100px;
 }
 
-#p5Sketch{
+#p5Sketch {
     position: fixed;
     width: 67%;
 }
@@ -70,7 +76,7 @@ input{
     /* border: 2px solid #555555; */
 }
 
-.footer-menu{
+.footer-menu {
     display: none;
     position: fixed;
     left: 0px;
@@ -80,7 +86,8 @@ input{
     background-color: #00f;
     /* margin: auto 0; */
 }
-.footer-menu button{
+
+.footer-menu button {
     padding: 0.3em;
     max-width: 100px;
     margin-top: 2px;
@@ -89,11 +96,13 @@ input{
     -moz-transform: translate(0%, 50%);
     -webkit-transform: translate(0%, 50%); */
 }
-.footer-btns{
+
+.footer-btns {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
 }
-.footer-agent-info div{
+
+.footer-agent-info div {
     /* float: left; */
     /* font-size: 1.4rem; */
     /* text-align: center;
@@ -102,7 +111,8 @@ input{
     color: #fff;
     text-overflow: ellipsis; */
 }
-.footer-agent-elt{
+
+.footer-agent-elt {
     /* float: left; */
     display: grid;
     grid-template-columns: 170px 1fr;
@@ -113,32 +123,36 @@ input{
     text-overflow: ellipsis;
     font-size: 1.5rem;
 }
-#working{
+
+#working {
     background-color: #0f0;
     width: 25%;
     height: 10px;
 }
-#swapping{
+
+#swapping {
     background-color: #0ff;
     width: 25%;
     height: 10px;
 }
-#resting{
+
+#resting {
     background-color: #fa0;
     width: 25%;
     height: 10px;
 }
-#available{
+
+#available {
     background-color: #f00;
     width: 25%;
     height: 10px;
 }
 
-.traits-txt-input{
+.traits-txt-input {
     width: 100px;
 }
 
-.menu{
+.menu {
     /* display: none; */
     background-color: #0000ffaa;
     border: 2px solid #0f0;
@@ -153,13 +167,15 @@ input{
     overflow-y: scroll;
     z-index: 99999999;
 }
-.traits-input{
+
+.traits-input {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
     grid-gap: 0.5rem;
 }
-.traits-item{
+
+.traits-item {
     /* background: #fff; */
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -168,33 +184,39 @@ input{
     border: solid 2px #00f;
     padding: 0.5rem;
 }
-.traits-item input{
+
+.traits-item input {
     /* max-width: 40px; */
 }
-.traits-item input[type=text]{
+
+.traits-item input[type=text] {
     /* max-width: 70px; */
 }
-.traits-elt{
 
+.traits-elt {
     border-bottom: solid 2px #ff0;
 }
-.hide{
+
+.hide {
     display: block;
     grid-column: 1 / span 2;
     color: #f00;
     background-color: #0ff;
     /* padding: 0.5rem; */
 }
+
 button#close-menu {
     position: fixed;
     top: 0px;
     right: 0px;
 }
-.custom-input, .custom-behavior{
+
+.custom-input, .custom-behavior {
     max-width: 50px;
     margin: 5px;
 }
-.menu-content{
+
+.menu-content {
     color: #ff0;
     /* color: #0f0; */
     display: flex;
@@ -205,40 +227,44 @@ button#close-menu {
     padding: 10px;
 }
 
-
-.menu-content button{
+.menu-content button {
     text-align: center;
     padding: 2rem;
     font-size: 1.5em;
     color: #fff;
     background-color: #f00;
     border-radius: 50px;
-    border: solid 2px #fff; 
+    border: solid 2px #fff;
 }
-.menu-content button:hover{
+
+.menu-content button:hover {
     /* font-style: italic; */
     border-radius: 0px;
     color: #ff0;
     border: solid 2px #ff0;
     cursor: pointer;
-
 }
-.menu-set-agents, .model-settings{
+
+.menu-set-agents, .model-settings {
     padding: 0.5rem;
     text-align: center;
 }
-.menu-set-agents i{
+
+.menu-set-agents i {
     color: #0f0;
     /* font-size: 2rem; */
 }
-.model-settings{
+
+.model-settings {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
 }
-.model-settings-item{
+
+.model-settings-item {
     padding: 0.5rem;
 }
+
 /* .menu-content p{
     line-height: 1.8em;
 } */
@@ -251,31 +277,35 @@ button#close-menu {
     background-color: #00f;
     /* border: 2px solid #555555; */
 }
-.content{
+
+.content {
     /* padding: 2px; */
     color: #00f;
     cursor: pointer;
 }
-.content:hover{
+
+.content:hover {
     background-color: #0f0;
     color: #f00;
     text-decoration: underline #00f;
     font-style: italic;
 }
 
-#info-window{
+#info-window {
     /* display: none; */
 }
-.info{
+
+.info {
     /* position: fixed; */
     /* background-color: #fff; */
     width: 100%;
 }
-.preference{
+
+.preference {
     color: #f00;
 }
 
-#display-date{
+#display-date {
     /* position: fixed; */
     /* left: 0px; */
     /* top: 0px; */
@@ -290,52 +320,110 @@ button#close-menu {
 }
 
 /* d3js && c3js styling */
-.viz-container{
+
+.viz-container {
     width: 100%;
     height: 100vh;
     display: grid;
-    grid-template-rows: 50px 1fr 50px;
+    grid-template-rows: 50px calc(100vh - 100px) 50px;
     grid-template-columns: 200px 1fr;
-    grid-template-areas: 
-    "header header"
-    "menu chart"
-    "footer footer"
-    ;
+    grid-template-areas: "header header" "mn chart" "footer footer";
 }
-.header{
+
+.header {
     grid-area: header;
     background-color: #fa0;
 }
-.chart-menu{
-    grid-area: menu;
-    background-color: #00f;
+
+.chart-menu {
+    grid-area: mn;
+    background-color: #ccc;
+    padding: 0.25rem;
 }
 
-.btn{
+.caption{
+    color: #00f;
+    border-bottom: solid 2px #000
+}
+
+.btn {
     cursor: pointer;
     padding: 0.5rem;
-    margin: 0.125rem;
+    margin: 0.5rem 0;
     text-align: center;
     width: max-content;
-    background-color: #fa0;
-}
-.btn:hover{
-    background-color: aqua;
+    border-radius: 0px;
+    border: solid 2px #000;
+    background-color: #fff;
+    box-shadow: #00f 3px 3px;
+    text-transform: uppercase;
+    font-family: Courier, monospace;
+    font-size: 0.85rem;
 }
 
-.visualiztions{
+.btn:hover {
+    background-color: #ff0;
+    border-radius: 50px;
+}
+
+option.btn:checked {
+    background-color: #ff0;
+    border-radius: 50px;
+}
+
+.select-btns {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+select.select-el, .btns select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* background-position: right 0px top 0.25rem;
+    background-size: 1.5rem 1.5rem, 1.5rem 1.5rem, 2.5em 2.5em;
+    background-repeat: no-repeat;
+    background-image: url('icons/arrow-down.svg'); */
+    /* Add custom arrow */
+    cursor: pointer;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    text-align: center;
+    border-radius: 0px;
+    border: solid 2px #000;
+    background-color: #fff;
+    box-shadow: #f00 3px 3px;
+    text-transform: uppercase;
+    font-family: Courier, monospace;
+    font-size: 0.85rem;
+}
+
+select.select-el:hover{
+    box-shadow: #f00 6px 6px;
+}
+
+.btns select{
+    text-align: center;
+}
+
+.visualizations {
+    background-color: rgb(0, 0, 30);
     grid-area: chart;
     overflow-y: scroll;
 }
-.footer{
+
+.footer {
     grid-area: footer;
     background-color: aqua;
 }
-.y-axis, .x-axis{
+
+.y-axis, .x-axis {
     color: #F5F5F5;
 }
 
-.tip{
+.tip {
     /* max-width: 150px; */
     background-color: #000000aa;
     color: #F5F5F5;
@@ -343,23 +431,28 @@ button#close-menu {
     padding: 0.25rem;
 }
 
-.chart-1{
-    width: 75%;
+.chart {
+    /* background-color: violet; */
+    width: 100%;
     height: 85vh;
+    border-bottom: solid 2px #fa0;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
 }
 
-.c3 line, .c3 path{
+.c3 line, .c3 path {
     color: #fa0;
     stroke: #fa0;
 }
-.c3 text{
+
+.c3 text {
     fill: #fff;
     color: #fff;
 }
 
 /* PLAYER STYLING */
 
-.player-interface, .player-work{
+.player-interface, .player-work {
     display: none;
     background-color: #0f0;
     position: fixed;
@@ -370,10 +463,10 @@ button#close-menu {
     -webkit-transform: translate(-50%, -50%);
     width: 40%;
     height: auto;
-
     min-height: 150px;
     padding: 5px;
 }
+
 /* #player-stats, #player-task{
     min-height: 150px;
     position: relative;
@@ -382,14 +475,16 @@ button#close-menu {
     float: left;
     overflow-y: scroll;
 } */
-#player-stats{
+
+#player-stats {
     background-color: #00f
 }
-#player-task{
+
+#player-task {
     text-align: center;
     background-color: #f00;
 }
 
-#rest-interaction{
+#rest-interaction {
     display: none;
 }

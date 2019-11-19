@@ -451,8 +451,6 @@ class Behavior {
     const skill_sum = skill > 0.5 ? skill : -(skill);
     const sum = Math.abs(results[2] - (results[0] + results[1])) > 0.5 ? 1 : -1;
     const agent_fld = (agent.FLD / MAXIMUM) - 0.5;
-    // console.log(sum, agent_fld, (sum + agent_fld) * endurance * 25)
-    // console.log(agent_pref)
     agent_pref.task_preference += sum  * endurance * skill_sum;// this 25 is here to make the gain and drop in preference more marked
     agent_pref.task_preference = clamp(agent_pref.task_preference, MINIMUM, MAXIMUM);
   }
