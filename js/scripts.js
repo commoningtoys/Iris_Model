@@ -188,6 +188,11 @@ function update_behavior_setting_menu(elt) {
   }
 }
 
+
+/**
+ * @param {Number} index 
+ * @returns the value of the hidden planning menu
+ */
 function get_values_hidden_menu(index) {
   const hidden = document.getElementsByClassName('hide')[index].children;
   const result = [];
@@ -200,17 +205,24 @@ function get_values_hidden_menu(index) {
   return result
 }
 
+
+/**
+ * this function updates the name of the various behaviors in the menu
+ */
 function update_buttons() {
-  // console.log(el.value);
   const inputs = document.getElementsByClassName('traits-txt-input');
   for (let i = 0; i < inputs.length; i++) {
     const btn = document.getElementById('bev-' + (i + 1));
     btn.innerText = inputs[i].value;
-    // btn = inputs[i].value;
   }
 }
 update_buttons();
 
+
+
+/**
+ * sets the the values o the select element in the visualization
+ */
 function set_selects() {
   const sel_1 = document.getElementById('agents-param-1');
   const sel_2 = document.getElementById('agents-param-2');
@@ -231,3 +243,38 @@ function set_selects() {
 }
 
 set_selects();
+
+/**
+ * sets the date in the web page
+ * @param {Number} y years
+ * @param {Number} m months
+ * @param {Number} d days
+ * @param {Number} h hours
+ */
+function set_date(y, m, d, h) {
+  let currentDate = `<div class="date-el">years: ${y}</div>
+    <div class="date-el">months: ${m}</div>
+    <div class="date-el">days: ${d}</div>
+    <div class="date-el">hours: ${h}</div>`;
+  // console.log(currentDate);
+  const date_el = document.getElementById('display-date');
+  date_el.innerHTML = currentDate;
+}
+
+// suggestions tips
+
+const help_tip = document.querySelector('div.help-tip')
+document.onmousemove = mouse => {
+  help_tip.style.top = mouse.y - 10 + 'px';
+  help_tip.style.left = mouse.x + 10 + 'px';
+}
+const tooltips_el = document.querySelectorAll('[data-title]')
+tooltips_el.forEach(tip => {
+  tip.addEventListener('mouseover', elt => {
+    help_tip.textContent = tip.dataset['title'];
+    help_tip.style.display = 'block';
+  })
+  tip.addEventListener('mouseleave', elt => {
+    help_tip.style.display = 'none';
+  })
+})

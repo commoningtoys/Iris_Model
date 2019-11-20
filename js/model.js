@@ -260,7 +260,8 @@ class IrisModel {
       return {
         value_1: -(val_1_arr[val_1_arr.length -1]),
         value_2: (val_2_arr[val_2_arr.length - 1]),
-        id: datapoint.id
+        id: datapoint.id,
+        behavior: datapoint.behavior
       }
     });
     param = param.sort((a, b) => a.value_1 - b.value_1);
@@ -619,9 +620,14 @@ class IrisModel {
       m: this.months,
       y: this.years
     }
-    let currentDate = `years: ${this.years}<br>months: ${this.months}<br>days: ${this.days}<br>hours: ${this.hours}`;
-    // console.log(currentDate);
-    document.getElementById('display-date').innerHTML = currentDate;
+    set_date(this.years, this.months, this.days, this.hours)
+    // Object.keys(this.model_date).forEach(key => {
+    //   const date_div = document.createElement('div');
+    //   date_div.setAttribute('class', 'date-el');
+    //   date_div.textContent = `${key}: ${this.model_date[key]}`
+    //   date_el.appendChild()
+    // })
+
   }
   end_after(val) {
     this.termination = val;

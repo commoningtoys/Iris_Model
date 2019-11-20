@@ -50,7 +50,12 @@ class Plot {
         //   // x: 'id',
         // },
         type: 'bar',
-        order: null
+        order: null,
+
+        
+      },
+      color: {
+        pattern: ['#00f', '#f00']
       },
       axis: {
         rotated: true,
@@ -67,12 +72,9 @@ class Plot {
       tooltip: {
         format: {
           title: (x, index) => {
-            return 'agent ' + this.previous_data[index].id
+            return 'agent ' + this.previous_data[index].id + ' | ' + this.previous_data[index].behavior
           },
           value: (value, ratio, id, index) => {
-
-
-
             // console.log(value, ratio, id, index);
             // const last_memory = this.data.memories[value];
             return Math.abs(value)
@@ -91,6 +93,9 @@ class Plot {
         y: {
           lines: [{ value: 0 }]
         }
+      },
+      transition: {
+        duration: null
       }
     })
   }
@@ -111,6 +116,12 @@ class Plot {
       data: {
         columns: [],
         type: 'pie'
+      },
+      color: {
+        pattern: ['#fff', '#f00', '#00f', '#ccc']
+      },
+      transition: {
+        duration: null
       }
     })
     this.pies_2 = c3.generate({
@@ -128,6 +139,12 @@ class Plot {
       data: {
         columns: [],
         type: 'pie'
+      },
+      color: {
+        pattern: ['#fff', '#f00', '#00f', '#ccc']
+      },
+      transition: {
+        duration: null
       }
     })
   }
@@ -188,9 +205,9 @@ class Plot {
           }
         }
       },
-      tooltip: {
-        position: (data, w, h, el) => { return { top: 0, left: 0 } }
-      },
+      // tooltip: {
+      //   position: (data, w, h, el) => { return { top: 0, left: 0 } }
+      // },
       onresize: function () {
 
       },
@@ -206,7 +223,7 @@ class Plot {
         }
       },
       transition: {
-        duration: 100
+        duration: null
       }
     })
   }

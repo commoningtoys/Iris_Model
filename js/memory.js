@@ -32,12 +32,12 @@ class Memory {
           Object.keys(preferences).forEach(inner_key => {
             const index = this.get_index(task + '_' + inner_key);
             const inner_el = preferences[inner_key];
-            if(index !== null)this.memory[index].push(inner_el)
+            if (index !== null) this.memory[index].push(inner_el)
           })
         })
       } else {
         const index = this.get_index(key);
-        if(index !== null)this.memory[index].push(data);
+        if (index !== null) this.memory[index].push(data);
 
       }
     })
@@ -50,7 +50,7 @@ class Memory {
   }
   get_index(key) {
     let index = null;
-    Object.keys(this.memory).forEach(item =>{
+    Object.keys(this.memory).forEach(item => {
       if (item === key) {
         index = key;
       }
@@ -58,22 +58,32 @@ class Memory {
     return index;
   }
   get_memories(filter) {
-    if(typeof filter === 'string')return this.memory;
+    if (typeof filter === 'string') return this.memory;
     else return this.filter_memories(filter)
   }
 
-  filter_memories(filter){
+  filter_memories(filter) {
     const result = {};
     const slice = 20;
 
     let begin = filter - slice;
     let end = filter;
 
-    if(filter <= slice)begin = filter + slice;
+    if (filter <= slice) begin = filter + slice;
 
     Object.keys(this.memory).forEach(key => {
       result[key] = this.memory[key].slice(0, end);
     })
+
+    const last_idx = result.parsed_clock.length - 1;
+    const last_date = result.parsed_clock[last_idx];
+
+    const h = last_date.getHours();
+    const d = last_date.getDate();
+    const m = last_date.getMonth() + 1;
+    const y = last_date.getFullYear();
+
+    set_date(y, m, d, h);
 
     return result
   }
