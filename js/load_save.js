@@ -56,7 +56,6 @@ function save_traits() {
 function load_traits(elt) {
   const val = elt.selectedOptions[0].value;
   const config = JSON.parse(window.localStorage.getItem(val));
-  console.log(config);
 
   for (const item of config) {
     const elt = document.getElementById(item.id);
@@ -85,7 +84,6 @@ function load_traits(elt) {
 function set_config_names() {
   const select = document.getElementById('load-config');
   for (let i = 0; i < window.localStorage.length; i++) {
-    console.log(window.localStorage.key(i));
     const name = window.localStorage.key(i);
     const option = document.createElement('option');
     option.setAttribute('class', 'btn')
@@ -97,6 +95,35 @@ function set_config_names() {
 }
 
 set_config_names()
+
+
+
+
+const doc = new jsPDF();
+// window.html2canvas = html2canvas;
+
+
+function save_pdf() {
+  // doc.html(document.getElementById('visualizations'), {
+  //   callback: function (doc) {
+  //     doc.save();
+  //   }
+  // });
+
+  // html2canvas(document.getElementById('visualizations')).then(canvas => document.body.appendChild(canvas));
+
+  const svgs = document.querySelectorAll('svg')
+  const imgs_uri = []
+  for (const svg of svgs) {
+    console.log(svg);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d')
+    const v = canvg.Canvg.fromString(ctx, svg.outerHTML);
+    v.render();
+    window.open(canvas.toDataURL('image/png'));
+  }
+  console.log(imgs_uri);
+}
 
 function storageAvailable(type) {
   var storage;

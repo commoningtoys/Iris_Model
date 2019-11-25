@@ -38,7 +38,7 @@ body {
     margin: 0;
     font-size: 100%;
     hyphens: auto;
-    background-color: #fff;
+    background-color: #ccc;
     font-family: Courier, monospace;
 }
 
@@ -374,21 +374,32 @@ button#close-menu {
 
 .viz-container {
     width: 100%;
-    height: 100vh;
-    display: grid;
-    grid-template-rows: 50px calc(100vh - 100px) 50px;
+    height: auto;
+    background-color: #ccc;
+    /* display: grid;
+    grid-template-rows: 75px 1fr;
     grid-template-columns: 200px 1fr;
-    grid-template-areas: "header header" "mn chart" "footer footer";
+    grid-template-areas: "header header" "mn chart"; */
 }
 
 .header {
-    grid-area: header;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    height: 75px;
+    width: 100%;
+    /* grid-area: header; */
     background-color: #aaa;
     border-bottom: solid 2px #000;
 }
 
 .chart-menu {
-    grid-area: mn;
+    /* grid-area: mn; */
+    position: fixed;
+    top: 75px;
+    left: 0px;
+    width: 200px;
+    height: auto;
     background-color: #ccc;
     padding: 0.25rem;
 }
@@ -461,16 +472,24 @@ select.select-el:hover {
 }
 
 .visualizations {
+    z-index: -1;
     background-color: #ddd;
     border-left: solid 2px #000;
     grid-area: chart;
-    overflow-y: scroll;
+    position: absolute;
+    top: 75px;
+    left: 200px;
+    width: calc(100% - 200px);
+    /* overflow-y: scroll; */
 }
 
 .footer {
     grid-area: footer;
     background-color: #aaa;
     border-top: solid 2px #000;
+    display: flex;
+    flex-direction: row;
+
 }
 
 .y-axis, .x-axis {
