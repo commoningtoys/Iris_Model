@@ -144,7 +144,7 @@ input {}
     width: 100px;
 }
 
-.box{
+.box {
     background-color: #ccc;
     border: solid 2px #000;
     box-shadow: #00f 3px 3px;
@@ -168,6 +168,26 @@ input {}
     z-index: 99999999;
 }
 
+.load-save {
+    height: auto;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.load-save-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    width: 45%;
+}
+
+select#load-config option.btn {
+    display: flex;
+    flex-direction: row;
+    /* overflow: -moz-hidden-unscrollable; */
+}
+
 .traits-input {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -186,7 +206,7 @@ input {}
     box-shadow: #00f 3px 3px;
 }
 
-.menu input[type=text],  .menu input[type=number]{
+.menu input[type=text], .menu input[type=number] {
     /* max-width: 40px; */
     /* appearance: none; */
     font-family: Courier, monospace;
@@ -201,7 +221,7 @@ input {}
     text-align: center;
 }
 
-.menu input[type=number]:hover, .menu input[type=text]:hover{
+.menu input[type=number]:hover, .menu input[type=text]:hover {
     box-shadow: #00f 6px 6px;
 }
 
@@ -319,7 +339,7 @@ button#close-menu {
     color: #f00;
 }
 
-#display-date {
+#display-date, .load-save {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
@@ -410,7 +430,7 @@ option.btn:checked {
     justify-content: space-evenly;
 }
 
-select.select-el, .btns select {
+select.select-el, .btns select, .load-save select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -480,25 +500,26 @@ select.select-el:hover {
 }
 
 .c3 text {
-    fill: #000;
-    color: #000;
+    fill: #00c;
+    color: #00c;
+    font-family: Courier, monospace;
 }
 
-.c3-tooltip td{
+.c3-tooltip td {
     border: solid 2px #000;
     box-shadow: #f00 3px 3px;
 }
-.c3-tooltip td.value{
+
+.c3-tooltip td.value {
     width: 200px;
 }
 
 /*tool tip hel styling*/
 
 [data-title] {
-    
     /* position: relative; */
     cursor: help;
-  }
+}
 
 .help-tip {
     /* content: attr(data-title); */
@@ -513,8 +534,7 @@ select.select-el:hover {
     font-size: 12px;
     /* font-family: sans-serif; */
     box-shadow: #f00 3px 3px;
-  }
-
+}
 
 /* PLAYER STYLING */
 

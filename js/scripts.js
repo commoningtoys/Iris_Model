@@ -198,7 +198,6 @@ function get_values_hidden_menu(index) {
   const result = [];
   for (const child of hidden) {
     if (child.checked) {
-      console.log(child.value);
       result.push(child.value);
     }
   }

@@ -25,7 +25,7 @@
   <div class="viz-container">
     <div class="header">
 
-        <div id="display-date"></div>
+      <div id="display-date"></div>
     </div>
     <div class="chart-menu">
       <div class="info" id="info-window">
@@ -41,10 +41,10 @@
           <div class="btn" id="bev-4" onclick="irisModel.show_behavior(this)"></div>
           <div class="btn" onclick="irisModel.reset_filters()">ALL!</div>
           <br>
-          <div class="caption">
+          <div class="caption" data-title="cmd + click to select multiple agents">
             filter single agents
           </div>
-          <select  multiple name="agents-list" id="agents-list" onchange="irisModel.filter_agents(this)">
+          <select multiple name="agents-list" id="agents-list" onchange="irisModel.filter_agents(this)">
             <!-- 
               this gets populated in line 6 of agent.js
              -->
@@ -81,7 +81,7 @@
       </div>
       <div class="chart" id="bar-chart" style="border-bottom: 0px;"></div>
     </div>
-    <div class="footer" >
+    <div class="footer">
       <!-- the max value of the slider gets updated in memory.js line 45 -->
       <div style="text-align: center;">
         <input type="range" name="time" id="time-slider" min="1" max="100" value="0"
@@ -149,18 +149,35 @@
   <div class="menu">
     <!-- <button id="close-menu">CLOSE ❌</button> -->
     <div class="menu-content">
+      <div class="load-save box">
+        <div class="load-save-item">
+          <input  id="save-config" type="text"
+            data-title="set the name of this model configuration and click the icon below to save it!" value="save model"
+            style="max-width: 350px; width: 75%; margin: 0.5rem auto;" autocomplete="off">
+
+          <div> <span style="font-size: 2rem; cursor: pointer;" onclick="save_traits()">✅</span></div>
+        </div>
+        <div class="load-save-item"> <div class="box">load model</div> <select name="" style="width: 100%; height: 150px;" id="load-config" multiple onchange="load_traits(this)"></select>
+        </div>
+      </div>
       <div class="traits-input">
-        <div class="traits-item">
-          <div class="traits-elt">trait:</div> <input class="traits-txt-input" data-title="set the name of this behavior" onchange="update_buttons()"
-            autocomplete="off" type="text" name="trait" value="curious">
-          <div class="traits-elt">curiosity:</div> <input data-title="set a value between 0 and 1" type="number" value="1" autocomplete="off" name="curiosity">
-          <div class="traits-elt">perfectionism:</div> <input data-title="set a value between 0 and 1" type="number" value="0" autocomplete="off"
-            name="perfectionism">
-          <div class="traits-elt">endurance:</div> <input data-title="set a value between 0 and 1" type="number" value="0.5" autocomplete="off" name="endurance">
-          <div class="traits-elt">goodwill:</div> <input data-title="set a value between 0 and 1" type="number" value="0" autocomplete="off" name="goodwill">
-          <div class="traits-elt">how many agents?</div> <input data-title="set a number of agents with this trait" type="number" value="4" autocomplete="off" name="amount">
+        <div class="traits-item" id="trait-0">
+          <div class="traits-elt">trait:</div> <input class="traits-txt-input"
+            data-title="set the name of this behavior" onchange="update_buttons()" autocomplete="off" type="text"
+            name="trait" value="curious">
+          <div class="traits-elt">curiosity:</div> <input data-title="set a value between 0 and 1" type="number"
+            value="1" autocomplete="off" name="curiosity">
+          <div class="traits-elt">perfectionism:</div> <input data-title="set a value between 0 and 1" type="number"
+            value="0" autocomplete="off" name="perfectionism">
+          <div class="traits-elt">endurance:</div> <input data-title="set a value between 0 and 1" type="number"
+            value="0.5" autocomplete="off" name="endurance">
+          <div class="traits-elt">goodwill:</div> <input data-title="set a value between 0 and 1" type="number"
+            value="0" autocomplete="off" name="goodwill">
+          <div class="traits-elt">how many agents?</div> <input data-title="set a number of agents with this trait"
+            type="number" value="4" autocomplete="off" name="amount">
           <!-- here we put the hidden menu -->
-          <div class="hide" data-title="how does the agent plan his work? distibuted means that he does his work any time during the month, while compact means that the agent chooses a period of the month, namely begin, middle and and, and does his work un such timeframe">
+          <div class="hide"
+            data-title="how does the agent plan his work? distibuted means that he does his work any time during the month, while compact means that the agent chooses a period of the month, namely begin, middle and and, and does his work un such timeframe">
             <div class="traits-elt">planning:</div><input class="hidden-input" type="radio" name="planning_1"
               value="distributed" autocomplete="off"><label for="distributed">distributed</label>
             <input class="hidden-input" type="radio" name="planning_1" value="compact" autocomplete="off" checked><label
@@ -175,17 +192,23 @@
           </div>
           <!-- end of hidden menu -->
         </div>
-        <div class="traits-item">
-          <div class="traits-elt">trait:</div> <input class="traits-txt-input" data-title="set the name of this behavior" onchange="update_buttons()"
-            autocomplete="off" type="text" name="trait" value="perfectionist">
-          <div class="traits-elt">curiosity:</div> <input data-title="set a value between 0 and 1" type="number" value="0" autocomplete="off" name="curiosity">
-          <div class="traits-elt">perfectionism:</div> <input data-title="set a value between 0 and 1" type="number" value="1" autocomplete="off"
-            name="perfectionism">
-          <div class="traits-elt">endurance:</div> <input data-title="set a value between 0 and 1" type="number" value="0.7" autocomplete="off" name="endurance">
-          <div class="traits-elt">goodwill:</div> <input data-title="set a value between 0 and 1" type="number" value="0" autocomplete="off" name="goodwill">
-          <div class="traits-elt">how many agents?</div> <input data-title="set a number of agents with this trait" type="number" value="4" autocomplete="off" name="amount">
+        <div class="traits-item" id="trait-1">
+          <div class="traits-elt">trait:</div> <input class="traits-txt-input"
+            data-title="set the name of this behavior" onchange="update_buttons()" autocomplete="off" type="text"
+            name="trait" value="perfectionist">
+          <div class="traits-elt">curiosity:</div> <input data-title="set a value between 0 and 1" type="number"
+            value="0" autocomplete="off" name="curiosity">
+          <div class="traits-elt">perfectionism:</div> <input data-title="set a value between 0 and 1" type="number"
+            value="1" autocomplete="off" name="perfectionism">
+          <div class="traits-elt">endurance:</div> <input data-title="set a value between 0 and 1" type="number"
+            value="0.7" autocomplete="off" name="endurance">
+          <div class="traits-elt">goodwill:</div> <input data-title="set a value between 0 and 1" type="number"
+            value="0" autocomplete="off" name="goodwill">
+          <div class="traits-elt">how many agents?</div> <input data-title="set a number of agents with this trait"
+            type="number" value="4" autocomplete="off" name="amount">
           <!-- here we put the hidden menu -->
-          <div class="hide" data-title="how does the agent plan his work? distibuted means that he does his work any time during the month, while compact means that the agent chooses a period of the month, namely begin, middle and and, and does his work un such timeframe">
+          <div class="hide"
+            data-title="how does the agent plan his work? distibuted means that he does his work any time during the month, while compact means that the agent chooses a period of the month, namely begin, middle and and, and does his work un such timeframe">
             <div class="traits-elt">planning:</div><input class="hidden-input" type="radio" name="planning_2"
               value="distributed" autocomplete="off"><label for="distributed">distributed</label>
             <input class="hidden-input" type="radio" name="planning_2" value="compact" autocomplete="off" checked><label
@@ -200,17 +223,23 @@
           </div>
           <!-- end of hidden menu -->
         </div>
-        <div class="traits-item">
-          <div class="traits-elt">trait:</div> <input class="traits-txt-input" data-title="set the name of this behavior" onchange="update_buttons()"
-            autocomplete="off" type="text" name="trait" value="lazy">
-          <div class="traits-elt">curiosity:</div> <input data-title="set a value between 0 and 1" type="number" value="1" autocomplete="off" name="curiosity">
-          <div class="traits-elt">perfectionism:</div> <input data-title="set a value between 0 and 1" type="number" value="0" autocomplete="off"
-            name="perfectionism">
-          <div class="traits-elt">endurance:</div> <input data-title="set a value between 0 and 1" type="number" value="0.2" autocomplete="off" name="endurance">
-          <div class="traits-elt">goodwill:</div> <input data-title="set a value between 0 and 1" type="number" value="0" autocomplete="off" name="goodwill">
-          <div class="traits-elt">how many agents?</div> <input data-title="set a number of agents with this trait" type="number" value="4" autocomplete="off" name="amount">
+        <div class="traits-item" id="trait-2">
+          <div class="traits-elt">trait:</div> <input class="traits-txt-input"
+            data-title="set the name of this behavior" onchange="update_buttons()" autocomplete="off" type="text"
+            name="trait" value="lazy">
+          <div class="traits-elt">curiosity:</div> <input data-title="set a value between 0 and 1" type="number"
+            value="1" autocomplete="off" name="curiosity">
+          <div class="traits-elt">perfectionism:</div> <input data-title="set a value between 0 and 1" type="number"
+            value="0" autocomplete="off" name="perfectionism">
+          <div class="traits-elt">endurance:</div> <input data-title="set a value between 0 and 1" type="number"
+            value="0.2" autocomplete="off" name="endurance">
+          <div class="traits-elt">goodwill:</div> <input data-title="set a value between 0 and 1" type="number"
+            value="0" autocomplete="off" name="goodwill">
+          <div class="traits-elt">how many agents?</div> <input data-title="set a number of agents with this trait"
+            type="number" value="4" autocomplete="off" name="amount">
           <!-- here we put the hidden menu -->
-          <div class="hide" data-title="how does the agent plan his work? distibuted means that he does his work any time during the month, while compact means that the agent chooses a period of the month, namely begin, middle and and, and does his work un such timeframe">
+          <div class="hide"
+            data-title="how does the agent plan his work? distibuted means that he does his work any time during the month, while compact means that the agent chooses a period of the month, namely begin, middle and and, and does his work un such timeframe">
             <div class="traits-elt">planning:</div><input class="hidden-input" type="radio" name="planning_3"
               value="distributed" autocomplete="off"><label for="distributed">distributed</label>
             <input class="hidden-input" type="radio" name="planning_3" value="compact" autocomplete="off" checked><label
@@ -225,17 +254,23 @@
           </div>
           <!-- end of hidden menu -->
         </div>
-        <div class="traits-item">
-          <div class="traits-elt">trait:</div> <input class="traits-txt-input" data-title="set the name of this behavior" onchange="update_buttons()"
-            autocomplete="off" type="text" name="trait" value="goodwiller">
-          <div class="traits-elt">curiosity:</div> <input data-title="set a value between 0 and 1" type="number" value="0.1" autocomplete="off" name="curiosity">
-          <div class="traits-elt">perfectionism:</div> <input data-title="set a value between 0 and 1" type="number" value="0" autocomplete="off"
-            name="perfectionism">
-          <div class="traits-elt">endurance:</div> <input data-title="set a value between 0 and 1" type="number" value="0.8" autocomplete="off" name="endurance">
-          <div class="traits-elt">goodwill:</div> <input data-title="set a value between 0 and 1" type="number" value="1" autocomplete="off" name="goodwill">
-          <div class="traits-elt">how many agents?</div> <input data-title="set a number of agents with this trait" type="number" value="4" autocomplete="off" name="amount">
+        <div class="traits-item" id="trait-3">
+          <div class="traits-elt">trait:</div> <input class="traits-txt-input"
+            data-title="set the name of this behavior" onchange="update_buttons()" autocomplete="off" type="text"
+            name="trait" value="goodwiller">
+          <div class="traits-elt">curiosity:</div> <input data-title="set a value between 0 and 1" type="number"
+            value="0.1" autocomplete="off" name="curiosity">
+          <div class="traits-elt">perfectionism:</div> <input data-title="set a value between 0 and 1" type="number"
+            value="0" autocomplete="off" name="perfectionism">
+          <div class="traits-elt">endurance:</div> <input data-title="set a value between 0 and 1" type="number"
+            value="0.8" autocomplete="off" name="endurance">
+          <div class="traits-elt">goodwill:</div> <input data-title="set a value between 0 and 1" type="number"
+            value="1" autocomplete="off" name="goodwill">
+          <div class="traits-elt">how many agents?</div> <input data-title="set a number of agents with this trait"
+            type="number" value="4" autocomplete="off" name="amount">
           <!-- here we put the hidden menu -->
-          <div class="hide" data-title="how does the agent plan his work? distibuted means that he does his work any time during the month, while compact means that the agent chooses a period of the month, namely begin, middle and and, and does his work un such timeframe">
+          <div class="hide"
+            data-title="how does the agent plan his work? distibuted means that he does his work any time during the month, while compact means that the agent chooses a period of the month, namely begin, middle and and, and does his work un such timeframe">
             <div class="traits-elt">planning:</div>
             <input class="hidden-input" type="radio" name="planning_4" value="distributed" autocomplete="off"><label
               for="distributed">distributed</label>
@@ -256,11 +291,12 @@
       <div class="menu-set-agents box">
 
         <div style="font-size: 30px;">Total number of agents: <span id="how-many-agents">16</span></div>
-        How many task-sets:<input input type="number" value="1" autocomplete="off" id="how-many-task"
-          class="custom-input">
-        <br>
+        How many task-sets:<input
+          data-title="(each set is composed by 4 tasks. Use at least 1 task set for every 12 agents)" type="number"
+          value="1" autocomplete="off" id="how-many-task" class="custom-input">
+        <!-- <br>
         <i>(each set is composed by 4 tasks. <u style="color: #00f; font-weight:bolder;">Use at least 1 task set for
-            every 12 agents</u>)</i>
+            every 12 agents</u>)</i> -->
         <!-- set number of players
         <input type="text" value="0" class="custom-input" id="num-players"> <br> -->
       </div>
@@ -331,6 +367,7 @@
       </div>
     </div>
   </div> -->
+  <script src="js/load_save.js"></script>
   <script src="js/behavior.js"></script>
   <script src="js/memory.js"></script>
   <script src="js/agent.js"></script>
