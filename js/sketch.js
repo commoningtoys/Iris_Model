@@ -76,19 +76,6 @@ function single_execution() {
   }
 }
 
-function get_model_type() {
-  let inputs = document.getElementById('model-type');
-  inputs = $(inputs).find('input')
-  let result;
-  for (const input of inputs) {
-    if (input.checked) {
-      console.log(input.value);
-      result = input.value;
-    }
-  }
-  return result;
-}
-
 function extract_traits() {
   // here we need to extract the values of the menu
   const result = [];

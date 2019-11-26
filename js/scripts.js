@@ -24,6 +24,21 @@ function start_stop_model() {
   }
 }
 
+
+
+function get_model_type() {
+  let inputs = document.getElementById('model-type');
+  inputs = $(inputs).find('input')
+  let result;
+  for (const input of inputs) {
+    if (input.checked) {
+      console.log(input.value);
+      result = input.value;
+    }
+  }
+  return result;
+}
+
 // let recordData = document.getElementById('record-data')
 // recordData.addEventListener('click', () => {
 //   irisModel.recordData();

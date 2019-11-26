@@ -225,8 +225,8 @@ class Agent {
   reset_spending_time() {
     // this.spending_hours = this.monthly_hours;
     if (this.spending_hours <= 0) {
-      // this.spending_hours += this.monthly_hours;
-      this.spending_hours = this.monthly_hours;
+      this.spending_hours += this.monthly_hours;
+      // this.spending_hours = this.monthly_hours;
     } else {
       // this agent has not used up all his monthly hours
       // what to do?

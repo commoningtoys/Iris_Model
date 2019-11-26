@@ -20,12 +20,24 @@ const traits_id = [
 
 
 
-let config = []
+let config = {
+  agents: [],
+  model: {
+    task_sets: parseInt(document.getElementById('how-many-task').value),
+    model_type: get_model_type(),
+    hours: parseInt(document.getElementById('monthly-hours').value),
+    wage: parseInt(document.getElementById('min-wage').value),
+    stress_inc: parseFloat(document.getElementById('stress-increment').value),
+    stress_dec: parseFloat(document.getElementById('stress-decrement').value),
+    stop_after: parseInt(document.getElementById('stop-model').value)
+  }
+}
+
+
 
 function update_config() {
-  console.log('hello!');
   // here we need to extract the values of the menu
-  config = [];
+  config.agents = [];
   let index = 0;
   for (const id of traits_id) {
     const elt = document.getElementById(id);
@@ -38,33 +50,49 @@ function update_config() {
     const goodwill = parseFloat(elt.children['goodwill'].value);
     const planning = get_values_hidden_menu(index);
     // and we push them inside the array
-    config.push({
+    config.agents.push({
       id, amount, trait, curiosity, perfectionism, endurance, goodwill, planning
     });
     index++;
   }
+
+  config.model = {
+    task_sets: parseInt(document.getElementById('how-many-task').value),
+    model_type: get_model_type(),
+    hours: parseInt(document.getElementById('monthly-hours').value),
+    wage: parseInt(document.getElementById('min-wage').value),
+    stress_inc: parseFloat(document.getElementById('stress-increment').value),
+    stress_dec: parseFloat(document.getElementById('stress-decrement').value),
+    stop_after: parseInt(document.getElementById('stop-model').value)
+  }
+
   set_config_to_html();
 }
+
 update_config();
 
-function set_config_to_html(){
+function set_config_to_html() {
   const el = document.getElementById('show-config');
   el.innerHTML = '';
-  for (const conf of config) {
+  for (const conf of config.agents) {
     const str = `${conf.trait}: 👫🏻 – ${conf.amount} | 🔎 – ${conf.curiosity} | 🔭 – ${conf.perfectionism} | 🚴🏻 – ${conf.endurance} | 🛠 – ${conf.goodwill} | 🗓 – ${conf.planning[0]}`
     const tmp_div = document.createElement('div');
     tmp_div.setAttribute('class', 'caption-config');
     tmp_div.textContent = str;
     el.appendChild(tmp_div);
   }
-
+  const str = `task-sets – ${config.model.task_sets} | model type – ${config.model.model_type} | hours – ${config.model.hours} | wage – ${config.model.wage} | stress increment – ${config.model.stress_inc} | stress decrement – ${config.model.stress_dec} | end after – ${config.model.stop_after}`
+  const tmp_div = document.createElement('div');
+  tmp_div.setAttribute('class', 'caption-config');
+  tmp_div.textContent = str;
+  el.appendChild(tmp_div);
 }
 
 // attach event listener to the input values so that the config is always updated
 const inputs = document.querySelectorAll('.traits-input input');
 for (const input of inputs) {
   input.addEventListener('change', () => {
-    if(input.type === 'number')input.value = get_decimal_value(input.value);
+    if (input.type === 'number') input.value = get_decimal_value(input.value);
     update_buttons();
     update_config();
   });
@@ -91,12 +119,11 @@ function save_traits() {
 
 }
 
-
 function load_traits(elt) {
   const val = elt.selectedOptions[0].value;
   config = JSON.parse(window.localStorage.getItem(val));
 
-  for (const item of config) {
+  for (const item of config.agents) {
     const elt = document.getElementById(item.id);
     // Object.keys(item).forEach(key =>{
     //     elt.children[key].value = item[key];
@@ -117,8 +144,21 @@ function load_traits(elt) {
       }
     }
   }
+  document.getElementById('how-many-task').value = config.model.task_sets;
+  get_model_type()
+
+  const model_type_inputs = document.querySelectorAll('#model-type input')
+  for (const input of model_type_inputs) {
+    if (input.value === config.model.model_type) input.checked = true;
+  }
+  document.getElementById('monthly-hours').value = config.model.hours;
+  document.getElementById('min-wage').value = config.model.wage;
+  document.getElementById('stress-increment').value = config.model.stress_inc;
+  document.getElementById('stress-decrement').value = config.model.stress_dec;
+  document.getElementById('stop-model').value = config.model.stop_after;
 
   update_buttons();
+  set_config_to_html();
 }
 
 
