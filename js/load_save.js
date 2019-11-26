@@ -13,13 +13,16 @@ const traits_id = [
   'trait-1',
   'trait-2',
   'trait-3'
-]
+];
 
-function save_traits() {
-  const elt = document.getElementById('save-config')
-  const config_name = elt.value;
+
+
+let config = []
+
+function update_config() {
+  console.log('hello!');
   // here we need to extract the values of the menu
-  const result = [];
+  config = [];
   let index = 0;
   for (const id of traits_id) {
     const elt = document.getElementById(id);
@@ -32,15 +35,47 @@ function save_traits() {
     const goodwill = parseFloat(elt.children['goodwill'].value);
     const planning = get_values_hidden_menu(index);
     // and we push them inside the array
-    result.push({
+    config.push({
       id, amount, trait, curiosity, perfectionism, endurance, goodwill, planning
     });
     index++;
   }
+  set_download_config();
+  set_config_to_html();
+}
+update_config();
 
+function set_config_to_html(){
+  const el = document.getElementById('show-config');
+  el.innerHTML = '';
+  for (const conf of config) {
+    const str = `${conf.trait}: 👫🏻 – ${conf.amount} | 🔎 – ${conf.curiosity} | 🔭 – ${conf.perfectionism} | 🚴🏻 – ${conf.endurance} | 🛠 – ${conf.goodwill} | 🗓 – ${conf.planning[0]}`
+    const tmp_div = document.createElement('div');
+    tmp_div.setAttribute('class', 'caption-config');
+    tmp_div.textContent = str;
+    el.appendChild(tmp_div);
+  }
+
+}
+
+// attach event listener to the input values so that the config is always updated
+const inputs = document.querySelectorAll('.traits-input input');
+for (const input of inputs) {
+  input.addEventListener('change', () => {
+    if(input.type === 'number')input.value = get_decimal_value(input.value);
+    update_buttons();
+    update_config();
+  });
+}
+
+function save_traits() {
+  const elt = document.getElementById('save-config')
+  const config_name = elt.value;
+
+  update_config();
 
   if (!localStorage.getItem(config_name)) {
-    window.localStorage.setItem(config_name, JSON.stringify(result));
+    window.localStorage.setItem(config_name, JSON.stringify(config));
   } else {
     elt.value = 'choose another name!'
   }
@@ -51,11 +86,13 @@ function save_traits() {
   option.value = config_name;
   option.textContent = config_name;
   select.appendChild(option);
+
 }
+
 
 function load_traits(elt) {
   const val = elt.selectedOptions[0].value;
-  const config = JSON.parse(window.localStorage.getItem(val));
+  config = JSON.parse(window.localStorage.getItem(val));
 
   for (const item of config) {
     const elt = document.getElementById(item.id);
@@ -78,7 +115,19 @@ function load_traits(elt) {
       }
     }
   }
+
   update_buttons();
+  set_download_config();
+}
+
+
+function set_download_config() {
+  // here we add the the config as a JSON file to the download button
+  const data_string = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config));
+  const save_btn = document.getElementById('save-config-client');
+  save_btn.setAttribute("href", data_string);
+  const date = new Date()
+  save_btn.setAttribute("download", `${date.toString().replace(/\s/g, '_')}.json`);
 }
 
 function set_config_names() {
@@ -99,31 +148,31 @@ set_config_names()
 
 
 
-const doc = new jsPDF();
-// window.html2canvas = html2canvas;
+// const doc = new jsPDF();
+// // window.html2canvas = html2canvas;
 
 
-function save_pdf() {
-  // doc.html(document.getElementById('visualizations'), {
-  //   callback: function (doc) {
-  //     doc.save();
-  //   }
-  // });
+// function save_pdf() {
+//   // doc.html(document.getElementById('visualizations'), {
+//   //   callback: function (doc) {
+//   //     doc.save();
+//   //   }
+//   // });
 
-  // html2canvas(document.getElementById('visualizations')).then(canvas => document.body.appendChild(canvas));
+//   // html2canvas(document.getElementById('visualizations')).then(canvas => document.body.appendChild(canvas));
 
-  const svgs = document.querySelectorAll('svg')
-  const imgs_uri = []
-  for (const svg of svgs) {
-    console.log(svg);
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d')
-    const v = canvg.Canvg.fromString(ctx, svg.outerHTML);
-    v.render();
-    window.open(canvas.toDataURL('image/png'));
-  }
-  console.log(imgs_uri);
-}
+//   const svgs = document.querySelectorAll('svg')
+//   const imgs_uri = []
+//   for (const svg of svgs) {
+//     console.log(svg);
+//     const canvas = document.createElement('canvas');
+//     const ctx = canvas.getContext('2d')
+//     const v = canvg.Canvg.fromString(ctx, svg.outerHTML);
+//     v.render();
+//     window.open(canvas.toDataURL('image/png'));
+//   }
+//   console.log(imgs_uri);
+// }
 
 function storageAvailable(type) {
   var storage;

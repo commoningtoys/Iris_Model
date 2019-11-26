@@ -15,9 +15,9 @@
   <!-- <script src="https://d3js.org/d3.v5.min.js"></script> -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.min.js"></script>
-  <script src="js/libraries/html2canvas.min.js"></script>
+  <!-- <script src="js/libraries/html2canvas.min.js"></script>
   <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
-  <script type="text/javascript" src="https://unpkg.com/canvg@3.0.0-beta.3/lib/umd.js"></script>
+  <script type="text/javascript" src="https://unpkg.com/canvg@3.0.0-beta.3/lib/umd.js"></script> -->
   <script src="js/utils.js"></script>
   <script src="js/global.js"></script>
   <link rel="stylesheet" href="style.css">
@@ -30,12 +30,12 @@
 
       <div id="display-date"></div>
 
-            <!-- the max value of the slider gets updated in memory.js line 45 -->
-            <div style="text-align: center;">
-                <input type="range" name="time" id="time-slider" min="1" max="100" value="0"
-                  oninput="irisModel.update_data(this)" style="width: 60%;">
-              </div>
-              <!-- ************************************************************* -->
+      <!-- the max value of the slider gets updated in memory.js line 45 -->
+      <div style="text-align: center;">
+        <input type="range" name="time" id="time-slider" min="1" max="100" value="0"
+          oninput="irisModel.update_data(this)" style="width: 60%;">
+      </div>
+      <!-- ************************************************************* -->
     </div>
     <div class="chart-menu">
       <div class="info" id="info-window">
@@ -45,11 +45,13 @@
             filter agents by behavior
           </div>
           <!-- <div class="btn" onclick="irisModel.plot.toggle()">toggle all</div> -->
-          <div class="btn" id="bev-1" onclick="irisModel.show_behavior(this)"></div>
-          <div class="btn" id="bev-2" onclick="irisModel.show_behavior(this)"></div>
-          <div class="btn" id="bev-3" onclick="irisModel.show_behavior(this)"></div>
-          <div class="btn" id="bev-4" onclick="irisModel.show_behavior(this)"></div>
-          <div class="btn" onclick="irisModel.reset_filters()">ALL!</div>
+          <div >
+            <div class="btn" id="bev-1" onclick="irisModel.show_behavior(this)"></div>
+            <div class="btn" id="bev-2" onclick="irisModel.show_behavior(this)"></div>
+            <div class="btn" id="bev-3" onclick="irisModel.show_behavior(this)"></div>
+            <div class="btn" id="bev-4" onclick="irisModel.show_behavior(this)"></div>
+            <div class="btn" onclick="irisModel.reset_filters()">ALL!</div>
+          </div>
           <br>
           <div class="caption" data-title="cmd + click to select multiple agents">
             filter single agents
@@ -60,9 +62,9 @@
              -->
           </select>
         </div>
-        <div class="btn" onclick="save_pdf()">
-            save pdf
-          </div>
+        <div class="btn" data-title="copy and paste this in the console | :screenshot --dpr 2 --fullpage" style="width: 85%;">
+          <a id="save-config-client">save model configuration</a>
+        </div>
         <!-- <div class="model-settings-item">
           set model speed:<br>
           <input type="range" value="1" min="1" max="10" id="model-speed">
@@ -70,6 +72,9 @@
       </div>
     </div>
     <div class="visualizations" id="visualizations">
+      <div class="box" id="show-config" style="width: 95%; margin: 10px auto; background-color: #fff;">
+
+      </div>
       <div class="chart" id="chart"></div>
       <div style="overflow: hidden;">
         <div class="chart" id="pie-1" style="width: 50%; float: left;"></div>
@@ -174,17 +179,16 @@
       <div class="traits-input">
         <div class="traits-item" id="trait-0">
           <div class="traits-elt">trait:</div> <input class="traits-txt-input"
-            data-title="set the name of this behavior" onchange="update_buttons()" autocomplete="off" type="text"
-            name="trait" value="curious">
-          <div class="traits-elt">curiosity:</div> <input data-title="set a value between 0 and 1" type="number"
+            data-title="set the name of this behavior" autocomplete="off" type="text" name="trait" value="curious">
+          <div class="traits-elt">curiosity 🔎:</div> <input data-title="set a value between 0 and 1" type="number"
             value="1" autocomplete="off" name="curiosity">
-          <div class="traits-elt">perfectionism:</div> <input data-title="set a value between 0 and 1" type="number"
+          <div class="traits-elt">perfectionism 🔭:</div> <input data-title="set a value between 0 and 1" type="number"
             value="0" autocomplete="off" name="perfectionism">
-          <div class="traits-elt">endurance:</div> <input data-title="set a value between 0 and 1" type="number"
+          <div class="traits-elt">endurance 🚴🏻:</div> <input data-title="set a value between 0 and 1" type="number"
             value="0.5" autocomplete="off" name="endurance">
-          <div class="traits-elt">goodwill:</div> <input data-title="set a value between 0 and 1" type="number"
+          <div class="traits-elt">goodwill 🛠:</div> <input data-title="set a value between 0 and 1" type="number"
             value="0" autocomplete="off" name="goodwill">
-          <div class="traits-elt">how many agents?</div> <input data-title="set a number of agents with this trait"
+          <div class="traits-elt">how many agents 👫🏻?</div> <input data-title="set a number of agents with this trait"
             type="number" value="4" autocomplete="off" name="amount">
           <!-- here we put the hidden menu -->
           <div class="hide"
@@ -205,17 +209,17 @@
         </div>
         <div class="traits-item" id="trait-1">
           <div class="traits-elt">trait:</div> <input class="traits-txt-input"
-            data-title="set the name of this behavior" onchange="update_buttons()" autocomplete="off" type="text"
-            name="trait" value="perfectionist">
-          <div class="traits-elt">curiosity:</div> <input data-title="set a value between 0 and 1" type="number"
+            data-title="set the name of this behavior" autocomplete="off" type="text" name="trait"
+            value="perfectionist">
+          <div class="traits-elt">curiosity 🔎:</div> <input data-title="set a value between 0 and 1" type="number"
             value="0" autocomplete="off" name="curiosity">
-          <div class="traits-elt">perfectionism:</div> <input data-title="set a value between 0 and 1" type="number"
+          <div class="traits-elt">perfectionism 🔭:</div> <input data-title="set a value between 0 and 1" type="number"
             value="1" autocomplete="off" name="perfectionism">
-          <div class="traits-elt">endurance:</div> <input data-title="set a value between 0 and 1" type="number"
+          <div class="traits-elt">endurance 🚴🏻:</div> <input data-title="set a value between 0 and 1" type="number"
             value="0.7" autocomplete="off" name="endurance">
-          <div class="traits-elt">goodwill:</div> <input data-title="set a value between 0 and 1" type="number"
+          <div class="traits-elt">goodwill 🛠:</div> <input data-title="set a value between 0 and 1" type="number"
             value="0" autocomplete="off" name="goodwill">
-          <div class="traits-elt">how many agents?</div> <input data-title="set a number of agents with this trait"
+          <div class="traits-elt">how many agents 👫🏻?</div> <input data-title="set a number of agents with this trait"
             type="number" value="4" autocomplete="off" name="amount">
           <!-- here we put the hidden menu -->
           <div class="hide"
@@ -236,17 +240,16 @@
         </div>
         <div class="traits-item" id="trait-2">
           <div class="traits-elt">trait:</div> <input class="traits-txt-input"
-            data-title="set the name of this behavior" onchange="update_buttons()" autocomplete="off" type="text"
-            name="trait" value="lazy">
-          <div class="traits-elt">curiosity:</div> <input data-title="set a value between 0 and 1" type="number"
+            data-title="set the name of this behavior" autocomplete="off" type="text" name="trait" value="lazy">
+          <div class="traits-elt">curiosity 🔎:</div> <input data-title="set a value between 0 and 1" type="number"
             value="1" autocomplete="off" name="curiosity">
-          <div class="traits-elt">perfectionism:</div> <input data-title="set a value between 0 and 1" type="number"
+          <div class="traits-elt">perfectionism 🔭:</div> <input data-title="set a value between 0 and 1" type="number"
             value="0" autocomplete="off" name="perfectionism">
-          <div class="traits-elt">endurance:</div> <input data-title="set a value between 0 and 1" type="number"
+          <div class="traits-elt">endurance 🚴🏻:</div> <input data-title="set a value between 0 and 1" type="number"
             value="0.2" autocomplete="off" name="endurance">
-          <div class="traits-elt">goodwill:</div> <input data-title="set a value between 0 and 1" type="number"
+          <div class="traits-elt">goodwill 🛠:</div> <input data-title="set a value between 0 and 1" type="number"
             value="0" autocomplete="off" name="goodwill">
-          <div class="traits-elt">how many agents?</div> <input data-title="set a number of agents with this trait"
+          <div class="traits-elt">how many agents 👫🏻?</div> <input data-title="set a number of agents with this trait"
             type="number" value="4" autocomplete="off" name="amount">
           <!-- here we put the hidden menu -->
           <div class="hide"
@@ -267,17 +270,16 @@
         </div>
         <div class="traits-item" id="trait-3">
           <div class="traits-elt">trait:</div> <input class="traits-txt-input"
-            data-title="set the name of this behavior" onchange="update_buttons()" autocomplete="off" type="text"
-            name="trait" value="goodwiller">
-          <div class="traits-elt">curiosity:</div> <input data-title="set a value between 0 and 1" type="number"
+            data-title="set the name of this behavior" autocomplete="off" type="text" name="trait" value="goodwiller">
+          <div class="traits-elt">curiosity 🔎:</div> <input data-title="set a value between 0 and 1" type="number"
             value="0.1" autocomplete="off" name="curiosity">
-          <div class="traits-elt">perfectionism:</div> <input data-title="set a value between 0 and 1" type="number"
+          <div class="traits-elt">perfectionism 🔭:</div> <input data-title="set a value between 0 and 1" type="number"
             value="0" autocomplete="off" name="perfectionism">
-          <div class="traits-elt">endurance:</div> <input data-title="set a value between 0 and 1" type="number"
+          <div class="traits-elt">endurance 🚴🏻:</div> <input data-title="set a value between 0 and 1" type="number"
             value="0.8" autocomplete="off" name="endurance">
-          <div class="traits-elt">goodwill:</div> <input data-title="set a value between 0 and 1" type="number"
+          <div class="traits-elt">goodwill 🛠:</div> <input data-title="set a value between 0 and 1" type="number"
             value="1" autocomplete="off" name="goodwill">
-          <div class="traits-elt">how many agents?</div> <input data-title="set a number of agents with this trait"
+          <div class="traits-elt">how many agents 👫🏻?</div> <input data-title="set a number of agents with this trait"
             type="number" value="4" autocomplete="off" name="amount">
           <!-- here we put the hidden menu -->
           <div class="hide"
@@ -378,6 +380,7 @@
       </div>
     </div>
   </div> -->
+  <script src="js/scripts.js"></script>
   <script src="js/load_save.js"></script>
   <script src="js/behavior.js"></script>
   <script src="js/memory.js"></script>
@@ -385,7 +388,6 @@
   <script src="js/task.js"></script>
   <script src="js/model.js"></script>
   <script src="js/plot.js"></script>
-  <script src="js/scripts.js"></script>
   <script src="js/sketch.js"></script>
   <!-- <div id="whatFrameRate" style="position: fixed; top: 0px; left: 0px;"></div> -->
 </body>

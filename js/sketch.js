@@ -38,7 +38,7 @@ function init_model() {
   clearInterval(tick);
   start_stop = false;
 
-  console.log('start')
+  // console.log('start')
   // if (check_values) {// if the input given in the menu are correct than start the model
 
   const traits_list = extract_traits();
@@ -54,7 +54,7 @@ function init_model() {
   irisModel.end_after(stop_model);
 
   $('.menu').toggle('fast');
-
+  document.querySelector('.info').style.visibility = 'visible'
   // $('#info-window').show('fast', () => {
   //   // whe the window is closed resize the sketch
   //   resizeCanvas(WIDTH(), HEIGHT());

@@ -124,13 +124,6 @@ function init_menu() {
     for (const term of input_labels) {
       inputs.push(elt.children[term])
     }
-    // here we squish all the values between 0 and 1
-    for (const term of input_labels) {
-      elt.children[term].addEventListener('change', (event) => {
-        const input = elt.children[term];
-        input.value = get_decimal_value(input.value);
-      })
-    }
 
     // here we assign the eventListener to the amount inputs
     elt.children['amount'].addEventListener('change', () => {
