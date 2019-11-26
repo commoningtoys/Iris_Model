@@ -10,6 +10,7 @@ function start_stop_model() {
   start_stop = !start_stop;
   if (start_stop) {
     $('#start-stop').text('RESTART');
+    $('#show-menu').toggle('fast');
 
     clearInterval(tick);
   } else {
@@ -40,6 +41,7 @@ $('#show-sidebar').click(() => {
 
 $('#show-menu').click(() => {
   $('.menu').toggle('fast');
+  $('#show-menu').toggle('fast');
 })
 
 $('#close-menu').click(() => {
