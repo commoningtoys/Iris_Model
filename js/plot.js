@@ -46,13 +46,8 @@ class Plot {
       },
       data: {
         json: {},
-        // keys: {
-        //   // x: 'id',
-        // },
         type: 'bar',
         order: null,
-
-        
       },
       color: {
         pattern: ['#00f', '#f00']
@@ -61,7 +56,6 @@ class Plot {
         rotated: true,
         x: {
           type: 'category',
-          // show: false
         },
         y: {
           tick: {
@@ -75,15 +69,9 @@ class Plot {
             return 'agent ' + this.previous_data[index].id + ' | ' + this.previous_data[index].behavior
           },
           value: (value, ratio, id, index) => {
-            // console.log(value, ratio, id, index);
-            // const last_memory = this.data.memories[value];
             return Math.abs(value)
           }
         },
-        // contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
-        //   // console.log(d, defaultTitleFormat(d), defaultValueFormat(d), color(d));
-        //   // return ... // formatted html as you want
-        // }
 
       },
       legend: {
@@ -96,6 +84,12 @@ class Plot {
       },
       transition: {
         duration: null
+      },
+      onresize: () => {
+        this.bar_chart.resize({
+          width: this.get_dims().w * 0.95,
+          height: this.get_dims().h * 0.75
+        })
       }
     })
   }
@@ -122,6 +116,12 @@ class Plot {
       },
       transition: {
         duration: null
+      },
+      onresize: () => {
+        this.pies_1.resize({
+          width: this.get_dims().w / 2.3,
+          height: this.get_dims().w / 2.3
+        })
       }
     })
     this.pies_2 = c3.generate({
@@ -145,6 +145,12 @@ class Plot {
       },
       transition: {
         duration: null
+      },
+      onresize: () => {
+        this.pies_2.resize({
+          width: this.get_dims().w / 2.3,
+          height: this.get_dims().w / 2.3
+        })
       }
     })
   }
@@ -173,17 +179,6 @@ class Plot {
           brute_force: 'scatter'
         }
       },
-      // legend: {
-      //   item: {
-      //     onclick: (id)=> {
-      //       console.log(id);
-      //       this.chart.toggle(id)
-      //     }
-      //   }
-      // },
-      // color: (color, d) => {
-      //   console.log(d.id);
-      // },
       axis: {
         x: {
           type: 'timeseries',
@@ -205,12 +200,6 @@ class Plot {
           }
         }
       },
-      // tooltip: {
-      //   position: (data, w, h, el) => { return { top: 0, left: 0 } }
-      // },
-      onresize: function () {
-
-      },
       subchart: {
         show: true
       },
@@ -224,6 +213,12 @@ class Plot {
       },
       transition: {
         duration: null
+      },
+      onresize: () => {
+        this.chart.resize({
+          width: this.get_dims().w * 0.95,
+          height: this.get_dims().h * 0.95
+        })
       }
     })
   }

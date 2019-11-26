@@ -27,9 +27,9 @@ function draw() {
 
 
 
-function windowResized() {
-  resizeCanvas(WIDTH(), HEIGHT());
-}
+// function windowResized() {
+//   resizeCanvas(WIDTH(), HEIGHT());
+// }
 
 
 
