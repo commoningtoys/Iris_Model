@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="c3.min.css">
   <script src="js/libraries/d3.min.js"></script>
   <script src="js/libraries/c3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
   <!-- <script src="js/libraries/d3.js"></script> -->
   <!-- <script src="https://d3js.org/d3.v5.min.js"></script> -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
@@ -62,8 +63,8 @@
              -->
           </select>
         </div>
-        <div class="btn" data-title="copy and paste this in the console | :screenshot --dpr 2 --fullpage" style="width: 85%;">
-          <a id="save-config-client">save model configuration</a>
+        <div class="btn copy" data-title=" click this button, this will save command to download a screenshot in your clipboard | open up the console with cmd + alt + K | paste the command and press enter" data-clipboard-text=":screenshot --dpr 2 --fullpage" style="width: 85%;">
+          screenshot [firefox only]
         </div>
         <!-- <div class="model-settings-item">
           set model speed:<br>

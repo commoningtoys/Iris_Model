@@ -1,3 +1,6 @@
+new ClipboardJS('.copy');// to save to clipboard
+
+
 let storage_available = false;
 
 if (storageAvailable('localStorage')) {
@@ -40,7 +43,6 @@ function update_config() {
     });
     index++;
   }
-  set_download_config();
   set_config_to_html();
 }
 update_config();
@@ -117,18 +119,8 @@ function load_traits(elt) {
   }
 
   update_buttons();
-  set_download_config();
 }
 
-
-function set_download_config() {
-  // here we add the the config as a JSON file to the download button
-  const data_string = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config));
-  const save_btn = document.getElementById('save-config-client');
-  save_btn.setAttribute("href", data_string);
-  const date = new Date()
-  save_btn.setAttribute("download", `${date.toString().replace(/\s/g, '_')}.json`);
-}
 
 function set_config_names() {
   const select = document.getElementById('load-config');

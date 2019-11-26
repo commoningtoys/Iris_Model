@@ -83,7 +83,9 @@ class Memory {
     const m = last_date.getMonth() + 1;
     const y = last_date.getFullYear();
 
-    set_date(y, m, d, h);
+    const current_year = new Date().getFullYear();
+    
+    set_date(y - current_year, m, d, h);
 
     return result
   }

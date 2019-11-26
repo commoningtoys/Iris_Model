@@ -403,8 +403,9 @@ button#close-menu {
 }
 
 .caption-config{
-    color: #f00;
+    color: #00f;
     padding: 0.25rem;
+    font-size: 0.75rem;
 }
 
 .btn {
