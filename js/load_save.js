@@ -106,16 +106,16 @@ function save_traits() {
 
   if (!localStorage.getItem(config_name)) {
     window.localStorage.setItem(config_name, JSON.stringify(config));
+
+    const select = document.getElementById('load-config');
+    const option = document.createElement('option');
+    option.setAttribute('class', 'btn')
+    option.value = config_name;
+    option.textContent = config_name;
+    select.appendChild(option);
   } else {
     elt.value = 'choose another name!'
   }
-
-  const select = document.getElementById('load-config');
-  const option = document.createElement('option');
-  option.setAttribute('class', 'btn')
-  option.value = config_name;
-  option.textContent = config_name;
-  select.appendChild(option);
 
 }
 
