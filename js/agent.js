@@ -4,7 +4,6 @@ class Agent {
     let zeroes = ''; 
     for(let i = 0; i < id_len; i++)zeroes += '0'
     this.ID = zeroes + id;
-    console.log(this.ID);
 
     // here we should also populate the select element in the menu
     const select = document.getElementById('agents-list');
@@ -80,23 +79,7 @@ class Agent {
     this.decision = '';
 
     this.mappedAmountOfTime = 0;
-    // this.colors = {
-    //   work: color(255, 0, 0),
-    //   rest: color(255, 255, 0),
-    //   swap: color(0, 255, 0),
-    //   unable: color(125)
-    // };
     this.showStatistics = false;
-    // this.preferenceColors = {
-    //   skill: color(0, 255, 0),
-    //   preference: color(255, 0, 255),
-    //   FLD: color(0, 255, 255),
-    //   time_coins: color(255, 0, 0),
-    //   stress: color(255, 255, 0),
-    //   time: color(45, 105, 245),
-    //   swapped: color(0, 255, 100, 100),
-    //   brute_force: color(255, 125, 0, 100)
-    // };
 
     this.preferenceArchive = [];
     this.data = [];
@@ -120,69 +103,6 @@ class Agent {
 
     this.recordData = false;
   }
-  /**
-   * 
-   */
-  // makeInfo(agents) {
-  //   let myDiv = document.createElement('div');
-  //   $(myDiv).html(this.htmlText())
-  //     .addClass('content')
-  //     .attr('id', this.ID)
-  //     .click(() => {
-  //       this.showStatistics = true;
-  //       for (const agent of agents) {// this needs to be refactored
-  //         if (this !== agent) agent.showStatistics = false;
-  //       }
-  //     });// here we set the agent to be shown in show function
-  //   $('.info').append(myDiv);
-  // }
-  /**
-   * 
-   */
-  // setInfo() {
-  //   // to update the infos
-  //   document.getElementById(this.ID).innerHTML = this.htmlText();
-  // }
-  /**
-   * 
-   */
-  // htmlText() {
-  //   const BR = '<br>';
-  //   let str1 = '<b>AGENT: ' + this.ID + '</b>' + BR;
-  //   let str11 = '<b>behavior: ' + this.behavior_exp.traits.trait + '</b>' + BR;
-  //   let str12 = '<b>behavior traits:</b>' + BR;
-  //   str12 += "<div class = 'preference'>";
-  //   Object.keys(this.behavior_exp.result_traits).forEach(key => {
-  //     str12 += "<strong>" + key + "</strong>: " + roundPrecision(this.behavior_exp.result_traits[key], 3) + "<br>";
-  //   })
-  //   str12 += "</div><br>";
-  //   let str2 = (this.working == true ? 'doing this task: ' + BR + this.currentTask : 'is not working' + BR) + BR;
-  //   let str21 = 'working timer: ' + BR + this.workingTimer + BR;
-  //   let str22 = (this.done_for_the_day == true ? 'agent is done for today' : 'agent is available to work') + BR;
-  //   let str3 = (this.has_swapped === true ? 'has swapped for: ' + BR + this.swap_task : 'has not swapped' + BR) + BR;
-  //   let str31 = (this.resting === true ? `is resting` : 'not resting') + BR;
-  //   let str4 = 'feel like doing: ' + this.FLD + BR;
-  //   let str5 = 'time coins: ' + this.time_coins + BR;
-  //   let str6 = '<div class="toggle">preferences:';
-  //   //iterating through all the item one by one.
-  //   Object.keys(this.preferences).forEach(val => {
-  //     //getting all the keys in val (current array item)
-  //     let keys = Object.keys(this.preferences[val]);
-  //     let objAttribute = this.preferences[val];
-  //     //assigning HTML string to the variable html
-  //     str6 += "<div class = 'preference'>";
-  //     //iterating through all the keys presented in val (current array item)
-  //     keys.forEach(key => {
-  //       //appending more HTML string with key and value aginst that key;
-  //       // str6 += "<strong>preferences</strong> <br>"
-  //       if (!key.startsWith('forget')) str6 += "<strong>" + key + "</strong>: " + roundPrecision(objAttribute[key], 2) + "<br>";
-  //     });
-  //     //final HTML sting is appending to close the DIV element.
-  //     str6 += "</div><br>";
-  //   });
-  //   str6 += '</div>';
-  //   return str1 + str11 + str12 + str2 + str21 + str22 + str3 + str31 + str4 + str5 + str6;
-  // }
 
   set_time(time_obj) {
     const h = this.initial_date.getHours();
@@ -243,106 +163,6 @@ class Agent {
     // this.spending_hours = this.monthly_hours + update_hours;
   }
   /**
-   * 
-   */
-  show() {
-    if (this.showStatistics) {
-      background(51)
-      // this.infographic();
-    }
-  }
-  /**
-   * 
-   */
-  infographic() {
-    const INFO_WIDTH = width - LEFT_GUTTER;
-    let ROW_NUMBER = 0;
-    ROW_NUMBER += (ROWS + parseInt(this.ID)) % ROWS;
-    ROW_NUMBER *= 2;
-    const CT = this.currentTask;
-    // here we extract the values of FLD, resting time && stress && more
-    let fld = this.preferenceArchive.map(result => result.feel_like_doing);
-    let rt = this.preferenceArchive.map(result => result.time_coins);
-    let stress = this.preferenceArchive.map(result => result.stress_level);
-    let aot = this.preferenceArchive.map(result => result.amount_of_time);
-    let swapped = this.preferenceArchive.map(result => result.swapped);
-    // console.log(swapped);
-    let bruteForce = this.preferenceArchive.map(result => result.brute_force);
-    // and here we draw them in the infographic
-    stroke(255);
-    // FIrst we draw the infographic outline
-    line(posX(0, MAXIMUM), posY(MAXIMUM, ROW_NUMBER), posX(0, MINIMUM), posY(MINIMUM, ROW_NUMBER));
-    line(posX(0, MAXIMUM), posY(MINIMUM, ROW_NUMBER), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, ROW_NUMBER));
-    let i = 0;
-    for (const el of TASK_LIST) {
-      line(posX(0, MAXIMUM, i, TASK_LIST.length), posY(MAXIMUM, ROW_NUMBER - 1), posX(0, MINIMUM, i, TASK_LIST.length), posY(MINIMUM, ROW_NUMBER - 1));
-      line(posX(0, MAXIMUM, i, TASK_LIST.length), posY(MINIMUM, ROW_NUMBER - 1), posX(MAXIMUM, MAXIMUM, i, TASK_LIST.length), posY(MINIMUM, ROW_NUMBER - 1));
-      i++;
-    }
-    // here we draw when an agent has swapped or has been brute forced to do a task
-    drawLine(swapped, this.preferenceColors.swapped, ROW_NUMBER);
-    drawLine(bruteForce, this.preferenceColors.brute_force, ROW_NUMBER);
-    // here below we draw the information about the preferences of the agent
-    printGraphic(`AGENT_ID${this.ID}\n${this.behavior_exp.traits.trait}\nFLD`, fld, this.preferenceColors.FLD, ROW_NUMBER);
-    printGraphic('\n\n\nRESTING TIME', rt, this.preferenceColors.time_coins, ROW_NUMBER);
-    printGraphic('\n\n\n\nSTRESS', stress, this.preferenceColors.stress, ROW_NUMBER);
-    printGraphic('', aot, this.preferenceColors.time, ROW_NUMBER);
-    // here we extract preferences and we NEEDS REFACTORING!!
-    let j = 0;
-    for (const el of TASK_LIST) {
-      let pref = this.preferenceArchive.map(result => result.preferences[el.type]);
-      let taskSkill = pref.map(result => result.skill_level);
-      let taskPref = pref.map(result => result.task_preference);
-
-      printGraphic('', taskSkill, this.preferenceColors.skill, ROW_NUMBER - 1, j, TASK_LIST.length);
-      printGraphic('', taskPref, this.preferenceColors.preference, ROW_NUMBER - 1, j, TASK_LIST.length);
-      j++;
-    }
-    function printGraphic(str, arr, col, row_number, col_number, tot_col) {
-      let colNumber = col_number || 0;
-      let totCol = tot_col || 1;
-      noStroke();
-      fill(col);
-      text(str, PADDING / 2, posY(MAXIMUM, row_number));
-      noFill();
-      stroke(col);
-      strokeWeight(1);
-      let i = 0;
-      beginShape();
-      for (const val of arr) {
-        let currX = posX(i, arr.length, colNumber, totCol);
-        let currY = posY(val, row_number);
-        vertex(currX, currY);
-        i++;
-      }
-      endShape();
-    }
-
-    function drawLine(arr, col, row_number) {
-      strokeWeight(0.5);
-      stroke(col);
-      let index = 0;
-      for (const val of arr) {
-        if (val === true) {
-          let x = posX(index, arr.length);
-          line(x, posY(MINIMUM, row_number), x, posY(MAXIMUM, row_number)); //posY(MINIMUM, ROW_NUMBER), posX(MAXIMUM, MAXIMUM), posY(MINIMUM, ROW_NUMBER)
-        }
-        index++;
-      }
-    }
-
-    function posX(index, max, col_number, tot_col) {
-      let col = col_number || 0;
-      let colNumber = tot_col || 1;
-      let W = (INFO_WIDTH - PADDING) / colNumber;
-
-      return LEFT_GUTTER + map(index, 0, max, col * W, (col + 1) * W);
-    }
-    function posY(val, row_number) {
-      return 2 * (INFO_HEIGHT + PADDING) + ((INFO_HEIGHT + PADDING) * row_number) - map(val, MINIMUM, MAXIMUM, 0, INFO_HEIGHT);
-    }
-  }
-  /**
    * here the agent works
    */
   update() {
@@ -375,22 +195,8 @@ class Agent {
       }
     }
   }
-  /**
-   * We will need this later
-   */
-  setPosition(x, y) {
-    this.pos.x = x;
-    this.pos.y = y;
-  }
   swap_2(task, agents) {
-    // console.log('deciding...')
-    // if (this.spending_model) {
-    //   // console.log(`agent_${this.ID} is deciding`);
-    //   return this.behavior_exp.decide_2(task, agents, this);
-    // }
-    // else {
     return this.behavior_exp.decide(task, agents, this);
-    // }
   }
 
   increase_stress(mult) {

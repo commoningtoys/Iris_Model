@@ -1,6 +1,125 @@
+/////////////////////
+/********************
+/* NUMBER FUNCTIONS *
+/********************
+/////////////////////
+
+/**
+ * maps a number from one range to the new range
+ * @param {Number} value 
+ * @param {Number} istart 
+ * @param {Number} istop 
+ * @param {Number} ostart 
+ * @param {Number} ostop 
+ * @returns the value between the new range
+ */
 function map(value, istart, istop, ostart, ostop) {
   return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
 }
+
+/**
+ * clamps a value between a maximum and a minimum
+ * @param {Number} val the value
+ * @param {Number} min floor clamp
+ * @param {Number} max ceil clamp
+ * @returns the clamped value
+ */
+function clamp(val, min, max) {
+  return Math.min(Math.max(min, val), max);
+}
+/**
+ * @returns random integer between 0 and 100
+ */
+function randomMinMAx() {
+  return MINIMUM + Math.floor(Math.random() * MAXIMUM);
+}
+
+
+function roundPrecision(value, precision) {
+  if (typeof value === 'number') {
+    let multiplier = Math.pow(10, precision || 0);
+    return Math.round(value * multiplier) / multiplier;
+  } else return value;
+}
+
+/**
+ * 
+ * @param {String} val value from input element
+ * @returns the value as number between 0 and 1
+ */
+
+function get_decimal_value(val) {
+  val = parseFloat(val);
+  if (val <= 1) return val;
+  else {
+    // if the value is bigger than one than we round it
+    val = parseInt(val);
+    const dec = val.toString();
+    // console.log(dec)
+    const result = val / Math.pow(10, dec.length);
+    // console.log(result);
+    return result
+  }
+}
+
+
+///////////////////////////////
+/******************************
+/* ARRAY AND OBJECT FUNCTIONS *
+/******************************
+///////////////////////////////
+
+/**
+ * 
+ * @param {Array} arr 
+ * @param {String} key 
+ */
+
+function extract_unique_keys(arr, key) {
+
+  const result = []
+  arr.reduce((accumulator, curr_value, currentIndex, array) => {
+    let parent = curr_value[key]
+    result.push(parent)
+  }, {})
+  return result;
+}
+
+
+function random_arr_element(arr) {
+  const random_idx = Math.floor(Math.random() * arr.length);
+  return arr[random_idx];
+}
+
+
+
+function sumArray(arr1, arr2) {
+  for (let i = 0; i < arr2.length; i++) {
+    if (arr1[i] === undefined || arr1[i] === null) arr1[i] = 0;
+    arr1[i] += arr2[i]
+  }
+}
+
+/**
+ * Randomize array element order in-place.
+ * Using Durstenfeld shuffle algorithm.
+ * @param {Array} array 
+*/
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    let temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+}
+
+
+////////////////////////////
+/***************************
+/* MODEL SPECIFICS METHODS *
+/***************************
+////////////////////////////
 
 /**
  * this function returns an Object with the information about
@@ -38,84 +157,14 @@ function make_trait(name, cur_val, perf_val, endu_val, good_val, planning) {
     planning: planning
   }
 }
-function extract_unique_keys(arr, key) {
 
-  const result = []
-  arr.reduce((accumulator, curr_value, currentIndex, array) => {
-    let parent = curr_value[key]
-    result.push(parent)
-  }, {})
-  return result;
-}
-function random_arr_element(arr) {
-  const random_idx = Math.floor(Math.random() * arr.length);
-  return arr[random_idx];
-}
-
-
-
-/**
- * clamps a value between a maximum and a minimum
- * @param {Number} val the value
- * @param {Number} min floor clamp
- * @param {Number} max ceil clamp
- * @returns the clamped value
- */
-function clamp(val, min, max) {
-  return Math.min(Math.max(min, val), max);
-}
-
-function randomMinMAx() {
-  return MINIMUM + Math.floor(Math.random() * MAXIMUM);
-}
-
-/**
- * Randomize array element order in-place.
- * Using Durstenfeld shuffle algorithm.
- * @param {Array} array 
-*/
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    let j = Math.floor(Math.random() * (i + 1));
-    let temp = array[i];
-    array[i] = array[j];
-    array[j] = temp;
-  }
-}
 
 function sort_agents(agents){
   return agents.sort((a, b)=> a.ID - b.ID);
 }
-
-function sumArray(arr1, arr2) {
-  for (let i = 0; i < arr2.length; i++) {
-    if (arr1[i] === undefined || arr1[i] === null) arr1[i] = 0;
-    arr1[i] += arr2[i]
-  }
-}
 function timeUpdate() {
   // return (1 / frameRate()) * TIME_SCALE;
   return 1;
-}
-
-
-function WIDTH() {
-  const info = document.getElementById('info-window');
-  const w = info.getBoundingClientRect().width;
-  return innerWidth - w;
-};
-
-function HEIGHT() {
-  const footer = document.getElementById('footer');
-  const h = footer.getBoundingClientRect().height;
-  return innerHeight - h;
-}
-
-function roundPrecision(value, precision) {
-  if (typeof value === 'number') {
-    let multiplier = Math.pow(10, precision || 0);
-    return Math.round(value * multiplier) / multiplier;
-  } else return value;
 }
 
 function saveRAWData(agents, id) {
@@ -192,3 +241,6 @@ function linearRegression(y, x) {
 
   return lr;
 }
+
+
+

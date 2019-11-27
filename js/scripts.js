@@ -1,9 +1,39 @@
-/**
- * here we add all the event listeners for the menu
- */
+////////////////////////////////////
+/***********************************
+/* DOM METHODS AND EVENT LISTENERS *
+/**********************************/
+////////////////////////////////////
 
 let start_stop = false;
 $('#start-stop').click(start_stop_model);
+
+$('#show-menu').click(() => {
+  $('.menu').toggle('fast');
+  $('#show-menu').toggle('fast');
+})
+
+$('#close-menu').click(() => {
+  $('.menu').toggle('fast');
+})
+
+const minWage = document.getElementById('min-wage');
+minWage.addEventListener('change', event => {
+  $('#set-min-wage').text(minWage.value);
+});
+
+$('#stress-increment').change(el => {
+  console.log($('#stress-increment').val())
+  irisModel.set_stress_increment($('#stress-increment').val());
+  $('#set-stress-increment').text($('#stress-increment').val())
+})
+
+$('#stress-decrement').change(el => {
+  console.log($('#stress-decrement').val())
+  irisModel.set_stress_increment($('#stress-decrement').val());
+  $('#set-stress-decrement').text($('#stress-decrement').val())
+})
+
+
 
 function start_stop_model() {
   console.log('start-stop');
@@ -32,99 +62,11 @@ function get_model_type() {
   let result;
   for (const input of inputs) {
     if (input.checked) {
-      console.log(input.value);
       result = input.value;
     }
   }
   return result;
 }
-
-// let recordData = document.getElementById('record-data')
-// recordData.addEventListener('click', () => {
-//   irisModel.recordData();
-// });
-
-let showSideBar = true;
-$('#show-sidebar').click(() => {
-  showSideBar = !showSideBar;
-  $('#show-sidebar').text(showSideBar == true ? 'SHOW SIDEBAR' : 'HIDE SIDEBAR');
-  $('#info-window').toggle('fast', () => {
-    // whe the window is closed resize the sketch
-    resizeCanvas(WIDTH(), HEIGHT());
-  });
-});
-
-$('#show-menu').click(() => {
-  $('.menu').toggle('fast');
-  $('#show-menu').toggle('fast');
-})
-
-$('#close-menu').click(() => {
-  $('.menu').toggle('fast');
-})
-
-$('#select-behavior').click(el => {
-  // console.log($("#select-behavior option:selected").val());
-  const behavior = $("#select-behavior option:selected").val();
-  // irisModel.setAgentsBehavior(behavior);
-  const agentsNumber = document.getElementById('how-many-agents');
-  const inputCustom = document.getElementsByClassName('custom-behavior');
-  // const behavior = $("#select-behavior option:selected").val();
-  // here we reset the values of the behaviors to 0
-  for (const el of inputCustom) {
-    el.value = 0;
-  }
-  // here we update them to all *behavior*
-  switch (behavior) {
-    case 'curious':
-      inputCustom.curious.value = agentsNumber.innerText;
-      break;
-    case 'perfectionist':
-      inputCustom.perfectionist.value = agentsNumber.innerText;
-      break;
-    case 'geniesser':
-      inputCustom.geniesser.value = agentsNumber.innerText;
-      break;
-    case 'capitalist':
-      inputCustom.capitalist.value = agentsNumber.innerText;
-      break;
-  }
-})
-
-// const setSpeed = document.getElementById('model-speed');
-// setSpeed.addEventListener('change', event => {
-//   loops = setSpeed.value;
-// })
-
-const minWage = document.getElementById('min-wage');
-minWage.addEventListener('change', event => {
-  $('#set-min-wage').text(minWage.value);
-})
-
-$('.custom-behavior').change(() => {
-  let sum = 0;
-  const agentsNumber = document.getElementById('how-many-agents');
-  const taskNumber = document.getElementById('how-many-task');
-  const inputCustom = document.getElementsByClassName('custom-behavior');
-  for (const el of inputCustom) {
-    sum += parseInt(el.value);
-  }
-  console.log(sum);
-  agentsNumber.innerText = sum;
-  taskNumber.value = Math.floor(sum / 5);
-});
-
-$('#stress-increment').change(el => {
-  console.log($('#stress-increment').val())
-  irisModel.set_stress_increment($('#stress-increment').val());
-  $('#set-stress-increment').text($('#stress-increment').val())
-})
-
-$('#stress-decrement').change(el => {
-  console.log($('#stress-decrement').val())
-  irisModel.set_stress_increment($('#stress-decrement').val());
-  $('#set-stress-decrement').text($('#stress-decrement').val())
-})
 
 /**
  * this function initializes the menu with all the listeners
@@ -167,21 +109,7 @@ function init_menu() {
   }
 }
 
-function get_decimal_value(val) {
-  console.log(val);
-  val = parseFloat(val);
-  if (val <= 1) return val;
-  else {
-    // if the value is bigger than one than we round it
-    val = parseInt(val);
-    const dec = val.toString();
-    // console.log(dec)
-    const result = val / Math.pow(10, dec.length);
-    // console.log(result);
-    return result
-  }
-}
-
+ 
 function update_behavior_setting_menu(elt) {
   console.log(elt.value);
   const hidden = document.getElementsByClassName('hide')
@@ -198,6 +126,30 @@ function update_behavior_setting_menu(elt) {
   }
 }
 
+function extract_traits() {
+  // here we need to extract the values of the menu
+  const result = [];
+  const traits_input = document.getElementsByClassName('traits-input');
+  let index = 0;
+  for (const elt of traits_input[0].children) {
+    // here we extract the values we neeed
+    const amount = parseInt(elt.children['amount'].value);
+    const trait_name = elt.children['trait'].value; // this must stay a string
+    const cur_val = parseFloat(elt.children['curiosity'].value);
+    const perf_val = parseFloat(elt.children['perfectionism'].value);
+    const endu_val = parseFloat(elt.children['endurance'].value);
+    const good_val = parseFloat(elt.children['goodwill'].value);
+    // console.log(elt.children);
+    const planning = get_values_hidden_menu(index);
+    // lets make the amount a global variable
+    AGENT_NUM = amount;
+    // and we push them inside the array
+    for (let i = 0; i < amount; i++)result.push(make_trait(trait_name, cur_val, perf_val, endu_val, good_val, planning));
+    index++;
+  }
+  
+  return result;
+}
 
 /**
  * @param {Number} index 
@@ -225,7 +177,6 @@ function update_buttons() {
     btn.innerText = inputs[i].value;
   }
 }
-update_buttons();
 
 
 
@@ -250,8 +201,6 @@ function set_selects() {
     sel_2.appendChild(option_2);
   }
 }
-
-set_selects();
 
 /**
  * sets the date in the web page

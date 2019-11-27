@@ -1,3 +1,10 @@
+
+
+update_buttons();
+set_selects();
+init_menu();
+
+
 let irisModel = null;
 let loops = 50;
 let players = 0;
@@ -5,41 +12,12 @@ let check_values = true;
 let batch_mode = false;
 let execution_is_finished = true;
 let execution_combinations;
-
 let tick;
-
-init_menu();
-let cnv;
-// function setup() {
-//   // cnv = createCanvas(WIDTH(), HEIGHT());
-//   noCanvas();
-//   // frameRate(200);
-// }
-
-// function draw() {
-//   if (!batch_mode) {
-
-
-//   }
-
-//   // document.getElementById('whatFrameRate').innerHTML = 'Frame rate: <br>' + frameRate();
-// }
-
-
-
-// function windowResized() {
-//   resizeCanvas(WIDTH(), HEIGHT());
-// }
-
-
 
 function init_model() {
 
   clearInterval(tick);
   start_stop = false;
-
-  // console.log('start')
-  // if (check_values) {// if the input given in the menu are correct than start the model
 
   const traits_list = extract_traits();
   const min_wage = parseInt(document.getElementById('min-wage').value);
@@ -54,13 +32,8 @@ function init_model() {
   irisModel.end_after(stop_model);
 
   $('.menu').toggle('fast');
-  document.querySelector('.info').style.visibility = 'visible'
-  // $('#info-window').show('fast', () => {
-  //   // whe the window is closed resize the sketch
-  //   resizeCanvas(WIDTH(), HEIGHT());
-  // });
+  document.querySelector('.info').style.visibility = 'visible';
   tick = setInterval(single_execution, 0.1);
-  // } 
 }
 
 let frame_count = 0;
@@ -78,30 +51,25 @@ function single_execution() {
   }
 }
 
-function extract_traits() {
-  // here we need to extract the values of the menu
-  const result = [];
-  const traits_input = document.getElementsByClassName('traits-input');
-  let index = 0;
-  for (const elt of traits_input[0].children) {
-    // here we extract the values we neeed
-    const amount = parseInt(elt.children['amount'].value);
-    const trait_name = elt.children['trait'].value; // this must stay a string
-    const cur_val = parseFloat(elt.children['curiosity'].value);
-    const perf_val = parseFloat(elt.children['perfectionism'].value);
-    const endu_val = parseFloat(elt.children['endurance'].value);
-    const good_val = parseFloat(elt.children['goodwill'].value);
-    // console.log(elt.children);
-    const planning = get_values_hidden_menu(index);
-    // lets make the amount a global variable
-    AGENT_NUM = amount;
-    // and we push them inside the array
-    for (let i = 0; i < amount; i++)result.push(make_trait(trait_name, cur_val, perf_val, endu_val, good_val, planning));
-    index++;
-  }
-  
-  return result;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * this function fills the executions combination array with
  * all the possible combiation of agents in groups of 1, 2, 3 and 4 agents
@@ -125,11 +93,6 @@ function init_batch() {
   }
   execution_combinations = combination_of_array_elements(traits_list);
   $('.menu').toggle('fast');
-
-  $('#info-window').toggle('fast', () => {
-    // whe the window is closed resize the sketch
-    resizeCanvas(WIDTH(), HEIGHT());
-  });
 
   tick = setInterval(batch_executions, 0.1);//apparently it can't be faster than 5ms
 }
