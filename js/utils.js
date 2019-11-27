@@ -1,3 +1,7 @@
+function map(value, istart, istop, ostart, ostop) {
+  return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
+}
+
 /**
  * this function returns an Object with the information about
  * the task to be fed in the Task class

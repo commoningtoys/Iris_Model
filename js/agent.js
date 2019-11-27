@@ -1,6 +1,10 @@
 class Agent {
   constructor(id, _traits, model_type, monthly_hours) {
-    this.ID = nf(id, 4);
+    const id_len = 4 - id.toString(10).length;
+    let zeroes = ''; 
+    for(let i = 0; i < id_len; i++)zeroes += '0'
+    this.ID = zeroes + id;
+    console.log(this.ID);
 
     // here we should also populate the select element in the menu
     const select = document.getElementById('agents-list');
@@ -76,23 +80,23 @@ class Agent {
     this.decision = '';
 
     this.mappedAmountOfTime = 0;
-    this.colors = {
-      work: color(255, 0, 0),
-      rest: color(255, 255, 0),
-      swap: color(0, 255, 0),
-      unable: color(125)
-    };
+    // this.colors = {
+    //   work: color(255, 0, 0),
+    //   rest: color(255, 255, 0),
+    //   swap: color(0, 255, 0),
+    //   unable: color(125)
+    // };
     this.showStatistics = false;
-    this.preferenceColors = {
-      skill: color(0, 255, 0),
-      preference: color(255, 0, 255),
-      FLD: color(0, 255, 255),
-      time_coins: color(255, 0, 0),
-      stress: color(255, 255, 0),
-      time: color(45, 105, 245),
-      swapped: color(0, 255, 100, 100),
-      brute_force: color(255, 125, 0, 100)
-    };
+    // this.preferenceColors = {
+    //   skill: color(0, 255, 0),
+    //   preference: color(255, 0, 255),
+    //   FLD: color(0, 255, 255),
+    //   time_coins: color(255, 0, 0),
+    //   stress: color(255, 255, 0),
+    //   time: color(45, 105, 245),
+    //   swapped: color(0, 255, 100, 100),
+    //   brute_force: color(255, 125, 0, 100)
+    // };
 
     this.preferenceArchive = [];
     this.data = [];

@@ -10,20 +10,20 @@ let tick;
 
 init_menu();
 let cnv;
-function setup() {
-  // cnv = createCanvas(WIDTH(), HEIGHT());
-  noCanvas();
-  // frameRate(200);
-}
+// function setup() {
+//   // cnv = createCanvas(WIDTH(), HEIGHT());
+//   noCanvas();
+//   // frameRate(200);
+// }
 
-function draw() {
-  if (!batch_mode) {
+// function draw() {
+//   if (!batch_mode) {
 
 
-  }
+//   }
 
-  // document.getElementById('whatFrameRate').innerHTML = 'Frame rate: <br>' + frameRate();
-}
+//   // document.getElementById('whatFrameRate').innerHTML = 'Frame rate: <br>' + frameRate();
+// }
 
 
 
@@ -63,16 +63,18 @@ function init_model() {
   // } 
 }
 
+let frame_count = 0;
+
 function single_execution() {
   if (irisModel != null) {
     for (let i = 0; i < loops; i++) {
       irisModel.update();
     }
-    if (frameCount % 15 == 0) {
+    if (frame_count % 15 == 0) {
       irisModel.update_data();
       // irisModel.plot_data();
     }
-
+    frame_count ++;
   }
 }
 
