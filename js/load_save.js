@@ -5,7 +5,6 @@ let storage_available = false;
 
 if (storageAvailable('localStorage')) {
   storage_available = true;
-  console.log(window.localStorage);
 }
 else {
   // Too bad, no localStorage for us
@@ -164,6 +163,7 @@ function set_config_names() {
   const cookies = get_all_cookie_names();
   for (let i = 0; i < cookies.length; i++) {
     const name = cookies[i];
+    if(name === '')break;
     const option = document.createElement('option');
     option.setAttribute('class', 'btn')
     option.value = name;
