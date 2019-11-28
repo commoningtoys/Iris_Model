@@ -5,6 +5,7 @@ let storage_available = false;
 
 if (storageAvailable('localStorage')) {
   storage_available = true;
+  console.log(window.localStorage);
 }
 else {
   // Too bad, no localStorage for us
@@ -104,8 +105,8 @@ function save_traits() {
 
   update_config();
 
-  if (!localStorage.getItem(config_name)) {
-    window.localStorage.setItem(config_name, JSON.stringify(config));
+  if (check_cookie(config_name)) {
+    set_cookie(config_name, config);
 
     const select = document.getElementById('load-config');
     const option = document.createElement('option');
@@ -121,13 +122,10 @@ function save_traits() {
 
 function load_traits(elt) {
   const val = elt.selectedOptions[0].value;
-  config = JSON.parse(window.localStorage.getItem(val));
-
+  const cookie = atob(get_cookie(val));
+  config = JSON.parse(cookie);
   for (const item of config.agents) {
     const elt = document.getElementById(item.id);
-    // Object.keys(item).forEach(key =>{
-    //     elt.children[key].value = item[key];
-    // })
     elt.children['amount'].value = item.amount;
     elt.children['trait'].value = item.trait; // this must stay a string
     elt.children['curiosity'].value = item.curiosity;
@@ -145,7 +143,6 @@ function load_traits(elt) {
     }
   }
   document.getElementById('how-many-task').value = config.model.task_sets;
-  get_model_type()
 
   const model_type_inputs = document.querySelectorAll('#model-type input')
   for (const input of model_type_inputs) {
@@ -164,8 +161,9 @@ function load_traits(elt) {
 
 function set_config_names() {
   const select = document.getElementById('load-config');
-  for (let i = 0; i < window.localStorage.length; i++) {
-    const name = window.localStorage.key(i);
+  const cookies = get_all_cookie_names();
+  for (let i = 0; i < cookies.length; i++) {
+    const name = cookies[i];
     const option = document.createElement('option');
     option.setAttribute('class', 'btn')
     option.value = name;
@@ -178,7 +176,60 @@ function set_config_names() {
 set_config_names()
 
 
+function set_cookie(cname, json) {
+  const d = new Date();
+  let parsed = JSON.stringify(json);
+  parsed = btoa(parsed)
+  d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000));
+  const expires = "expires=" + d.toUTCString();
+  const write_to_cookie = cname + "=" + parsed + ";" + expires + ";path=/";
+  document.cookie = write_to_cookie;
+}
 
+function get_cookie(cname) {
+  const name = cname + "=";
+  const ca = document.cookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+      }
+  }
+  return null;
+}
+
+function check_cookie(cname) {
+  console.log(cname);
+  let user = get_cookie(cname);
+  console.log(user);
+  if (user === null) {
+    console.log('no cookie found');
+    return true
+      // alert("Welcome again " + user);
+      // draw_cookies();
+  } else {
+    console.log('cookie already in use');
+    return false
+      // if (user != "" && user != null) {
+      //     set_cookie("cookies", user, 365);
+      // }
+  }
+}
+
+function get_all_cookie_names(){
+  var pairs = document.cookie.split(";");
+  var cookie_names = [];
+  for (var i=0; i<pairs.length; i++){
+    var pair = pairs[i].split("=");
+    cookie_name = (pair[0] + '').trim();
+    console.log(cookie_name);
+    cookie_names.push(cookie_name);
+  }
+  return cookie_names;
+}
 
 // const doc = new jsPDF();
 // // window.html2canvas = html2canvas;
