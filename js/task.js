@@ -145,7 +145,7 @@ class Task {
     this.swapping_agents = 0;
     // shuffleArray(agents);// we shuffle the agents 
     // here we filter out all the agents who already have done the task for the day
-    let available_agents = agents.filter(agent => (agent.done_for_the_day === false && agent.spending_hours > 0) && (!agent.working || !agent.resting));
+    let available_agents = agents.filter(agent => (agent.done_for_the_day === false && agent.spending_hours > 0) && !agent.working && !agent.resting);
     // console.log(available_agents.length);
     let swapping_agents = available_agents.filter(agent => agent.has_swapped === true);
     // console.log(swapping_agents.length);
