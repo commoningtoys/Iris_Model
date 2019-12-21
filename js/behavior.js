@@ -108,7 +108,7 @@ class Behavior {
         }
       });
     }
-    if(this.compute_resting(agent, task)) return true;
+    if (this.compute_resting(agent, task)) return true;
     // here the swapping happens
     if (swap_value > 0.5) { // make it a slider between 0.3 – 0.7
       // console.log('WORK')
@@ -138,19 +138,17 @@ class Behavior {
       // first we need to get the archive of the decisions
       const decision_archive = agent.get_decision_archive()
       result = this.compute_decision_resting(decision_archive)
-      if (result) {       
+      if (result) {
         // if the agent is resting than he rests
         agent.push_to_decision_archive('rest');
         // console.log('agent resting...', agent.ID);
         agent.rest(task);
       }
       return result;
-    } else if (this.computed_traits.endurance < 0.3) {
-
-
-      // in here we handle the coins aspect
-      // does the agent have enough money?
-      if (agent.time_coins >= task.aot) {
+    } else {
+      if (this.computed_traits.endurance < 0.3 && agent.time_coins >= task.aot) {
+        // in here we handle the coins aspect
+        // does the agent have enough money?
         // add rest to the agent task archive
         agent.push_to_decision_archive('rest');
         //if the agent has enough time coins he rests and tells the task that he rests
@@ -164,8 +162,6 @@ class Behavior {
         // the agent can't rest
         return false
       }
-    } else {
-      return false
     }
   }
   compute_decision_resting(decision_archive) {
@@ -173,17 +169,17 @@ class Behavior {
     const work_archive = decision_archive.filter(result => result.decision === 'work');
     let last_decision = null;
     let curr_month = 0;
-    if(work_archive.length > 0){
+    if (work_archive.length > 0) {
       last_decision = work_archive[work_archive.length - 1];
       curr_month = work_archive.filter(result => result.time.m === last_decision.time.m);
     }
-    if(curr_month === undefined)console.log(curr_month);
+    if (curr_month === undefined) console.log(curr_month);
     if (this.planning.plan === 'distributed') {
       // if the plan is distributed the agent should look at the past executions 
       // the tendency to rest will decrease by the distance
-      if(last_decision === null){result = false;}
-      else if(last_decision.time.m !== this.agent.get_inner_clock().m){result = false}
-      else{
+      if (last_decision === null) { result = false; }
+      else if (last_decision.time.m !== this.agent.get_inner_clock().m) { result = false }
+      else {
         const last_day = last_decision.time.d;
         const current_day = this.agent.get_inner_clock().d;
         const difference = current_day - last_day;
@@ -199,24 +195,24 @@ class Behavior {
     return result
   }
 
-  compute_compact_resting(decision_archive){
+  compute_compact_resting(decision_archive) {
     let result = false;
     // let period_of_month = undefined;
     const current_day = this.agent.get_inner_clock().d;
     const agent_compact_plan = this.planning.distribution;
     // console.log(agent_compact_plan);
-    if(current_day >= 1 && current_day <=10){
+    if (current_day >= 1 && current_day <= 10) {
       // begin
-      
+
       result = (agent_compact_plan === 'begin')
-    }else if(current_day >= 11 && current_day <= 20){
+    } else if (current_day >= 11 && current_day <= 20) {
       // middle
       result = (agent_compact_plan === 'middle')
-    }else if(current_day >= 21 && current_day <= 30){
+    } else if (current_day >= 21 && current_day <= 30) {
       // end
       result = (agent_compact_plan === 'end')
-      
-    }else{
+
+    } else {
       // error handling
       console.error(`error: a month has less than ${current_day} days!!`);
     }
@@ -451,7 +447,7 @@ class Behavior {
     const skill_sum = skill > 0.5 ? skill : -(skill);
     const sum = Math.abs(results[2] - (results[0] + results[1])) > 0.5 ? 1 : -1;
     const agent_fld = (agent.FLD / MAXIMUM) - 0.5;
-    agent_pref.task_preference += sum  * endurance * skill_sum;// this 25 is here to make the gain and drop in preference more marked
+    agent_pref.task_preference += sum * endurance * skill_sum;// this 25 is here to make the gain and drop in preference more marked
     agent_pref.task_preference = clamp(agent_pref.task_preference, MINIMUM, MAXIMUM);
   }
   setType(_traits) {

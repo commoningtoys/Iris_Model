@@ -151,16 +151,6 @@ class Task {
     // console.log(swapping_agents.length);
     // available_agents = available_agents.filter(agent => agent.behavior_exp.compute_resting(agent, this) === false)
 
-    // here we add the vailable agents who did  not swap to the agents pool
-    // this will be used later in the case no agent has swapped for this task
-    this.agentsPool = available_agents.filter(agent => agent.has_swapped === false);
-
-    // what if there is no available agents? brute force
-    if(this.agentsPool.length <= 0){
-      // console.log('no agents available... brute forcing...');
-      this.bruteForceTask(agents);
-    }
-
     // here we select the swapping agent if there is any
     swapping_agents = swapping_agents.filter(agent => agent.swap_task === this.type);
     // console.log(`swapping agents with ${this.type}: ${swapping_agents.length}`);
@@ -174,50 +164,17 @@ class Task {
       return // we return as the task has been executed
     }
 
+    // here we add the vailable agents who did  not swap to the agents pool
+    // this will be used later in the case no agent has swapped for this task
+    this.agentsPool = available_agents.filter(agent => agent.has_swapped === false);
 
-      /*
-       ######  ####### ######  ######  #######  #####     #    ####### ####### ######
-       #     # #       #     # #     # #       #     #   # #      #    #       #     #
-       #     # #       #     # #     # #       #        #   #     #    #       #     #
-       #     # #####   ######  ######  #####   #       #     #    #    #####   #     #
-       #     # #       #       #   #   #       #       #######    #    #       #     #
-       #     # #       #       #    #  #       #     # #     #    #    #       #     #
-       ######  ####### #       #     # #######  #####  #     #    #    ####### ######
-
-      */
-    // // here we check if the agent has traded before if yes he executes the task
-    // for (const agent of available_agents) {
-    //   // skill = agent.getPreferences(this.type).skill_level;
-    //   if ((agent.has_swapped && agent.swap_task === this.type) && (!agent.working || !agent.resting)) {
-    //     // this is where chooseTask() happens
-    //     if (agent.isPlayer) {
-    //       // if the agent is the player than make him work
-    //       agent.playerTaskToExecute = this;
-    //       agent.has_swapped = false; // reset here the traded boolean
-    //       agent.playerWorks(agents);
-    //       return;// WE RETURN BECAUSE THE AGENT IS THE PLAYER THEREFORE WE DON'T NEED TO CHECK FOR MORE AGENTS TO DO THE TASK
-    //     } else {
-    //       /**
-    //        * I THINK THERE IS A LOGIC PROBLEM HERE
-    //        * IT MIGHT BE BETTER TO PUT ALL THE AGENT THAT 
-    //        * TRADED FOR THIS TASK ONTO A POOL AND THEN PICK A RANDOM ONE
-    //        */
-    //       // this.agentsPool.push(agent);
-    //       this.swapping_agents++;
-    //       //////DEPRECATED//////
-    //       // amountOfSkill += skill;// we will use this when we will need more agents to carry out the task
-    //       //////////////////////
-    //       // console.log(agent.ID, agent.swap_task)
-    //       agent.work(this, agents, false);//the agent works
-    //       agent.has_swapped = false; // reset here the traded boolean | needs to be done after the the agent.work otherwise the it is not possible to visualize the trade happening
-    //       // this.executed++;
-    //       // console.log('swapping agent doing the task!');
-    //       return;// IF THE AGENT HAS TRADED FOR THIS TASK THAN HE GETS PICKED THEREFORE WE RETURN
-    //     }
-    //   } else if (!agent.working && agent.ability && !agent.has_swapped) {// maybe the trade happens once we have the pool
-    //     this.agentsPool.push(agent);// IF NONE OF THE ABOVE THINGS HAPPENED THAN WE PUSH THE AGENT INTO A POOL OF POSSIBLE CANDIDATE FOR THE TASK
-    //   }
-    // }
+    // what if there is no available agents? brute force
+    if(this.agentsPool.length <= 0){
+      // console.log('no agents available... brute forcing...');
+      this.bruteForceTask(agents);
+      // we return as the task gets brute-forced
+      return;
+    }
 
 
     /**
@@ -282,12 +239,21 @@ class Task {
          * 
          * For now it doesn't let player to be brute forced
          */
+
+        // if bruteforced the agent don't earn resting time
+        //  reset task value
+        this.time_coins_reserve += this.value
+        this.value = 0;
+
+
+        const stress_multiplier = agent.resting === true ? 10 : 2.5;
+
         agent.resting = false;
         agent.restingTimer = 0;
         // check resting timer!!!
         agent.has_swapped = false;
         agent.swap_task = '';
-        agent.increase_stress(1);
+        agent.increase_stress(stress_multiplier);
         agent.work(this, agents, true);
         // agent.FLD /= 2;
         // add this to the html text

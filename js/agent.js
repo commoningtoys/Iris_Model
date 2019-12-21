@@ -203,6 +203,7 @@ class Agent {
     const multiplier = mult || 1;
     this.stress += this.stress_increase_val * multiplier;
     this.stress = clamp(this.stress, MINIMUM, MAXIMUM);
+    // console.log(this.stress);
   }
 
   taskValue(agents, task_name) {
@@ -257,6 +258,7 @@ class Agent {
     this.restingTimer = task.aot;
     // when the agent has rested he also is less stressed
     this.stress /= this.stress_decrease_val;
+    // console.log('rest...');
     // this.updateAttributes(task, true);
     // this.setInfo();
   }

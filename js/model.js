@@ -25,6 +25,7 @@ class IrisModel {
       this.agents.push(new Agent(idx, trait, model_type, monthly_hours))
       idx++;
     }
+    // console.log(this.agents);
     // make the info for all of the agents and set their initial time
     for (const agent of this.agents) {
       // agent.makeInfo(this.agents);
@@ -122,7 +123,7 @@ class IrisModel {
   }
   update() {
     this.setModelTime();
-    // for(let i = 0; i < 10; i++){
+    
     for (const agent of this.agents) {
       agent.set_time(this.model_date);
       agent.update();
@@ -289,7 +290,7 @@ class IrisModel {
         option.disabled = false;
       }
       for (const option of options) {
-        if (!option.innerText.includes(this.behavior)) option.disabled = true;
+        if (!option.innerText.includes(this.behavior.toUpperCase())) option.disabled = true;
       }
     } else {
       for (const option of options) {

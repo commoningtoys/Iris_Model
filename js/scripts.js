@@ -147,7 +147,7 @@ function extract_traits() {
     for (let i = 0; i < amount; i++)result.push(make_trait(trait_name, cur_val, perf_val, endu_val, good_val, planning));
     index++;
   }
-  
+  // console.log(result);
   return result;
 }
 

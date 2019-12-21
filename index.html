@@ -308,7 +308,7 @@
         <div style="font-size: 30px;">Total number of agents: <span id="how-many-agents">16</span></div>
         How many task-sets:<input
           data-title="(each set is composed by 4 tasks. Use at least 1 task set for every 12 agents)" type="number"
-          value="1" autocomplete="off" id="how-many-task" class="custom-input">
+          value="1" autocomplete="off" id="how-many-task" class="custom-input" onchange="update_config()">
         <!-- <br>
         <i>(each set is composed by 4 tasks. <u style="color: #00f; font-weight:bolder;">Use at least 1 task set for
             every 12 agents</u>)</i> -->
@@ -320,10 +320,10 @@
         <div class="model-settings-item" id="model-type">
           <i>what kind of model should the community run?</i> <br>
           <input type="radio" name="model-type" value="time-accumulate" autocomplete="off"
-            onchange="update_behavior_setting_menu(this)"><label for="time-accumulate">time-accumulate</label> <br>
+            onchange="update_behavior_setting_menu(this); update_config()"><label for="time-accumulate">time-accumulate</label> <br>
           <input type="radio" name="model-type" value="time-spending" autocomplete="off"
-            onchange="update_behavior_setting_menu(this)" checked><label for="time-spending">time-spending</label>
-          <input type="number" value="30" id="monthly-hours" autocomplete="off" style="width:30px;"><label> hours per
+            onchange="update_behavior_setting_menu(this); update_config()" checked><label for="time-spending">time-spending</label>
+          <input type="number" value="30" id="monthly-hours" autocomplete="off" style="width:30px;" onchange="update_config()"><label> hours per
             month</label>
         </div>
         <div class="model-settings-item">

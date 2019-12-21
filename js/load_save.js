@@ -72,6 +72,7 @@ function update_config() {
 update_config();
 
 function set_config_to_html() {
+  console.log('update...');
   const el = document.getElementById('show-config');
   el.innerHTML = '';
   for (const conf of config.agents) {
@@ -92,7 +93,7 @@ function set_config_to_html() {
 const inputs = document.querySelectorAll('.traits-input input');
 for (const input of inputs) {
   input.addEventListener('change', () => {
-    if (input.type === 'number') input.value = get_decimal_value(input.value);
+    if (input.type === 'number' && input.name !== 'amount') input.value = get_decimal_value(input.value);
     update_buttons();
     update_config();
   });
